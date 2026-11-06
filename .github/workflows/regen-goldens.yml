@@ -56,7 +56,12 @@ jobs:
             test/chat/chat_golden_test.dart \
             test/chat/chat_shell_test.dart \
             test/chat/empty_actions_test.dart \
-            test/chat/chat_screen_test.dart
+            test/chat/chat_screen_test.dart \
+            test/chat/model_sheet_test.dart \
+            test/chat/run_info_golden_test.dart \
+            test/integration/wiring_test.dart \
+            test/system_entry/share_landed_golden_test.dart \
+            test/wallpaper/wallpaper_screens_test.dart
       - name: What changed
         working-directory: app
         run: git status --short | sed -n '1,40p'
