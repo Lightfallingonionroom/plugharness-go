@@ -4706,6 +4706,108 @@ abstract class L10n {
   /// **'不显示'**
   String get botsPetNone;
 
+  /// No description provided for @botsPetCustom.
+  ///
+  /// In zh, this message translates to:
+  /// **'自定义宠物'**
+  String get botsPetCustom;
+
+  /// No description provided for @botsPetCustomName.
+  ///
+  /// In zh, this message translates to:
+  /// **'给宠物起个名字'**
+  String get botsPetCustomName;
+
+  /// No description provided for @botsPetAddImage.
+  ///
+  /// In zh, this message translates to:
+  /// **'从图片添加宠物'**
+  String get botsPetAddImage;
+
+  /// No description provided for @botsPetAddImageHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'支持相册图片，所有状态先使用同一形象'**
+  String get botsPetAddImageHint;
+
+  /// No description provided for @botsPetImportFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'图片无法导入，请换一张较小的常见格式图片'**
+  String get botsPetImportFailed;
+
+  /// No description provided for @botsPetDeleteConfirm.
+  ///
+  /// In zh, this message translates to:
+  /// **'删除这个自定义宠物？只删除导入的形象，不影响对话。'**
+  String get botsPetDeleteConfirm;
+
+  /// No description provided for @botsPetAddPack.
+  ///
+  /// In zh, this message translates to:
+  /// **'导入完整宠物包'**
+  String get botsPetAddPack;
+
+  /// No description provided for @botsPetAddPackHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'ZIP 内含 pack.json 和动作图片，可展示不同状态'**
+  String get botsPetAddPackHint;
+
+  /// No description provided for @botsPetPackImportFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'宠物包无效。请检查 pack.json、图片和 ZIP 结构。'**
+  String get botsPetPackImportFailed;
+
+  /// No description provided for @sceneAccounts.
+  ///
+  /// In zh, this message translates to:
+  /// **'场景账户'**
+  String get sceneAccounts;
+
+  /// No description provided for @sceneAccountsHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'为不同用途保存主机、默认模型和宠物配置'**
+  String get sceneAccountsHint;
+
+  /// No description provided for @sceneDefaultAccount.
+  ///
+  /// In zh, this message translates to:
+  /// **'主账户'**
+  String get sceneDefaultAccount;
+
+  /// No description provided for @sceneCreate.
+  ///
+  /// In zh, this message translates to:
+  /// **'新建场景账户'**
+  String get sceneCreate;
+
+  /// No description provided for @sceneAdmin.
+  ///
+  /// In zh, this message translates to:
+  /// **'主账户 · 配置场景'**
+  String get sceneAdmin;
+
+  /// No description provided for @sceneConfigOnly.
+  ///
+  /// In zh, this message translates to:
+  /// **'配置场景'**
+  String get sceneConfigOnly;
+
+  /// No description provided for @sceneDeleteConfirm.
+  ///
+  /// In zh, this message translates to:
+  /// **'删除场景“{name}”？只删除这份配置，不删除会话、文件或云端账号。'**
+  String sceneDeleteConfirm(String name);
+
+  /// No description provided for @sceneIsolationNotice.
+  ///
+  /// In zh, this message translates to:
+  /// **'当前版本切换的是应用配置，不是完整数据沙箱。会话、插件进程和凭据的隔离仍需单独实现。'**
+  String get sceneIsolationNotice;
+
   /// No description provided for @botsPets.
   ///
   /// In zh, this message translates to:
@@ -8203,6 +8305,30 @@ abstract class L10n {
   /// In zh, this message translates to:
   /// **'查看日志'**
   String get commonViewLogs;
+
+  /// No description provided for @commonRestore.
+  ///
+  /// In zh, this message translates to:
+  /// **'恢复'**
+  String get commonRestore;
+
+  /// No description provided for @commonReset.
+  ///
+  /// In zh, this message translates to:
+  /// **'恢复默认'**
+  String get commonReset;
+
+  /// No description provided for @commonCompact.
+  ///
+  /// In zh, this message translates to:
+  /// **'紧凑布局'**
+  String get commonCompact;
+
+  /// No description provided for @commonNone.
+  ///
+  /// In zh, this message translates to:
+  /// **'没有显示的功能'**
+  String get commonNone;
 
   /// No description provided for @commonItemCount.
   ///

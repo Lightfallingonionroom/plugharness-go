@@ -2705,6 +2705,60 @@ class L10nEn extends L10n {
   String get botsPetNone => 'None';
 
   @override
+  String get botsPetCustom => 'Custom pet';
+
+  @override
+  String get botsPetCustomName => 'Name your pet';
+
+  @override
+  String get botsPetAddImage => 'Add pet from image';
+
+  @override
+  String get botsPetAddImageHint => 'Choose an image; it is used for every state';
+
+  @override
+  String get botsPetImportFailed => 'Couldn’t import this image. Try a smaller common image format.';
+
+  @override
+  String get botsPetDeleteConfirm => 'Delete this custom pet? Only the imported artwork is removed.';
+
+  @override
+  String get botsPetAddPack => 'Import full pet pack';
+
+  @override
+  String get botsPetAddPackHint => 'ZIP with pack.json and animation sheets for different states';
+
+  @override
+  String get botsPetPackImportFailed => 'Invalid pet pack. Check pack.json, images and ZIP structure.';
+
+  @override
+  String get sceneAccounts => 'Scene accounts';
+
+  @override
+  String get sceneAccountsHint => 'Keep host, default model and pet choices for different kinds of work';
+
+  @override
+  String get sceneDefaultAccount => 'Main account';
+
+  @override
+  String get sceneCreate => 'New scene account';
+
+  @override
+  String get sceneAdmin => 'Main account · configuration scene';
+
+  @override
+  String get sceneConfigOnly => 'Configuration scene';
+
+  @override
+  String sceneDeleteConfirm(String name) {
+    return 'Delete scene “$name”? Only this configuration is removed, not chats, files or cloud accounts.';
+  }
+
+  @override
+  String get sceneIsolationNotice =>
+      'This version switches app configuration, not a full data sandbox. Session, plugin-process and credential isolation are separate work.';
+
+  @override
   String get botsPets => 'Pets';
 
   @override
@@ -4724,6 +4778,18 @@ class L10nEn extends L10n {
 
   @override
   String get commonViewLogs => 'View logs';
+
+  @override
+  String get commonRestore => 'Restore';
+
+  @override
+  String get commonReset => 'Reset';
+
+  @override
+  String get commonCompact => 'Compact layout';
+
+  @override
+  String get commonNone => 'No visible features';
 
   @override
   String commonItemCount(int count) {

@@ -55,41 +55,15 @@ class CustomPetStore {
 
   Future<PetPack> importArchive(List<int> bytes) async {
     if (bytes.isEmpty || bytes.length > 32 * 1024 * 1024) throw const FormatException('archive size');
-    final archive = ZipDecoder().decodeBytes(bytes, verify: true);
-    final manifests = archive.files.where((file) => file.isFile && file.name.split('/').last == 'pack.json').toList();
-    if (manifests.length != 1) throw const FormatException('one pack.json required');
-    final manifest = manifests.single;
-    final prefix = manifest.name.substring(0, manifest.name.length - 'pack.json'.length);
-    final parsed = jsonDecode(utf8.decode(manifest.content as List<int>));
-    if (parsed is! Map<String, Object?>) throw const FormatException('pack.json');
-    final pack = PetPack.parse(parsed);
-    if (pack.animations.values.any((anim) => anim.sheet.contains('/') || anim.sheet.contains('..'))) {
-      throw const FormatException('unsafe sheet path');
-    }
-    final files = <String, List<int>>{};
-    var total = 0;
-    for (final file in archive.files) {
-      if (!file.isFile || !file.name.startsWith(prefix)) continue;
-      final relative = file.name.substring(prefix.length);
-      if (relative.isEmpty || relative.contains('/') || relative == '.' || relative == '..' || relative.contains('\\')) {
-        throw const FormatException('unsafe archive path');
-      }
-      final content = file.content as List<int>;
-      total += content.length;
-      if (total > 96 * 1024 * 1024) throw const FormatException('uncompressed size');
-      files[relative] = content;
-    }
-    for (final animation in pack.animations.values) {
-      if (!files.containsKey(animation.sheet)) throw FormatException('missing ${animation.sheet}');
-    }
+    final prepared = preparePetArchive(bytes);
     final id = '$customPetPrefix${DateTime.now().microsecondsSinceEpoch}';
     final dir = Directory('${(await root()).path}/$id');
     await dir.create(recursive: true);
     try {
-      for (final entry in files.entries) {
+      for (final entry in prepared.files.entries) {
         await File('${dir.path}/${entry.key}').writeAsBytes(entry.value, flush: true);
       }
-      final stored = Map<String, Object?>.from(parsed)..['id'] = id;
+      final stored = Map<String, Object?>.from(prepared.manifest)..['id'] = id;
       await File('${dir.path}/pack.json').writeAsString(jsonEncode(stored), flush: true);
       return PetPack.parse(stored);
     } catch (_) {
@@ -103,6 +77,44 @@ class CustomPetStore {
     final dir = Directory('${(await root()).path}/$id');
     if (await dir.exists()) await dir.delete(recursive: true);
   }
+}
+
+class PreparedPetArchive {
+  const PreparedPetArchive(this.manifest, this.files);
+  final Map<String, Object?> manifest;
+  final Map<String, List<int>> files;
+}
+
+/// Validate and flatten a pet ZIP without touching the file system.
+PreparedPetArchive preparePetArchive(List<int> bytes) {
+  final archive = ZipDecoder().decodeBytes(bytes, verify: true);
+  final manifests = archive.files.where((file) => file.isFile && file.name.split('/').last == 'pack.json').toList();
+  if (manifests.length != 1) throw const FormatException('one pack.json required');
+  final manifestFile = manifests.single;
+  final prefix = manifestFile.name.substring(0, manifestFile.name.length - 'pack.json'.length);
+  final parsed = jsonDecode(utf8.decode(manifestFile.content as List<int>));
+  if (parsed is! Map<String, Object?>) throw const FormatException('pack.json');
+  final pack = PetPack.parse(parsed);
+  final files = <String, List<int>>{};
+  var total = 0;
+  for (final file in archive.files) {
+    if (file.name.startsWith('/') || file.name.contains('..') || file.name.contains('\\')) {
+      throw const FormatException('unsafe archive path');
+    }
+    if (!file.isFile || !file.name.startsWith(prefix)) continue;
+    final relative = file.name.substring(prefix.length);
+    if (relative.isEmpty || relative.contains('/')) throw const FormatException('nested archive path');
+    final content = file.content as List<int>;
+    total += content.length;
+    if (total > 96 * 1024 * 1024) throw const FormatException('uncompressed size');
+    files[relative] = content;
+  }
+  for (final animation in pack.animations.values) {
+    if (animation.sheet.contains('/') || animation.sheet.contains('..') || !files.containsKey(animation.sheet)) {
+      throw FormatException('missing or unsafe ${animation.sheet}');
+    }
+  }
+  return PreparedPetArchive(parsed, files);
 }
 
 PetPack singleImagePack({required String id, required String name, required int width, required int height}) =>
