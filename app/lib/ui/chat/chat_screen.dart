@@ -1431,15 +1431,21 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
 
     // A new chat has no title yet. ChatGPT puts the model picker there instead
     // of the words 「新对话」 — the bar says what this message will go out with.
-    final catalog = ref.watch(currentModelCatalogProvider);
-    final pickedModel = sessionId == null
-        ? ref.watch(pendingModelProvider)
-        : ref.watch(chatProvider(sessionId).select((c) => c.model));
-    final title = switch (chat?.title ?? listedTitle) {
-      final t? when t.trim().isNotEmpty => chatTitleShown(t.trim()),
-      _ when sessionId == null => modelShortName(pickedModel ?? catalog?.defaultSelection, catalog),
-      _ => l10n.commonNewChat,
-    };
+    // Read lazily: an open conversation with a title needs neither the
+    // catalog nor the model, and subscribing to the chat state here would
+    // rebuild the bar on every streamed token.
+    final shownTitle = (chat?.title ?? listedTitle)?.trim() ?? '';
+    final String title;
+    if (shownTitle.isNotEmpty) {
+      title = chatTitleShown(shownTitle);
+    } else if (sessionId == null) {
+      title = modelShortName(
+        ref.watch(pendingModelProvider) ?? ref.watch(currentModelCatalogProvider)?.defaultSelection,
+        ref.watch(currentModelCatalogProvider),
+      );
+    } else {
+      title = l10n.commonNewChat;
+    }
     final approval = chat?.approval;
     final question = chat?.question;
     final status = _status(
