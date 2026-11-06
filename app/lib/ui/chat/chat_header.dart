@@ -229,7 +229,14 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    HeaderTitleText(widget.title, style: titleStyle),
+                                    // A stable handle on the title: a new chat's title is the
+                                    // model's name, which the model sheet also
+                                    // shows — tests must tell the two apart.
+                                    HeaderTitleText(
+                                      widget.title,
+                                      key: const ValueKey('chat-title'),
+                                      style: titleStyle,
+                                    ),
                                     _StatusLine(
                                       status: Row(
                                         mainAxisSize: MainAxisSize.min,
