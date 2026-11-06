@@ -124,6 +124,11 @@ fi
 if ! command -v flutter >/dev/null 2>&1; then
   [[ -f $ROOT/tooling/env.sh ]] && source "$ROOT/tooling/env.sh"
   command -v flutter >/dev/null 2>&1 || die "flutter is not on PATH"
+
+# pub get may regenerate l10n from the merged ARBs before this script starts.
+# Re-run the project's authoritative generator so analysis/builds never see a
+# stale interface while the ARB parts already contain newer strings.
+python3 "$APP/tool/l10n_merge.py"
 fi
 
 stop_daemon() {
