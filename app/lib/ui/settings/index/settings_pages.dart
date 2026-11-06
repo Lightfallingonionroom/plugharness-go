@@ -24,6 +24,7 @@ import '../../providers/providers_page.dart';
 import '../../remote/remote_screen.dart';
 import '../../share_hosted/hosted_links_page.dart';
 import '../about_page.dart';
+import '../account/scene_accounts_page.dart';
 import '../appearance/appearance_page.dart';
 import '../background_guide_page.dart';
 import '../diagnostics_page.dart';
@@ -72,6 +73,7 @@ Widget settingsPage(SettingsPageId id, {String? sessionId}) => switch (id) {
   SettingsPageId.plugins => const PluginsScreen(),
   SettingsPageId.allFeatures => const AllFeaturesPage(),
   SettingsPageId.account => const AccountPage(),
+  SettingsPageId.sceneAccounts => const SceneAccountsPage(),
   SettingsPageId.remote => const RemoteScreen(),
   SettingsPageId.permission => PermissionPage(sessionId: sessionId),
   SettingsPageId.agentPresets => const AgentPresetsPage(),
