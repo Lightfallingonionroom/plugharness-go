@@ -136,8 +136,11 @@ class ChatEmptyState extends StatelessWidget {
     final theme = Theme.of(context);
     final retry = connected ? null : onReconnect;
     final idle = connected || retry != null ? null : this.idle;
+    // Connected, the title is the whole line: a subtitle here only repeated
+    // it ("有什么可以帮你？" over "今天想做点什么？"). Everything else still says
+    // what is going on, and why the composer will not send.
     final subtitle = connected
-        ? l10n.viewEmptySubtitle
+        ? null
         : retry != null
         ? l10n.commonEngineUnreachable
         : idle != null
@@ -148,8 +151,37 @@ class ChatEmptyState extends StatelessWidget {
         ? l10n.viewEmptyConnecting
         : l10n.viewEmptyDisconnected;
 
+    // Fixed slots, not a running counter: the subtitle comes and goes with
+    // the connection, and a counter would shift every later fade-in with it.
     var order = 0;
     Widget enter(Widget child) => FadeSlideIn(index: order++, child: child);
+    final titleFade = enter(
+      Text(
+        l10n.viewEmptyTitle,
+        textAlign: TextAlign.center,
+        style: theme.textTheme.headlineMedium?.copyWith(
+          fontSize: 28,
+          height: 1.25,
+          fontWeight: FontWeight.w500,
+          color: ChatGptShellColors.of(context).primaryText,
+        ),
+      ),
+    );
+    final subtitleFade = subtitle == null
+        ? null
+        : enter(
+            AnimatedSwitcher(
+              duration: AppMotion.of(context, AppMotion.quick),
+              child: Text(
+                subtitle,
+                key: ValueKey(subtitle),
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: ChatGptShellColors.of(context).secondaryText,
+                ),
+              ),
+            ),
+          );
 
     // One slot under the subtitle: the primary pill or the workspace chip,
     // the same height, swapped in place.
@@ -183,32 +215,8 @@ class ChatEmptyState extends StatelessWidget {
               // ChatGPT's new-chat screen is a single question. No mascot, no
               // greeting by the hour: the composer below is the one thing to
               // look at, and a fixed line does not go stale at 3 a.m.
-              enter(
-                Text(
-                  l10n.viewEmptyTitle,
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.headlineMedium?.copyWith(
-                    fontSize: 28,
-                    height: 1.25,
-                    fontWeight: FontWeight.w500,
-                    color: ChatGptShellColors.of(context).primaryText,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              enter(
-                AnimatedSwitcher(
-                  duration: AppMotion.of(context, AppMotion.quick),
-                  child: Text(
-                    subtitle,
-                    key: ValueKey(subtitle),
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: ChatGptShellColors.of(context).secondaryText,
-                    ),
-                  ),
-                ),
-              ),
+              titleFade,
+              if (subtitleFade != null) ...[const SizedBox(height: 8), subtitleFade],
               if (slot != null) ...[
                 const SizedBox(height: slotGap),
                 enter(

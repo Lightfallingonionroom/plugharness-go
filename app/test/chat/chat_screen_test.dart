@@ -200,7 +200,8 @@ void main() {
       await pumpFrames(tester);
       final chipText = find.text(failed ? '重新连接' : '在「项目」中');
       final chip = find.ancestor(of: chipText, matching: find.byType(InkWell)).first;
-      final subtitle = find.text(failed ? '没能连上引擎' : '今天想做点什么？');
+      // Connected, the title is the line above the slot (no subtitle).
+      final subtitle = find.text(failed ? '没能连上引擎' : '有什么可以帮你？');
       expect(tester.getRect(chip).height, EmptyActions.height);
       expect(tester.getCenter(chip).dx, 195);
       return tester.getRect(chip).top - tester.getRect(subtitle).bottom;

@@ -190,7 +190,8 @@ void main() {
           ),
         );
         final label = failed ? '重新连接' : '在「项目」中';
-        final subtitle = tester.getRect(find.text(failed ? '没能连上引擎' : '今天想做点什么？'));
+        // Connected, the title is the line above the slot (no subtitle).
+        final subtitle = tester.getRect(find.text(failed ? '没能连上引擎' : '有什么可以帮你？'));
         final pill = _rect(tester, label);
         return (pill, pill.top - subtitle.bottom);
       }
