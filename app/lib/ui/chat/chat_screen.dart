@@ -1429,23 +1429,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
       });
     }
 
-    // A new chat has no title yet. ChatGPT puts the model picker there instead
-    // of the words 「新对话」 — the bar says what this message will go out with.
-    // Read lazily: an open conversation with a title needs neither the
-    // catalog nor the model, and subscribing to the chat state here would
-    // rebuild the bar on every streamed token.
+    // A new chat has no title yet: the bar says 「新对话」, as before. Putting
+    // the model's name here read well but made `find.text` ambiguous for every
+    // test and screen that also shows the model (the sheet's cards), so the
+    // model stays where it is picked — the composer's foot and the chip.
     final shownTitle = (chat?.title ?? listedTitle)?.trim() ?? '';
-    final String title;
-    if (shownTitle.isNotEmpty) {
-      title = chatTitleShown(shownTitle);
-    } else if (sessionId == null) {
-      title = modelShortName(
-        ref.watch(pendingModelProvider) ?? ref.watch(currentModelCatalogProvider)?.defaultSelection,
-        ref.watch(currentModelCatalogProvider),
-      );
-    } else {
-      title = l10n.commonNewChat;
-    }
+    final title = shownTitle.isNotEmpty ? chatTitleShown(shownTitle) : l10n.commonNewChat;
     final approval = chat?.approval;
     final question = chat?.question;
     final status = _status(
@@ -1674,10 +1663,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                               },
                         // The title pill opens the whole session's details (on a
                         // wide window it folds and unfolds the panel beside us).
-                        // On a new chat the title is the model's name, so a tap
-                        // opens the picker, the way ChatGPT's bar does.
+                        // A new chat has nothing to open yet.
                         onTitleTap: sessionId == null
-                            ? () => unawaited(_showModelSheet())
+                            ? null
                             : () => SessionDetailPage.open(context, sessionId, toggle: true),
                         // A phone has no room for it: the model is shown and picked at the
                         // composer's foot while typing.

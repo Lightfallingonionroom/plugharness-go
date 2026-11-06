@@ -144,15 +144,15 @@ Future<void> _openSheetAlone(WidgetTester tester, ModelCatalog catalog, {double 
   await pumpFrames(tester, 8);
 }
 
-// The sheet's card for [name]. A new chat's bar carries the same model name,
-// and `find.text` would match both; the bar's copy is under `chat-title`, so
-// the card is the match that is NOT a descendant of it.
-Finder _card(String name) {
-  final barTitle = find.byKey(const ValueKey('chat-title'));
-  final inBar = find.descendant(of: barTitle, matching: find.text(name));
-  final barCount = inBar.evaluate().length;
-  return find.ancestor(of: find.text(name).at(barCount), matching: find.byType(GlassSurface)).first;
-}
+// The cards only. The chat bar behind the sheet can carry the same model
+// name now (a new chat's title is the model), and its GlassSurface would
+// otherwise be the first match — the sheet is what these tests measure.
+Finder _card(String name) => find
+    .descendant(
+      of: find.byType(BottomSheet),
+      matching: find.ancestor(of: find.text(name), matching: find.byType(GlassSurface)),
+    )
+    .first;
 
 ModelSelection? _picked(WidgetTester tester, ChatHarness harness) {
   final container = ProviderScope.containerOf(tester.element(find.byType(ChatScreen)));
@@ -215,11 +215,8 @@ void main() {
       await _openSheet(tester, _harness(testCatalog));
       expect(find.text('选择模型'), findsOneWidget);
       expect(find.text('DeepSeek'), findsOneWidget);
-      // Inside the sheet: the bar behind it also names the model now, so the
-      // count is 2 for the model that is current and 1 for the other.
-      final sheet = find.byType(Overlay).last;
-      expect(find.descendant(of: sheet, matching: find.text('V4 Pro')), findsOneWidget);
-      expect(find.descendant(of: sheet, matching: find.text('V41 Flash')), findsOneWidget);
+      expect(find.text('V4 Pro'), findsOneWidget);
+      expect(find.text('V41 Flash'), findsOneWidget);
       expect(find.text('思考深度'), findsOneWidget);
       // Only the effort selector is a segmented pill.
       expect(find.byType(SegmentedPill<String>), findsOneWidget);
