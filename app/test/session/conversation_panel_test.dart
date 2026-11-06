@@ -12,6 +12,7 @@ import 'package:dsh_app/ui/chat/composer.dart';
 import 'package:dsh_app/ui/chat/empty_state.dart' show chatClock;
 import 'package:dsh_app/ui/chat/model_sheet.dart';
 import 'package:dsh_app/ui/chat/widgets/attachments.dart' show AttachButton;
+import 'package:dsh_app/ui/common/segmented_pill.dart';
 import 'package:dsh_app/ui/session/conversation_overview.dart';
 import 'package:dsh_app/ui/session/conversation_panel.dart';
 import 'package:dsh_app/ui/session/conversation_panes.dart';
@@ -443,7 +444,8 @@ void main() {
 
     testWidgets('插件 is there with no plugins, and says where they come from', (tester) async {
       final opened = await panel(tester);
-      await tester.tap(find.text('插件'));
+      // The tab, not the footer shortcut of the same name.
+      await tester.tap(find.descendant(of: find.byType(SegmentedPill<String>), matching: find.text('插件')));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
       expect(find.byType(ConversationOverview), findsNothing);
