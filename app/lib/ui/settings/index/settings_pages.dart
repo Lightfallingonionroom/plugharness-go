@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 
 import '../../account/account_page.dart';
+import '../../account/scene_accounts_page.dart';
 import '../../engine/engine_screen.dart';
 import '../../engine_settings/engine_settings_hub.dart';
 import '../../engine_settings/runtime_settings_pages.dart';
@@ -24,7 +25,6 @@ import '../../providers/providers_page.dart';
 import '../../remote/remote_screen.dart';
 import '../../share_hosted/hosted_links_page.dart';
 import '../about_page.dart';
-import '../account/scene_accounts_page.dart';
 import '../appearance/appearance_page.dart';
 import '../background_guide_page.dart';
 import '../diagnostics_page.dart';
