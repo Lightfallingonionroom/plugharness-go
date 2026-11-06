@@ -17182,6 +17182,9 @@ class L10nZh extends L10n {
   String get viewEmptySubtitle => '今天想做点什么？';
 
   @override
+  String get viewEmptyTitle => '有什么可以帮你？';
+
+  @override
   String get viewEmptyStarting => '正在启动引擎…';
 
   @override

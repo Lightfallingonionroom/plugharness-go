@@ -18161,6 +18161,9 @@ class L10nEn extends L10n {
   String get viewEmptySubtitle => 'What would you like to do today?';
 
   @override
+  String get viewEmptyTitle => 'What can I help with?';
+
+  @override
   String get viewEmptyStarting => 'Starting engine…';
 
   @override

@@ -31274,6 +31274,12 @@ abstract class L10n {
   /// **'今天想做点什么？'**
   String get viewEmptySubtitle;
 
+  /// No description provided for @viewEmptyTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'有什么可以帮你？'**
+  String get viewEmptyTitle;
+
   /// No description provided for @viewEmptyStarting.
   ///
   /// In zh, this message translates to:
