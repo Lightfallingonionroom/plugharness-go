@@ -10,7 +10,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../l10n/l10n.dart';
 import '../pets/pet_prefs.dart';
 import 'hosts_state.dart';
+import 'chat_state.dart';
 import 'models_state.dart';
+import 'sessions_state.dart';
 
 /// A local scene account: a stable identity and its app-level configuration.
 /// It is NOT a DSH cloud account and does not claim process/session isolation.
@@ -153,7 +155,10 @@ class SceneAccountsController extends Notifier<SceneAccountsState> {
     final current = state.current;
     if (current == null) return;
     final host = ref.read(activeHostProvider);
-    final model = ref.read(pendingModelProvider) ?? ref.read(currentModelCatalogProvider)?.defaultSelection;
+    final sessionId = ref.read(currentSessionProvider);
+    final model = sessionId == null
+        ? ref.read(pendingModelProvider) ?? ref.read(currentModelCatalogProvider)?.defaultSelection
+        : ref.read(chatProvider(sessionId)).model;
     final pet = ref.read(petPrefsProvider).packId;
     await _update(state.copyWithAccounts([
       for (final a in state.accounts) a.id == current.id ? a.copyWith(host: host.encode(), model: model, petId: pet) : a,

@@ -1,13 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'pet_pack.dart';
-import 'pet_prefs.dart';
 
 const customPetPrefix = 'custom-';
 
@@ -101,7 +100,7 @@ Map<String, Object?> _singleImageJsonValues(String id, String name, int w, int h
 };
 
 class FilePetBundle extends AssetBundle {
-  const FilePetBundle(this.bundle);
+  FilePetBundle(this.bundle);
 
   final AssetBundle bundle;
 
