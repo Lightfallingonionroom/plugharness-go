@@ -35,6 +35,17 @@ jobs:
           key: runtime-inputs-r15-${{ runner.os }}
       - name: Build the arm64 Linux runtime
         run: runtime/build-runtime.sh arm64-v8a
+      - name: Reclaim runtime build workspace
+        run: |
+          echo 'Disk before cleanup:'
+          df -h .
+          du -sh runtime/out runtime/.work runtime/.cache 2>/dev/null || true
+          # runtime/out is the only runtime directory consumed by Gradle.
+          # The extracted rootfs, npm work tree and verified download cache are
+          # no longer needed after runtime/build-runtime.sh finishes.
+          rm -rf runtime/.work runtime/.cache
+          echo 'Disk after cleanup:'
+          df -h .
       - name: Flutter plugins and Android SDK paths
         working-directory: app
         run: |
