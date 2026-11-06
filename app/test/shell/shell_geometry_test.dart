@@ -55,8 +55,10 @@ void main() {
       final drawer = tester.getRect(find.byType(SessionsDrawer));
       final lockup = tester.getRect(find.byType(BrandLockup));
       final newChat = tester.getRect(find.byType(NewChatButton));
+      // The search bar is a flat stadium now (no glass tier): measure the
+      // Material that carries it, which is what the 10 line is about.
       final search = tester.getRect(
-        find.descendant(of: find.byType(SessionSearchBar), matching: find.byType(GlassSurface)),
+        find.descendant(of: find.byType(SessionSearchBar), matching: find.byType(Material)).first,
       );
       final tile = tester.getRect(find.byType(SessionTile).first);
       final title = tester.getRect(find.text('修复登录按钮重复提交'));
