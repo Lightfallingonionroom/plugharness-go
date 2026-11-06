@@ -49,20 +49,20 @@ class MainActivity : FlutterActivity() {
             engine.plugins.add(VoicePlugin())
             engine.plugins.add(SharePlugin())
             engine.plugins.add(ShortcutsPlugin())
-            engine.plugins.add(io.github.lightfallingonionroom.dsh_app.diagnostics.DiagnosticsPlugin())
-            engine.plugins.add(io.github.lightfallingonionroom.dsh_app.media.MediaPlugin())
-            engine.plugins.add(io.github.lightfallingonionroom.dsh_app.icons.LauncherIconPlugin())
-            engine.plugins.add(io.github.lightfallingonionroom.dsh_app.theme.DynamicColorPlugin())
-            engine.plugins.add(io.github.lightfallingonionroom.dsh_app.performance.PerformancePlugin())
-            engine.plugins.add(io.github.lightfallingonionroom.dsh_app.pet.PetOverlayPlugin())
-            engine.plugins.add(io.github.lightfallingonionroom.dsh_app.islands.IslandsPlugin())
-            engine.plugins.add(io.github.lightfallingonionroom.dsh_app.nativemedia.NativeMediaPlugin())
-            engine.plugins.add(io.github.lightfallingonionroom.dsh_app.nativefiles.NativeFilesPlugin())
-            engine.plugins.add(io.github.lightfallingonionroom.dsh_app.web.WebFilesPlugin())
-            engine.plugins.add(io.github.lightfallingonionroom.dsh_app.launch.LaunchPlugin())
-            engine.plugins.add(io.github.lightfallingonionroom.dsh_app.launch.LaunchClipPlugin())
-            engine.plugins.add(io.github.lightfallingonionroom.dsh_app.icons.PictureShortcutPlugin())
-            engine.plugins.add(io.github.lightfallingonionroom.dsh_app.usage.UsagePlugin())
+            engine.plugins.add(io.github.ccch1mneyyy.dsh_app.diagnostics.DiagnosticsPlugin())
+            engine.plugins.add(io.github.ccch1mneyyy.dsh_app.media.MediaPlugin())
+            engine.plugins.add(io.github.ccch1mneyyy.dsh_app.icons.LauncherIconPlugin())
+            engine.plugins.add(io.github.ccch1mneyyy.dsh_app.theme.DynamicColorPlugin())
+            engine.plugins.add(io.github.ccch1mneyyy.dsh_app.performance.PerformancePlugin())
+            engine.plugins.add(io.github.ccch1mneyyy.dsh_app.pet.PetOverlayPlugin())
+            engine.plugins.add(io.github.ccch1mneyyy.dsh_app.islands.IslandsPlugin())
+            engine.plugins.add(io.github.ccch1mneyyy.dsh_app.nativemedia.NativeMediaPlugin())
+            engine.plugins.add(io.github.ccch1mneyyy.dsh_app.nativefiles.NativeFilesPlugin())
+            engine.plugins.add(io.github.ccch1mneyyy.dsh_app.web.WebFilesPlugin())
+            engine.plugins.add(io.github.ccch1mneyyy.dsh_app.launch.LaunchPlugin())
+            engine.plugins.add(io.github.ccch1mneyyy.dsh_app.launch.LaunchClipPlugin())
+            engine.plugins.add(io.github.ccch1mneyyy.dsh_app.icons.PictureShortcutPlugin())
+            engine.plugins.add(io.github.ccch1mneyyy.dsh_app.usage.UsagePlugin())
             engine.dartExecutor.executeDartEntrypoint(DartExecutor.DartEntrypoint.createDefault())
             cache.put(ENGINE_ID, engine)
         }
@@ -112,7 +112,7 @@ class MainActivity : FlutterActivity() {
 
     override fun onResume() {
         super.onResume()
-        io.github.lightfallingonionroom.dsh_app.phone.background.BackgroundControl.get(applicationContext).restoreKeptChannel()
+        io.github.ccch1mneyyy.dsh_app.phone.background.BackgroundControl.get(applicationContext).restoreKeptChannel()
         inForeground = true
         // Coming back counts as activity: the first frames may not be scheduled yet.
         framesActive = true

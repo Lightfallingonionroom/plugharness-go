@@ -12,8 +12,8 @@ import android.util.Log
  * has no voice to hear, so this stands in for the speech gate's edges and logs the state.
  *
  * ```
- * adb shell am broadcast -a io.github.lightfallingonionroom.dsh_app.MEDIA_PROBE --es cmd speech --es edge start|end
- * adb shell am broadcast -a io.github.lightfallingonionroom.dsh_app.MEDIA_PROBE --es cmd state
+ * adb shell am broadcast -a io.github.ccch1mneyyy.dsh_app.MEDIA_PROBE --es cmd speech --es edge start|end
+ * adb shell am broadcast -a io.github.ccch1mneyyy.dsh_app.MEDIA_PROBE --es cmd state
  * ```
  * Every command logs `DshMedia: probe {…}`.
  */
