@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
-import '../../pets/pet_signals.dart' show petTakesWhaleProvider;
 import '../common/expand_reveal.dart';
 import '../common/fade_in.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
 import 'empty_actions.dart';
-import 'widgets/whale_tail.dart';
 
 /// 一条建议:一枚线性小图标 + 一行字,点了把 [prompt] 填进输入条。
 class ChatSuggestion {
@@ -60,19 +57,13 @@ String greetingFor(DateTime now) {
   return appL10n.viewGreetingNight;
 }
 
-/// 新对话的空状态:居中偏上,一尾很淡的鲸尾 + 按时段的问候 + 一句短副标题,
-/// 下面是两档控件(empty_actions.dart):
-///
-/// - 主操作至多一个,只在这一屏自己有出路时出现(连不上引擎:「重新连接」);
-/// - 其余都是同一规格的安静胶囊:工作区胶囊、2×2 的建议。
-///
-/// 输入条才是这一屏的主角,这里只是安静地递几个起点。
+/// 新对话的空状态:ChatGPT 式**一句大标题居中偏上**,下面是一条短副标题和
+/// 少量起点。没有插画、没有鲸尾:输入框才是这一屏唯一的主角。
 ///
 /// ```
-///                 ⌒)
-///               下午好
-///           今天想做点什么？
-///         ( ▢ 在「dsh-app」中 ⌄ )        ← 断线时这里换成主色「重新连接」
+///                你想做点什么？
+///
+///          ( ▢ 在「dsh-app」中 ⌄ )
 ///
 ///   ( ▢ 看看工作区有什么 ) ( </> 写个词频统计脚本 )
 ///   ( >_ 新建 Node.js 项目 ) ( ◌ rebase 还是 merge )
@@ -143,7 +134,6 @@ class ChatEmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
     final retry = connected ? null : onReconnect;
     final idle = connected || retry != null ? null : this.idle;
     final subtitle = connected
@@ -190,37 +180,22 @@ class ChatEmptyState extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // The pet stands on the composer below: one mascot a screen,
-              // so the still whale tail fades while the pet is drawn. Its
-              // room stays, so nothing moves when the pet comes and goes.
-              enter(
-                Consumer(
-                  builder: (context, ref, child) => AnimatedOpacity(
-                    opacity: ref.watch(petTakesWhaleProvider) ? 0 : 1,
-                    duration: AppMotion.of(context, AppMotion.standard),
-                    curve: AppMotion.std,
-                    child: child,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Center(
-                      child: WhaleTail(
-                        still: true,
-                        height: 40,
-                        color: whaleColorFor(theme.brightness).withValues(alpha: 0.4),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              // ChatGPT's new-chat screen is a single question. No mascot, no
+              // greeting by the hour: the composer below is the one thing to
+              // look at, and a fixed line does not go stale at 3 a.m.
               enter(
                 Text(
-                  greetingFor(now ?? chatClock()),
+                  l10n.viewEmptyTitle,
                   textAlign: TextAlign.center,
-                  style: theme.textTheme.displaySmall?.copyWith(color: theme.colorScheme.onSurface),
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontSize: 28,
+                    height: 1.25,
+                    fontWeight: FontWeight.w500,
+                    color: ChatGptShellColors.of(context).primaryText,
+                  ),
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 8),
               enter(
                 AnimatedSwitcher(
                   duration: AppMotion.of(context, AppMotion.quick),
@@ -228,7 +203,9 @@ class ChatEmptyState extends StatelessWidget {
                     subtitle,
                     key: ValueKey(subtitle),
                     textAlign: TextAlign.center,
-                    style: theme.textTheme.bodyLarge?.copyWith(color: dsh.textTertiary),
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: ChatGptShellColors.of(context).secondaryText,
+                    ),
                   ),
                 ),
               ),

@@ -9,11 +9,11 @@ import '../../theme/app_icons.dart';
 import '../../theme/theme.dart';
 import '../sessions_drawer.dart' show sessionSelectionColor;
 
-/// One conversation row: 44 high, the highlight on the 10 line, the title on
-/// the 20 line (plus [indent] inside a folder). At the end, one marker at
-/// most: what it waits for (待确认 / 待回答), a breathing dot while it works,
-/// or a quiet dot when it moved on since it was last seen. In multi-select a
-/// check slides in before the title.
+/// One conversation row: 36 high, a rounded highlight inside the panel's
+/// 10 line, the title on one line. At the end, one marker at most: what it
+/// waits for (待确认 / 待回答), a breathing dot while it works, or a quiet
+/// dot when it moved on since it was last seen. In multi-select a check
+/// slides in before the title.
 class SessionTile extends StatelessWidget {
   const SessionTile({
     super.key,
@@ -48,7 +48,7 @@ class SessionTile extends StatelessWidget {
   final bool selecting;
   final bool selected;
 
-  static const height = 44.0;
+  static const height = 36.0;
 
   /// A folder's glyph (20) plus its gap (10): members' titles line up with
   /// the folder's name.
@@ -66,7 +66,7 @@ class SessionTile extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final colors = DshColors.of(context);
-    final shape = Squircle.border(AppShape.md);
+    final shape = Squircle.border(AppShape.sm);
     final highlighted = selecting ? selected : current;
     final Widget? marker = switch ((pending, running, unread)) {
       (final PendingKind kind, _, _) => Text(
@@ -125,11 +125,11 @@ class SessionTile extends StatelessWidget {
                     title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      fontSize: 15,
-                      height: 1.4,
-                      color: scheme.onSurface,
-                      fontWeight: current && !selecting ? FontWeight.w600 : FontWeight.w400,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontSize: 14,
+                      height: 1.3,
+                      color: highlighted ? ChatGptShellColors.of(context).primaryText : scheme.onSurface,
+                      fontWeight: highlighted && !selecting ? FontWeight.w500 : FontWeight.w400,
                     ),
                   ),
                 ),
@@ -234,10 +234,13 @@ class DrawerEyebrow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 16, 10, 6),
+      padding: const EdgeInsets.fromLTRB(10, 14, 10, 4),
       child: Semantics(
         header: true,
-        child: Text(text, style: AppType.eyebrow(color: DshColors.of(context).textTertiary)),
+        child: Text(
+          text,
+          style: AppType.eyebrow(color: ChatGptShellColors.of(context).tertiaryText),
+        ),
       ),
     );
   }

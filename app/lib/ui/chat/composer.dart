@@ -24,15 +24,12 @@ import 'voice/voice_widgets.dart';
 /// The editor's line height, as a multiple of its font size.
 const _lineHeight = 1.45;
 
-/// 输入条:chrome 玻璃 + 28 圆角,1–6 行自动增高,右下角发送 / 停止。
+/// 输入条:ChatGPT 式**实心圆角输入框**——一条 1px 细线、无阴影,1–6 行
+/// 自动增高,右下角发送 / 停止。
 ///
-/// 两颗 36 圆键是胶囊的"端盖":四周都留 [_keyGap],单行时胶囊高 48、
-/// 圆角 28 = 键半径 20 + 8,圆键与胶囊两端同心;文字在 40 高里居中。
-/// 多行时键贴底,底边和侧边仍是 8。
-///
-/// 语音([voice]):草稿为空时发送键是麦克风(和 ＋ 键同样的淡底圆);
-/// 听写时 ＋ 换成 ✕(取消)、发送键换成主色的停止键,中间文字处显示
-/// 识别结果,停止键左边是音量条。四颗键始终同一位置、同一尺寸。
+/// 原来那套玻璃胶囊 + 端盖圆键保留交互,只把材质换成实色:聊天页是平铺的
+/// 文档面,输入条是它上面唯一一块"写字的地方"。＋ 与附件保留在左端,
+/// 语音 / 发送在右端。
 class Composer extends StatefulWidget {
   const Composer({
     super.key,
@@ -578,12 +575,21 @@ class _ComposerGlass extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final open = this.open;
-    if (open == null) return GlassSurface(tier: GlassTier.chrome, borderRadius: AppShape.radiusXl, child: child);
+    final glass = ChatGptShellColors.of(context).composerGlass;
+    if (open == null) {
+      return GlassSurface(
+        tier: GlassTier.chrome,
+        borderRadius: AppShape.radiusXl,
+        style: glass,
+        child: child,
+      );
+    }
     return AnimatedBuilder(
       animation: open,
       builder: (context, child) => GlassSurface(
         tier: GlassTier.chrome,
         borderRadius: BorderRadius.lerp(AppShape.radiusXl, _opened, open.value),
+        style: glass,
         child: child,
       ),
       child: child,

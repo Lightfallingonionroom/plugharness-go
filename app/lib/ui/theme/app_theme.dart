@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 
 import 'accent.dart';
 import 'app_icons.dart';
+import 'chatgpt_palette.dart';
 import 'ink_glow.dart';
 import 'page_transitions.dart';
 import 'palette.dart';
@@ -116,6 +117,10 @@ ThemeData _build(
     AppType.textTheme,
     glyphLocale,
   ).apply(bodyColor: scheme.onSurface, displayColor: scheme.onSurface);
+  // The chat shell's own neutral surfaces: page, sidebar, composer. Kept out
+  // of the shared ColorScheme so settings, onboarding and dialogs keep the
+  // app's existing identity.
+  final shell = isDark ? ChatGptShellColors.dark(accent) : ChatGptShellColors.light(accent);
   // 输入框 / Chip 的填充:与卡片玻璃同值,保证"表单是长在页面上的"。
   final fieldFill = surfaces.card.fallbackFill;
   // 弹出层(对话框、菜单)用不透明面:它们压在遮罩上,不需要也不应该透。
@@ -127,7 +132,7 @@ ThemeData _build(
     scaffoldBackgroundColor: scheme.surface,
     canvasColor: scheme.surface,
     textTheme: textTheme,
-    extensions: [colors, surfaces],
+    extensions: [colors, surfaces, shell],
     pageTransitionsTheme: transitions,
     visualDensity: VisualDensity.standard,
     // 水波保留但更含蓄。

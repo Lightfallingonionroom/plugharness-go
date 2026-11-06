@@ -5197,6 +5197,7 @@
   "viewGreetingEvening": "Good evening",
   "viewGreetingNight": "It’s late",
   "viewEmptySubtitle": "What would you like to do today?",
+  "viewEmptyTitle": "What can I help with?",
   "viewEmptyStarting": "Starting engine…",
   "viewEmptyConnecting": "Connecting to engine…",
   "viewEmptyDisconnected": "Engine not connected",

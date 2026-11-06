@@ -1521,11 +1521,16 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     final headerHeight = typing ? MediaQuery.paddingOf(context).top + AppSpace.sm : ChatHeader.heightOf(context);
 
     Widget backdrop(Widget child) => widget.backdrop ? WallpaperBackdrop(child: child) : child;
+    // The conversation sits on the shell's flat page colour. When a custom
+    // wallpaper is in use (or the chat is embedded in the shell, which paints
+    // the backdrop itself) this stays transparent and the page shows through.
+    final shell = ChatGptShellColors.of(context);
+    final pageColor = widget.backdrop ? shell.page : Colors.transparent;
     final screen = AnnotatedRegion<SystemUiOverlayStyle>(
       value: dshSystemOverlay(Theme.of(context).brightness),
       child: backdrop(
         Scaffold(
-          backgroundColor: Colors.transparent,
+          backgroundColor: pageColor,
           resizeToAvoidBottomInset: true,
           // The pet stands over the page on the capsules above the
           // composer (they report themselves with PetPerch).

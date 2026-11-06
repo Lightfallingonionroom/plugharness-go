@@ -513,12 +513,18 @@ class _SideParallax extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ChatGPT's drawer slides over the conversation; the chat underneath
+    // stays put (its content is not squeezed). The fluid tier keeps the
+    // small parallax that makes the panel feel laid over a page.
     final fluid = AppMotion.fluid(context);
     return AnimatedBuilder(
       animation: Listenable.merge([drawer, quickPanel]),
       child: child,
       builder: (context, child) => Transform.translate(
-        offset: Offset(fluid ? _share * (drawer.value * drawerWidth - quickPanel.value * quickPanelWidth) : 0, 0),
+        offset: Offset(
+          fluid ? _share * (drawer.value * drawerWidth - quickPanel.value * quickPanelWidth) : 0,
+          0,
+        ),
         child: child,
       ),
     );
@@ -542,7 +548,7 @@ class _DrawerOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scrim = DshSurfaces.of(context).scrim;
+    final shell = ChatGptShellColors.of(context);
     return AnimatedBuilder(
       animation: animation,
       child: RepaintBoundary(child: drawer),
@@ -556,7 +562,13 @@ class _DrawerOverlay extends StatelessWidget {
                 ignoring: progress == 0,
                 child: GestureDetector(
                   onTap: onClose,
-                  child: ColoredBox(color: scrim.withValues(alpha: scrim.a * progress)),
+                  // ChatGPT's drawer dims the page rather than tinting it:
+                  // the conversation stays readable behind the panel.
+                  child: ColoredBox(
+                    color: (shell.isDark ? Colors.black : shell.primaryText).withValues(
+                      alpha: (shell.isDark ? 0.55 : 0.28) * progress,
+                    ),
+                  ),
                 ),
               ),
             ),

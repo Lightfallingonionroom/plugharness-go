@@ -45,7 +45,6 @@ import '../web/mode_home.dart';
 import '../workspace/workspace_switcher.dart';
 import '../workspace/workspaces_page.dart';
 import 'adaptive/adaptive_layout.dart' show WindowClass;
-import 'brand_mark.dart';
 import 'drawer/drawer_actions.dart';
 import 'drawer/drawer_destination.dart';
 import 'drawer/archive_notice.dart';
@@ -68,8 +67,8 @@ String sessionTitle(SessionSummary s) {
 
 /// The soft fill behind the current conversation (drawer and search).
 Color sessionSelectionColor(BuildContext context) {
-  final scheme = Theme.of(context).colorScheme;
-  return scheme.primary.withValues(alpha: scheme.brightness == Brightness.dark ? 0.18 : 0.09);
+  final shell = ChatGptShellColors.of(context);
+  return shell.rowSelected;
 }
 
 /// The sessions drawer: brand and "新对话" on top, search, the workspace
@@ -139,6 +138,8 @@ class SessionsDrawer extends ConsumerWidget {
       });
     }
     final quick = AppMotion.of(context, AppMotion.quick);
+    final theme = Theme.of(context);
+    final shell = ChatGptShellColors.of(context);
     // A phone on its side: the top of the drawer (brand, search, filters)
     // would leave room for two conversations, so it scrolls away with them.
     final short = MediaQuery.sizeOf(context).height < WindowClass.compactHeight;
@@ -149,21 +150,28 @@ class SessionsDrawer extends ConsumerWidget {
             ? DrawerSelectionHeader(key: const ValueKey('selecting'), now: now)
             : Padding(
                 key: const ValueKey('brand'),
-                // The lockup lines up with the rows' text (20); the
-                // button's edge with the search bar's and the rows'
-                // edges (10).
-                padding: const EdgeInsets.fromLTRB(20, 14, 10, 10),
+                // The brand on the search bar's 10 line; the action ends on
+                // the same line. ChatGPT's sidebar: wordmark, then the one
+                // filled 新对话 key, then search.
+                padding: const EdgeInsets.fromLTRB(16, 10, 10, 6),
                 child: Row(
                   children: [
-                    // On a narrow drawer with large text the lockup gives
-                    // way a little rather than the keys.
-                    const Expanded(
+                    Expanded(
                       child: Align(
                         alignment: AlignmentDirectional.centerStart,
-                        child: FittedBox(fit: BoxFit.scaleDown, child: BrandLockup(height: 19)),
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            'PlugHarness',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w600,
+                              color: shell.primaryText,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                    // 网页模式, quietly: the one solid element stays 新对话.
                     const WebModeKey(tier: GlassTier.pill),
                     const SizedBox(width: 8),
                     NewChatButton(onTap: newChat),
@@ -201,8 +209,9 @@ class SessionsDrawer extends ConsumerWidget {
     );
 
     const radius = BorderRadius.only(topRight: Radius.circular(AppShape.xl), bottomRight: Radius.circular(AppShape.xl));
+    final shell = ChatGptShellColors.of(context);
     final content = Material(
-      type: MaterialType.transparency,
+      color: shell.sidebar,
       child: SafeArea(
         right: false,
         child: Column(
@@ -288,9 +297,20 @@ class SessionsDrawer extends ConsumerWidget {
 
     final motion = drawerMotion;
     if (motion == null) {
-      return GlassSurface(tier: GlassTier.sheet, borderRadius: radius, child: content);
+      return GlassSurface(
+        tier: GlassTier.sheet,
+        borderRadius: radius,
+        style: shell.sidebarGlass,
+        child: content,
+      );
     }
-    return SlidingGlass(motion: motion, tier: GlassTier.sheet, borderRadius: radius, child: content);
+    return SlidingGlass(
+      motion: motion,
+      tier: GlassTier.sheet,
+      borderRadius: radius,
+      style: shell.sidebarGlass,
+      child: content,
+    );
   }
 }
 
@@ -334,8 +354,7 @@ class NewChatButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
+    final shell = ChatGptShellColors.of(context);
     return Semantics(
       button: true,
       label: l10n.commonNewChat,
@@ -343,7 +362,7 @@ class NewChatButton extends StatelessWidget {
       excludeSemantics: true,
       child: Pressable(
         child: Material(
-          color: scheme.primary,
+          color: shell.primaryAction,
           shape: const StadiumBorder(),
           clipBehavior: Clip.antiAlias,
           child: InkWell(
@@ -357,9 +376,14 @@ class NewChatButton extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(AppIcons.newChat, size: 20, color: scheme.onPrimary),
+                    Icon(AppIcons.newChat, size: 20, color: shell.onPrimaryAction),
                     const SizedBox(width: 4),
-                    Text(l10n.commonNewChat, style: theme.textTheme.labelLarge?.copyWith(color: scheme.onPrimary)),
+                    Text(
+                      l10n.commonNewChat,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.labelLarge?.copyWith(color: shell.onPrimaryAction, fontWeight: FontWeight.w600),
+                    ),
                   ],
                 ),
               ),

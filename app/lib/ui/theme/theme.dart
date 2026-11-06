@@ -4,6 +4,7 @@ library;
 export 'accent.dart';
 export 'app_theme.dart';
 export 'backdrop.dart';
+export 'chatgpt_palette.dart';
 export 'feather.dart';
 export 'frame_clock.dart';
 export 'glass.dart';

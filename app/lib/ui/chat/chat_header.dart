@@ -22,6 +22,10 @@ import '../theme/theme.dart';
 import 'header_schedule.dart';
 import 'model_sheet.dart' show ModelChip;
 
+/// The flat header's own colours, read from the shell palette without making
+/// every dark/light decision here.
+typedef ChatHeaderColors = ChatGptShellColors;
+
 /// 顶栏状态行的内容:状态点 + 一句人话。颜色从不单独表达状态。
 /// 计时只在活动条里,这一行不走秒。
 class HeaderStatus {
@@ -34,17 +38,16 @@ class HeaderStatus {
   final String? spoken;
 }
 
-/// 聊天顶栏:**没有整条色带**(Claude 式),只有几枚浮动玻璃件;
-/// 内容滚到下面时才浮现一层页面色渐隐,与二级页面同一套做法。
-/// 打开着对话时最右是「新对话」圆键,与 ≡ 镜像。对话有进行中的自动化任务时,
-/// 标题胶囊的尾端是一颗与它同心的时钟键([HeaderScheduleCap])。
+/// 聊天顶栏:ChatGPT 式**一条平顶栏**——左键、标题、右侧动作在同一行,
+/// 不铺玻璃胶囊,只在内容滚到下面时浮一层页面色渐隐。
+///
+/// 结构与 ChatGPT 的对话顶栏一致:菜单键在左,对话标题居中偏左(副行是
+/// 状态/工作区),右侧是模型与「新对话」。省掉原来三枚玻璃圆钮的层次,
+/// 因为平顶栏本身已经是一条清楚的边界;玻璃只留给输入条和浮层。
 ///
 /// ```
-/// (≡) ( 修复登录重复提交 )   ( ✦ V4 Pro · 高 ⌄ ) (+)
-///     ( ● 生成中          )
-///
-/// (≡) ( 每天的构建检查 (◷) )   ( ✦ V4 Pro ⌄ ) (+)
-///     ( ● 本机             )
+/// ☰   修复登录重复提交              ✦ V4 Pro ⌄  ✎
+///      ● 生成中
 /// ```
 class ChatHeader extends ConsumerStatefulWidget {
   const ChatHeader({
@@ -82,11 +85,11 @@ class ChatHeader extends ConsumerStatefulWidget {
   /// 顶栏的高度(不含状态栏),与二级页面的返回键栏一致。列表顶部留白按它算。
   static const barHeight = 56.0;
 
-  /// The title pill: 44 like the keys beside it, taller when large text
-  /// needs it for the title and the status line.
+  /// The title row: 44 like the keys beside it, taller when large text needs
+  /// it for the title and the status line.
   static double pillHeightOf(BuildContext context) {
     final scaler = MediaQuery.textScalerOf(context);
-    return math.max(44.0, scaler.scale(15) * 1.3 + scaler.scale(11) * 1.25 + 8);
+    return math.max(44.0, scaler.scale(16) * 1.3 + scaler.scale(11) * 1.25 + 6);
   }
 
   static double barHeightOf(BuildContext context) => math.max(barHeight, pillHeightOf(context) + 12);
@@ -121,12 +124,16 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = theme.colorScheme;
     final dsh = DshColors.of(context);
     final top = MediaQuery.paddingOf(context).top;
     final barHeight = ChatHeader.barHeightOf(context);
     final pillHeight = ChatHeader.pillHeightOf(context);
-    final titleStyle = theme.textTheme.titleSmall?.copyWith(fontSize: 15, height: 1.3);
+    final titleStyle = theme.textTheme.titleMedium?.copyWith(
+      fontSize: 16,
+      height: 1.3,
+      fontWeight: FontWeight.w600,
+      color: ChatHeaderColors.of(context).primaryText,
+    );
     final statusStyle = theme.textTheme.labelSmall?.copyWith(fontSize: 11, height: 1.25);
     final titleFloor = _titleFloor(context, statusStyle);
     // The schedule clock widens the pill by this much over its plain right
@@ -174,10 +181,17 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
                               tier: GlassTier.chrome,
                               circle: true,
                               grouped: true,
+                              style: ChatHeaderColors.of(context).flatChrome,
                               onTap: widget.onOpenDrawer,
                               child: Tooltip(
                                 message: chrome?.menuTooltip ?? l10n.chatChats,
-                                child: Center(child: Icon(AppIcons.menu, size: 22, color: colors.onSurface)),
+                                child: Center(
+                                  child: Icon(
+                                    AppIcons.menu,
+                                    size: 22,
+                                    color: ChatHeaderColors.of(context).primaryText,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -185,22 +199,16 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
                   Semantics(
                     button: widget.onTitleTap != null,
                     hint: widget.onTitleTap == null ? null : l10n.chatViewChatDetails,
-                    child: GlassSurface(
-                      tier: GlassTier.chrome,
-                      stadium: true,
-                      grouped: true,
+                    child: GestureDetector(
                       onTap: widget.onTitleTap,
-                      // At least the 44 of the round key and the model
-                      // chip beside it; 16 on the left, and on the right 16
-                      // or the schedule clock, concentric with the end.
+                      behavior: HitTestBehavior.opaque,
                       child: ConstrainedBox(
                         key: const ValueKey('chat-title-pill'),
                         constraints: BoxConstraints(minHeight: pillHeight),
                         child: Padding(
-                          padding: const EdgeInsets.only(left: _pillPadding),
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
                           // A new title or status, or the clock coming and
-                          // going, glides the pill to its new width instead
-                          // of snapping.
+                          // going, glides the title block to its new width.
                           child: SmoothSize(
                             duration: AppMotion.of(context, AppMotion.standard),
                             curve: AppMotion.std,
@@ -208,7 +216,7 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
                             child: _PillContent(
                               textFloor: titleFloor - _pillPadding * 2,
                               text: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 4),
+                                padding: const EdgeInsets.symmetric(vertical: 3),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -227,7 +235,7 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
                                               style: statusStyle?.copyWith(
                                                 color: widget.status.tone == StatusTone.warn
                                                     ? dsh.warning
-                                                    : dsh.textTertiary,
+                                                    : ChatHeaderColors.of(context).tertiaryText,
                                               ),
                                             ),
                                           ),
@@ -240,7 +248,9 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
                                             ' · $detail',
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
-                                            style: statusStyle?.copyWith(color: dsh.textTertiary),
+                                            style: statusStyle?.copyWith(
+                                              color: ChatHeaderColors.of(context).tertiaryText,
+                                            ),
                                           ),
                                         ),
                                         null => const SizedBox.shrink(),
@@ -283,10 +293,17 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
                                     tier: GlassTier.chrome,
                                     circle: true,
                                     grouped: true,
+                                    style: ChatHeaderColors.of(context).flatChrome,
                                     onTap: widget.onNewChat,
                                     child: Tooltip(
                                       message: l10n.commonNewChat,
-                                      child: Center(child: Icon(AppIcons.newChat, size: 22, color: colors.onSurface)),
+                                      child: Center(
+                                        child: Icon(
+                                          AppIcons.newChat,
+                                          size: 22,
+                                          color: ChatHeaderColors.of(context).primaryText,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -338,8 +355,8 @@ class _ChipSlot extends SingleChildRenderObjectWidget {
 class _RenderChipSlot extends RenderProxyBox {}
 
 /// The bar's pieces on one line: the left key (≡ or the breadcrumb), the
-/// title pill, the trailing pieces (agents capsule, model chip) and the
-/// 新对话 key. The title pill and the model chip share what the keys leave:
+/// title block, the trailing pieces (agents capsule, model chip) and the
+/// 新对话 key.
 ///
 /// 1. both whole when they fit;
 /// 2. else the chip drops its depth (「· 高」) first;

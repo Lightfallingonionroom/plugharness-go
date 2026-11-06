@@ -15,7 +15,9 @@ import '../secret_mask.dart';
 import 'message_actions.dart';
 import 'quote_chip.dart';
 
-/// 用户消息:**右对齐的软气泡**,比页面深一档,像"按进去"的(Claude 式)。
+/// 用户消息:**右对齐的浅灰气泡**,像 ChatGPT 那样与助手正文区分开:
+/// 助手靠排版(左对齐、宽阅读列),用户靠一块安静的底。气泡本身不用主色,
+/// 主色只有一个位置——「新对话」。
 ///
 /// 禁配:气泡底上只用主文字 / 次级文字;三级文字(4.32)与主色(4.22)
 /// 不过 AA。
@@ -84,8 +86,8 @@ class UserBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final surfaces = DshSurfaces.of(context);
-    final style = AppType.chatBody(context, color: surfaces.onUserBubble);
+    final shell = ChatGptShellColors.of(context);
+    final style = AppType.chatBody(context, color: shell.primaryText);
     // A generation request (generation mode's parameter header on the first
     // line): the description is the bubble, the parameters a small line under
     // the bubble; the header itself is for the host's plugin.
@@ -117,8 +119,11 @@ class UserBubble extends StatelessWidget {
       child: HoldLift(
         onLongPress: () => _menu(context),
         child: DecoratedBox(
-          decoration: ShapeDecoration(color: surfaces.userBubble, shape: AppShape.bubble),
-          child: Padding(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), child: content),
+          decoration: ShapeDecoration(
+            color: shell.isDark ? shell.rowSelected : shell.rowHover,
+            shape: const _UserBubbleShape(),
+          ),
+          child: Padding(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10), child: content),
         ),
       ),
     );
@@ -166,6 +171,39 @@ class UserBubble extends StatelessWidget {
       },
     );
   }
+}
+
+/// ChatGPT's user bubble: a soft rectangle whose bottom-right corner is
+/// tucked in, so it reads as "spoken" without a tail.
+class _UserBubbleShape extends ShapeBorder {
+  const _UserBubbleShape();
+
+  static const _r = Radius.circular(18);
+  static const _tuck = Radius.circular(6);
+
+  @override
+  EdgeInsetsGeometry get dimensions => EdgeInsets.zero;
+
+  @override
+  Path getInnerPath(Rect rect, {TextDirection? textDirection}) => getOuterPath(rect, textDirection: textDirection);
+
+  @override
+  Path getOuterPath(Rect rect, {TextDirection? textDirection}) => Path()
+    ..addRRect(
+      RRect.fromRectAndCorners(
+        rect,
+        topLeft: _r,
+        topRight: _r,
+        bottomLeft: _r,
+        bottomRight: _tuck,
+      ),
+    );
+
+  @override
+  void paint(Canvas canvas, Rect rect, {TextDirection? textDirection}) {}
+
+  @override
+  ShapeBorder scale(double t) => this;
 }
 
 /// [_PendingMeta] 的位置:回显时(同一行,标签变成 null)这一行和输入条上

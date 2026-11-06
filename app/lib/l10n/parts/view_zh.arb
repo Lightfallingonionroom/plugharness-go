@@ -647,6 +647,7 @@
   "viewGreetingEvening": "晚上好",
   "viewGreetingNight": "夜深了",
   "viewEmptySubtitle": "今天想做点什么？",
+  "viewEmptyTitle": "有什么可以帮你？",
   "viewEmptyStarting": "正在启动引擎…",
   "viewEmptyConnecting": "正在连接引擎…",
   "viewEmptyDisconnected": "引擎未连接",

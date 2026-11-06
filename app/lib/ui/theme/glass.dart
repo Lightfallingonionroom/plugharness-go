@@ -301,11 +301,21 @@ class _GlassShadowPainter extends CustomPainter {
 /// a light theme, and a cut between them flashes. The blur stays in the tree throughout, so
 /// the panel's content is not rebuilt either.
 class SlidingGlass extends StatefulWidget {
-  const SlidingGlass({super.key, required this.motion, required this.tier, required this.borderRadius, this.child});
+  const SlidingGlass({
+    super.key,
+    required this.motion,
+    required this.tier,
+    required this.borderRadius,
+    this.style,
+    this.child,
+  });
 
   final Animation<double> motion;
   final GlassTier tier;
   final BorderRadiusGeometry borderRadius;
+
+  /// Overrides the tier's material (a flat sidebar, for instance).
+  final GlassStyle? style;
   final Widget? child;
 
   @override
@@ -358,8 +368,13 @@ class _SlidingGlassState extends State<SlidingGlass> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
     animation: _settled,
-    builder: (context, child) =>
-        GlassSurface(tier: widget.tier, borderRadius: widget.borderRadius, settled: _settled.value, child: child),
+    builder: (context, child) => GlassSurface(
+      tier: widget.tier,
+      borderRadius: widget.borderRadius,
+      style: widget.style,
+      settled: _settled.value,
+      child: child,
+    ),
     child: widget.child,
   );
 }

@@ -40,7 +40,7 @@ class SessionSearchBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final tertiary = DshColors.of(context).textTertiary;
+    final shell = ChatGptShellColors.of(context);
     return Padding(
       padding: padding,
       child: Semantics(
@@ -48,26 +48,31 @@ class SessionSearchBar extends ConsumerWidget {
         label: l10n.shellSearchChats,
         onTap: () => _open(context, ref),
         excludeSemantics: true,
-        child: GlassSurface(
-          tier: GlassTier.pill,
-          stadium: true,
-          onTap: () => _open(context, ref),
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 40),
-            child: Row(
-              children: [
-                Icon(AppIcons.search, size: 20, color: tertiary),
-                const SizedBox(width: 8),
-                Flexible(
-                  child: Text(
-                    l10n.shellSearchChats,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.bodyMedium?.copyWith(color: tertiary),
-                  ),
+        child: Material(
+          color: shell.rowHover,
+          shape: const StadiumBorder(),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: () => _open(context, ref),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 40),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Row(
+                  children: [
+                    Icon(AppIcons.search, size: 18, color: shell.tertiaryText),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        l10n.shellSearchChats,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodyMedium?.copyWith(color: shell.secondaryText),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
