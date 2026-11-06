@@ -8,6 +8,8 @@
 // Both tiers share the height, the side insets and the type metrics, so a
 // state change (connected ↔ failed) swaps the pill and the chip in place.
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../common/fade_in.dart';
@@ -41,10 +43,6 @@ abstract final class EmptyActions {
 
   /// Between suggestion chips, across and down.
   static const gap = 8.0;
-
-  /// Below this a half-width tile can no longer hold an icon and a readable
-  /// label, so the suggestions stack instead of pairing up.
-  static const minTileWidth = 132.0;
 
   /// The one type style of both tiers (14 / 1.55): equal line heights keep
   /// the tiers equally tall at every text size.
@@ -255,13 +253,14 @@ class SuggestionChips extends StatelessWidget {
     if (suggestions.isEmpty) return const SizedBox.shrink();
     return LayoutBuilder(
       builder: (context, constraints) {
-        // ChatGPT's 2×2 of equal tiles. It used to fall back to one column
-        // whenever a label was wider than half the row, which on a phone left
-        // four full-width bars — the opposite of the reference. The label
-        // ellipsizes inside its tile instead.
+        // ChatGPT's 2×2 of equal tiles — but only when every label actually
+        // fits in half a row. A cut suggestion is worse than a stacked one,
+        // so on a narrow phone (or at large text) they fall back to one per
+        // row. Measured, not guessed: [QuietChip.widthFor] is the same
+        // arithmetic the chip itself uses.
         final cell = (constraints.maxWidth - EmptyActions.gap) / 2;
-        final narrow = cell < EmptyActions.minTileWidth;
-        final columns = narrow ? 1 : 2;
+        final widest = suggestions.map((s) => QuietChip.widthFor(context, s.label, icon: true)).reduce(math.max);
+        final columns = widest <= cell ? 2 : 1;
 
         Widget chip(int i) {
           final s = suggestions[i];

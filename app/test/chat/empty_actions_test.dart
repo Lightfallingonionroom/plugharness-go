@@ -131,25 +131,20 @@ void main() {
       expect(chevron.center.dy, moreOrLessEquals(chip.center.dy, epsilon: 0.5));
     });
 
-    testWidgets('360dp with large text: two per row, nothing cut', (tester) async {
+    testWidgets('360dp with large text: one per row again, nothing cut', (tester) async {
+      // 1.3× on a 360 phone: whether the labels still fit in half a row is a
+      // measurement, not a guess — either way nothing may be cut.
       await _pumpChat(tester, size: const Size(360, 780), textScale: 1.3);
       expect(tester.takeException(), isNull);
       final composer = tester.getRect(find.byType(Composer));
       final cells = [for (final s in defaultSuggestions) _rect(tester, s.label)];
       for (final (i, c) in cells.indexed) {
-        // 2×2: a chip takes half the row, the outer pair keeps the composer's
-        // edges, and the second column sits one gap to the right of the first.
-        final paired = i.isEven;
-        expect(
-          paired ? c.left : c.right,
-          moreOrLessEquals(paired ? composer.left : composer.right, epsilon: 0.5),
-        );
-        expect(c.width, moreOrLessEquals(cells[i.isEven ? i : i - 1].width, epsilon: 0.5));
+        expect(c.left, moreOrLessEquals(composer.left, epsilon: 0.5));
+        expect(c.right, moreOrLessEquals(composer.right, epsilon: 0.5));
         expect(c.height, moreOrLessEquals(cells[0].height, epsilon: 0.5));
         expect(c.height, greaterThan(EmptyActions.height), reason: 'grows with text');
-        // A new row starts below the previous one.
-        if (i >= 2) {
-          expect(c.top - cells[i - 2].bottom, moreOrLessEquals(EmptyActions.gap));
+        if (i > 0) {
+          expect(c.top - cells[i - 1].bottom, moreOrLessEquals(EmptyActions.gap));
         }
         final paragraph = tester.renderObject<RenderParagraph>(find.text(defaultSuggestions[i].label));
         expect(paragraph.didExceedMaxLines, isFalse);

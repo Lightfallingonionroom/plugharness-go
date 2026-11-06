@@ -79,6 +79,15 @@ void main() {
         // (one column): EmptyActions.gap below it either way.
         expect(chips[2].top - chips[1].bottom, moreOrLessEquals(EmptyActions.gap));
 
+        // A 390 phone at the default size pairs them up: two per row, equal
+        // halves, the second column one gap to the right of the first.
+        if (size.width == 390 && scale == 1) {
+          expect(chips[1].top, moreOrLessEquals(chips[0].top, epsilon: 0.5));
+          expect(chips[1].left - chips[0].right, moreOrLessEquals(EmptyActions.gap, epsilon: 0.5));
+          expect(chips[3].top, moreOrLessEquals(chips[2].top, epsilon: 0.5));
+          expect(chips[2].left, moreOrLessEquals(chips[0].left, epsilon: 0.5));
+        }
+
         // The one line above the composer, centred on the screen.
         final greeting = tester.getRect(find.text('有什么可以帮你？'));
         expect(greeting.center.dx, moreOrLessEquals(width / 2, epsilon: 0.5));
