@@ -209,7 +209,11 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
                         key: const ValueKey('chat-title-pill'),
                         constraints: BoxConstraints(minHeight: pillHeight),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          // Left 16 only: the schedule cap already stands in
+                          // for the pill's right 16 (its own [padding]) when
+                          // there is no clock, so a symmetric inset would put
+                          // the text 32 in from the end.
+                          padding: const EdgeInsets.only(left: 16),
                           // A new title or status, or the clock coming and
                           // going, glides the title block to its new width.
                           child: SmoothSize(
@@ -219,7 +223,7 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
                             child: _PillContent(
                               textFloor: titleFloor - _pillPadding * 2,
                               text: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 3),
+                                padding: const EdgeInsets.symmetric(vertical: 4),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   mainAxisAlignment: MainAxisAlignment.center,

@@ -79,8 +79,8 @@ void main() {
         // (one column): EmptyActions.gap below it either way.
         expect(chips[2].top - chips[1].bottom, moreOrLessEquals(EmptyActions.gap));
 
-        // Greeting centred on the screen.
-        final greeting = tester.getRect(find.text('下午好'));
+        // The one line above the composer, centred on the screen.
+        final greeting = tester.getRect(find.text('有什么可以帮你？'));
         expect(greeting.center.dx, moreOrLessEquals(width / 2, epsilon: 0.5));
       });
     }
@@ -142,7 +142,7 @@ void main() {
     testWidgets('new chat, model sheet, effort, palette', (tester) async {
       await _pump(tester, ChatHarness());
       expect(tester.takeException(), isNull);
-      expect(find.text('下午好'), findsOneWidget);
+      expect(find.text('有什么可以帮你？'), findsOneWidget);
 
       await tester.tap(find.byType(TextField));
       await tester.pump();

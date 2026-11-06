@@ -388,7 +388,7 @@ void main() {
   group('new chat', () {
     testWidgets('greets and fills the composer from a suggestion', (tester) async {
       await pumpScreen(tester, ChatHarness());
-      expect(find.text('早上好'), findsOneWidget);
+      expect(find.text('有什么可以帮你？'), findsOneWidget);
       expect(find.text('新对话'), findsOneWidget);
 
       await tester.tap(find.text(defaultSuggestions.first.label));

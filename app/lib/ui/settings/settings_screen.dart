@@ -231,8 +231,8 @@ class SettingsScreen extends ConsumerWidget {
             SettingsTile(
               icon: AppIcons.keepAlive,
               tint: SettingsHues.general,
-              title: l10n.sceneAccounts,
-              subtitle: l10n.sceneAccountsHint,
+              // No subtitle: the row keeps the index's 52 line like every
+              // other one (settings_hub_geometry_test measures it).
               spot: SettingsIndex.entry(SettingsPageId.sceneAccounts),
               onTap: () => _push(context, const SceneAccountsPage()),
             ),

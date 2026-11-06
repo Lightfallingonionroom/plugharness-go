@@ -138,7 +138,6 @@ class SessionsDrawer extends ConsumerWidget {
       });
     }
     final quick = AppMotion.of(context, AppMotion.quick);
-    final theme = Theme.of(context);
     final shell = ChatGptShellColors.of(context);
     // A phone on its side: the top of the drawer (brand, search, filters)
     // would leave room for two conversations, so it scrolls away with them.
@@ -150,25 +149,20 @@ class SessionsDrawer extends ConsumerWidget {
             ? DrawerSelectionHeader(key: const ValueKey('selecting'), now: now)
             : Padding(
                 key: const ValueKey('brand'),
-                // The brand on the search bar's 10 line; the action ends on
-                // the same line. ChatGPT's sidebar: wordmark, then the one
-                // filled 新对话 key, then search.
-                padding: const EdgeInsets.fromLTRB(16, 10, 10, 6),
+                // The lockup on the rows' 20 line, the action ending on the
+                // 10 line; the same 14 / 10 box as [DrawerSelectionHeader],
+                // so 完成 lands exactly where 新对话 was.
+                padding: const EdgeInsets.fromLTRB(20, 14, 10, 10),
                 child: Row(
                   children: [
-                    Expanded(
+                    // On a narrow drawer with large text the lockup gives
+                    // way a little rather than the keys.
+                    const Expanded(
                       child: Align(
                         alignment: AlignmentDirectional.centerStart,
                         child: FittedBox(
                           fit: BoxFit.scaleDown,
-                          child: Text(
-                            'PlugHarness',
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontSize: 17,
-                              fontWeight: FontWeight.w600,
-                              color: shell.primaryText,
-                            ),
-                          ),
+                          child: BrandLockup(height: 19, label: 'PlugHarness'),
                         ),
                       ),
                     ),
