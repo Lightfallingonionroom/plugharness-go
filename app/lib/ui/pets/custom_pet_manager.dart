@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -68,12 +67,12 @@ class _CustomPetManagerState extends ConsumerState<CustomPetManager> {
       final files = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['zip']);
       final file = files.singleOrNull;
       if (file == null) return;
-      final bytes = BytesBuilder(copy: false);
+      final bytes = <int>[];
       await for (final chunk in file.readAsByteStream()) {
         if (bytes.length + chunk.length > 32 * 1024 * 1024) throw const FormatException('archive size');
-        bytes.add(chunk);
+        bytes.addAll(chunk);
       }
-      final pack = await ref.read(customPetStoreProvider).importArchive(bytes.takeBytes());
+      final pack = await ref.read(customPetStoreProvider).importArchive(bytes);
       ref.invalidate(customPetPacksProvider);
       ref.invalidate(petPackProvider(pack.id));
       await ref.read(petPrefsProvider.notifier).setPack(pack.id);
