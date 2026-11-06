@@ -144,15 +144,7 @@ Future<void> _openSheetAlone(WidgetTester tester, ModelCatalog catalog, {double 
   await pumpFrames(tester, 8);
 }
 
-// The cards only. The chat bar behind the sheet can carry the same model
-// name now (a new chat's title is the model), and its GlassSurface would
-// otherwise be the first match — the sheet is what these tests measure.
-Finder _card(String name) => find
-    .descendant(
-      of: find.byType(BottomSheet),
-      matching: find.ancestor(of: find.text(name), matching: find.byType(GlassSurface)),
-    )
-    .first;
+Finder _card(String name) => find.ancestor(of: find.text(name), matching: find.byType(GlassSurface)).first;
 
 ModelSelection? _picked(WidgetTester tester, ChatHarness harness) {
   final container = ProviderScope.containerOf(tester.element(find.byType(ChatScreen)));
