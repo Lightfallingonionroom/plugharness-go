@@ -272,11 +272,16 @@ class _ActionKey extends StatelessWidget {
                   else
                     Icon(icon, size: 22, color: color),
                   const SizedBox(height: 2),
-                  Text(
-                    label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.labelSmall?.copyWith(color: color, fontSize: 11, height: 1.2),
+                  // The bar's height is the identity bar's, which a large text
+                  // scale can shrink under the key's natural height: let the
+                  // label take what is left instead of overflowing the column.
+                  Flexible(
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.labelSmall?.copyWith(color: color, fontSize: 11, height: 1.2),
+                    ),
                   ),
                 ],
               ),
