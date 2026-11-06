@@ -16,6 +16,12 @@ jobs:
           flutter-version: 3.47.7
           channel: stable
           cache: true
+      - name: Install test fonts
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q fonts-noto-cjk
+          curl -fsSL --retry 3 -o /tmp/NotoColorEmoji.ttf https://raw.githubusercontent.com/googlefonts/noto-emoji/v2.051/fonts/NotoColorEmoji.ttf
+          sudo install -Dm644 /tmp/NotoColorEmoji.ttf /usr/share/fonts/noto/NotoColorEmoji.ttf
       - working-directory: app
         run: |
           flutter pub get --enforce-lockfile
