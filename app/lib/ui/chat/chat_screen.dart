@@ -1429,8 +1429,16 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
       });
     }
 
+    // A new chat has no title yet. ChatGPT puts the model picker there instead
+    // of the words 「新对话」 — the bar says what this message will go out with.
+    final newChat = sessionId == null;
+    final catalog = ref.watch(currentModelCatalogProvider);
+    final pickedModel = sessionId == null
+        ? ref.watch(pendingModelProvider)
+        : ref.watch(chatProvider(sessionId).select((c) => c.model));
     final title = switch (chat?.title ?? listedTitle) {
       final t? when t.trim().isNotEmpty => chatTitleShown(t.trim()),
+      _ when newChat => modelShortName(pickedModel ?? catalog?.defaultSelection, catalog),
       _ => l10n.commonNewChat,
     };
     final approval = chat?.approval;
@@ -1661,8 +1669,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                               },
                         // The title pill opens the whole session's details (on a
                         // wide window it folds and unfolds the panel beside us).
+                        // On a new chat the title is the model's name, so a tap
+                        // opens the picker, the way ChatGPT's bar does.
                         onTitleTap: sessionId == null
-                            ? null
+                            ? () => unawaited(_showModelSheet())
                             : () => SessionDetailPage.open(context, sessionId, toggle: true),
                         // A phone has no room for it: the model is shown and picked at the
                         // composer's foot while typing.
