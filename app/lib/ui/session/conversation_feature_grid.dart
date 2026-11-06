@@ -167,15 +167,18 @@ class _FeatureShortcut extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(5, 10, 5, 5),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(item.icon, size: compact ? 23 : 26, color: foreground),
                     const SizedBox(height: 7),
-                    Text(
-                      item.title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(color: foreground),
+                    Flexible(
+                      child: Text(
+                        item.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(color: foreground),
+                      ),
                     ),
                   ],
                 ),
