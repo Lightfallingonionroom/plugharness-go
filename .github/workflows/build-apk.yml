@@ -59,9 +59,13 @@ jobs:
       - name: Verify application identity
         run: |
           apk=app/build/app/outputs/flutter-apk/app-arm64-release.apk
-          "$ANDROID_HOME/build-tools/"*/aapt2 dump badging "$apk" | head -5
-          "$ANDROID_HOME/build-tools/"*/aapt2 dump badging "$apk" | grep "package: name='io.github.lightfallingonionroom.dsh_app'"
+          ls -lh "$apk"
+          AAPT2=$(ls -1d "$ANDROID_HOME"/build-tools/*/aapt2 2>/dev/null | sort -V | tail -1)
+          echo "aapt2=$AAPT2"
+          "$AAPT2" dump badging "$apk" | head -3
+          "$AAPT2" dump badging "$apk" | grep -F "package: name='io.github.lightfallingonionroom.dsh_app'"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: always()
         with:
           name: plugharness-go-arm64-apk
           path: app/build/app/outputs/flutter-apk/app-arm64-release.apk
