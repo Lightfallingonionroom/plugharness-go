@@ -64,8 +64,8 @@ class _CustomPetManagerState extends ConsumerState<CustomPetManager> {
   Future<void> addPack() async {
     setState(() => busy = true);
     try {
-      final result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['zip'], withData: true);
-      final file = result?.files.single;
+      final files = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['zip'], withData: true);
+      final file = files.singleOrNull;
       if (file == null) return;
       final bytes = file.bytes;
       if (bytes == null) throw const FormatException('no file bytes');

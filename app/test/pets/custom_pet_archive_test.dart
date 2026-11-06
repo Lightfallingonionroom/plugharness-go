@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:archive/archive.dart';
 import 'package:dsh_app/pets/custom_pets.dart';
+import 'package:dsh_app/pets/pet_pack.dart';
 import 'package:dsh_app/pets/pet_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -11,7 +12,7 @@ List<int> zip(Map<String, Object?> entries) {
     final bytes = entry.value is String ? utf8.encode(entry.value as String) : entry.value as List<int>;
     archive.addFile(ArchiveFile(entry.key, bytes.length, bytes));
   }
-  return ZipEncoder().encode(archive) ?? [];
+  return ZipEncoder().encode(archive);
 }
 
 String manifest() => jsonEncode({
