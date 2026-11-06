@@ -1,0 +1,67 @@
+name: Regen stragglers (temporary)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  regen:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      DSH_TEST_FONT_DIR: /usr/share/fonts/opentype/noto
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2
+        with:
+          flutter-version: 3.47.7
+          channel: stable
+          cache: true
+      - name: Gate - it still compiles
+        working-directory: app
+        run: |
+          flutter pub get --enforce-lockfile
+          flutter analyze --no-pub
+      - name: Restore test fonts
+        id: fonts
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: ~/test-fonts
+          key: test-fonts-1:20230817+repack1-3-v2.051
+      - name: Install test fonts
+        if: steps.fonts.outputs.cache-hit != 'true'
+        run: |
+          sudo apt-get update -q
+          apt-get download fonts-noto-cjk="1:20230817+repack1-3" fonts-noto-cjk-extra="1:20230817+repack1-3"
+          for deb in fonts-noto-cjk*.deb; do dpkg-deb -x "$deb" unpacked; done
+          mkdir -p ~/test-fonts
+          cp unpacked/usr/share/fonts/opentype/noto/NotoSansCJK-{Regular,Bold,Light}.ttc ~/test-fonts/
+          curl -fsSL --retry 3 -o ~/test-fonts/NotoColorEmoji.ttf https://raw.githubusercontent.com/googlefonts/noto-emoji/v2.051/fonts/NotoColorEmoji.ttf
+      - name: Save test fonts
+        if: steps.fonts.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: ~/test-fonts
+          key: test-fonts-1:20230817+repack1-3-v2.051
+      - name: Activate test fonts
+        run: |
+          sudo install -Dm644 -t /usr/share/fonts/opentype/noto ~/test-fonts/NotoSansCJK-*.ttc
+          sudo install -Dm644 ~/test-fonts/NotoColorEmoji.ttf /usr/share/fonts/noto/NotoColorEmoji.ttf
+      - name: Regenerate
+        working-directory: app
+        run: |
+          python3 tool/l10n_merge.py
+          flutter test --no-pub --update-goldens --concurrency=2 --reporter expanded \
+            test/remote/remote_golden_test.dart \
+            test/workspace/workspace_golden_test.dart \
+            test/shell/adaptive/adaptive_home_test.dart \
+            test/chat/tool_images_test.dart \
+            test/chat/run_info_golden_test.dart
+      - name: What changed
+        working-directory: app
+        run: git status --short | sed -n '1,60p'
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: updated-goldens-4
+          path: app/test/**/goldens/*.png
