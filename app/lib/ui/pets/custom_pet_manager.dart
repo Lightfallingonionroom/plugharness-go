@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -60,6 +61,25 @@ class _CustomPetManagerState extends ConsumerState<CustomPetManager> {
     }
   }
 
+  Future<void> addPack() async {
+    setState(() => busy = true);
+    try {
+      final result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['zip'], withData: true);
+      final file = result?.files.single;
+      if (file == null) return;
+      final bytes = file.bytes;
+      if (bytes == null) throw const FormatException('no file bytes');
+      final pack = await ref.read(customPetStoreProvider).importArchive(bytes);
+      ref.invalidate(customPetPacksProvider);
+      ref.invalidate(petPackProvider(pack.id));
+      await ref.read(petPrefsProvider.notifier).setPack(pack.id);
+    } catch (_) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(appL10n.botsPetPackImportFailed)));
+    } finally {
+      if (mounted) setState(() => busy = false);
+    }
+  }
+
   Future<void> remove(String id) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -89,6 +109,12 @@ class _CustomPetManagerState extends ConsumerState<CustomPetManager> {
           title: Text(appL10n.botsPetAddImage),
           subtitle: Text(appL10n.botsPetAddImageHint),
           onTap: busy ? null : add,
+        ),
+        ListTile(
+          leading: const Icon(AppIcons.add),
+          title: Text(appL10n.botsPetAddPack),
+          subtitle: Text(appL10n.botsPetAddPackHint),
+          onTap: busy ? null : addPack,
         ),
         for (final pack in custom)
           ListTile(

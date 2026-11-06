@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:archive/archive.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,7 +11,7 @@ import 'pet_pack.dart';
 
 const customPetPrefix = 'custom-';
 
-/// Custom packs live in app-private files/pets/<id>, a location the native
+/// Custom packs live in app-private `files/pets/&lt;id&gt;`, a location the native
 /// overlay already supports. Bundled assets remain untouched.
 class CustomPetStore {
   const CustomPetStore();
@@ -46,6 +47,51 @@ class CustomPetStore {
       final pack = singleImagePack(id: id, name: name.trim().isEmpty ? 'Custom pet' : name.trim(), width: w, height: h);
       await File('${dir.path}/pack.json').writeAsString(jsonEncode(_singleImageJson(pack)), flush: true);
       return PetPack.parse(jsonDecode(await File('${dir.path}/pack.json').readAsString()));
+    } catch (_) {
+      await dir.delete(recursive: true);
+      rethrow;
+    }
+  }
+
+  Future<PetPack> importArchive(List<int> bytes) async {
+    if (bytes.isEmpty || bytes.length > 32 * 1024 * 1024) throw const FormatException('archive size');
+    final archive = ZipDecoder().decodeBytes(bytes, verify: true);
+    final manifests = archive.files.where((file) => file.isFile && file.name.split('/').last == 'pack.json').toList();
+    if (manifests.length != 1) throw const FormatException('one pack.json required');
+    final manifest = manifests.single;
+    final prefix = manifest.name.substring(0, manifest.name.length - 'pack.json'.length);
+    final parsed = jsonDecode(utf8.decode(manifest.content as List<int>));
+    if (parsed is! Map<String, Object?>) throw const FormatException('pack.json');
+    final pack = PetPack.parse(parsed);
+    if (pack.animations.values.any((anim) => anim.sheet.contains('/') || anim.sheet.contains('..'))) {
+      throw const FormatException('unsafe sheet path');
+    }
+    final files = <String, List<int>>{};
+    var total = 0;
+    for (final file in archive.files) {
+      if (!file.isFile || !file.name.startsWith(prefix)) continue;
+      final relative = file.name.substring(prefix.length);
+      if (relative.isEmpty || relative.contains('/') || relative == '.' || relative == '..' || relative.contains('\\')) {
+        throw const FormatException('unsafe archive path');
+      }
+      final content = file.content as List<int>;
+      total += content.length;
+      if (total > 96 * 1024 * 1024) throw const FormatException('uncompressed size');
+      files[relative] = content;
+    }
+    for (final animation in pack.animations.values) {
+      if (!files.containsKey(animation.sheet)) throw FormatException('missing ${animation.sheet}');
+    }
+    final id = '$customPetPrefix${DateTime.now().microsecondsSinceEpoch}';
+    final dir = Directory('${(await root()).path}/$id');
+    await dir.create(recursive: true);
+    try {
+      for (final entry in files.entries) {
+        await File('${dir.path}/${entry.key}').writeAsBytes(entry.value, flush: true);
+      }
+      final stored = Map<String, Object?>.from(parsed)..['id'] = id;
+      await File('${dir.path}/pack.json').writeAsString(jsonEncode(stored), flush: true);
+      return PetPack.parse(stored);
     } catch (_) {
       await dir.delete(recursive: true);
       rethrow;
@@ -106,7 +152,7 @@ class FilePetBundle extends AssetBundle {
 
   @override
   Future<ByteData> load(String key) async {
-    if (key.startsWith('${PetPack.folder(customPetPrefix)}')) {
+    if (key.startsWith(PetPack.folder(customPetPrefix))) {
       final base = (await getApplicationDocumentsDirectory()).path;
       final relative = key.substring('assets/pets/'.length);
       final parts = relative.split('/');

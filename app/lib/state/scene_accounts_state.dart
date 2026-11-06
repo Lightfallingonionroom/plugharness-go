@@ -62,7 +62,9 @@ class SceneAccount {
   };
 
   static SceneAccount? parse(Object? raw) {
-    if (raw is! Map) return null;
+    if (raw is! Map) {
+      return null;
+    }
     final id = raw['id'], name = raw['name'], created = raw['createdAt'], updated = raw['updatedAt'];
     if (id is! String || !RegExp(r'^acct-[0-9a-f]{16}$').hasMatch(id) ||
         name is! String || name.trim().isEmpty || name.length > 64 ||
