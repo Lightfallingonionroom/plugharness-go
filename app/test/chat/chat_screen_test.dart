@@ -390,7 +390,13 @@ void main() {
     testWidgets('greets and fills the composer from a suggestion', (tester) async {
       await pumpScreen(tester, ChatHarness());
       expect(find.text('有什么可以帮你？'), findsOneWidget);
-      expect(find.text('新对话'), findsOneWidget);
+      // The bar names the model instead of the words 「新对话」, like ChatGPT.
+      expect(find.descendant(of: find.byType(ChatHeader), matching: find.text('新对话')), findsNothing);
+      expect(
+        find.descendant(of: find.byType(ChatHeader), matching: find.text('V4 Pro')),
+        findsWidgets,
+        reason: 'the new-chat bar shows the model it will send with',
+      );
 
       await tester.tap(find.text(defaultSuggestions.first.label));
       await tester.pump();
