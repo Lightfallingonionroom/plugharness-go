@@ -12,7 +12,7 @@ class RootBackendTest {
         val argv = RootCommands.appProcess("/data/app/base.apk", listOf("/data/app/split.apk"))
         assertEquals(3, argv.size)
         assertEquals(listOf("su", "-c"), argv.take(2))
-        assertEquals("CLASSPATH='/data/app/base.apk:/data/app/split.apk' exec /system/bin/app_process /system/bin io.lightfallingonionroom.dsh_app.phone.background.PrivilegedDisplayMain", argv[2])
+        assertEquals("CLASSPATH='/data/app/base.apk:/data/app/split.apk' exec /system/bin/app_process /system/bin io.github.lightfallingonionroom.dsh_app.phone.background.PrivilegedDisplayMain", argv[2])
     }
     @Test fun shellQuotesOsPathsWithoutExecutingTheirContents() {
         val marker = File.createTempFile("root-command-", ".must-not-exist").apply { delete() }

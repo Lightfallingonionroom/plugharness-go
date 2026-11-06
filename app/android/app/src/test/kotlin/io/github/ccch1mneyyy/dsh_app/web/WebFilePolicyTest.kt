@@ -20,7 +20,7 @@ class WebFilePolicyTest {
     }
 
     @Test fun rejectsPrivateFilePathsOwnProvidersAndMalformedContentUris() {
-        val app = "io.lightfallingonionroom.dsh_app"
+        val app = "io.github.lightfallingonionroom.dsh_app"
         assertTrue(WebFilePolicy.isExternalContent("content://com.android.providers.downloads.documents/document/12", app))
         assertFalse(WebFilePolicy.isExternalContent("file:///data/user/0/" + app + "/private", app))
         assertFalse(WebFilePolicy.isExternalContent("content://" + app + ".files/private", app))

@@ -52,7 +52,7 @@ class PetOverlayService : Service() {
     }
 
     companion object {
-        private const val ACTION_SNOOZE = "io.lightfallingonionroom.dsh_app.PET_SNOOZE"
+        private const val ACTION_SNOOZE = "io.github.lightfallingonionroom.dsh_app.PET_SNOOZE"
         private const val CHANNEL_ID = "dsh-pet"
         private const val NOTIFICATION_ID = 3090
 

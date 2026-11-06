@@ -12,13 +12,13 @@ import android.util.Log
  * has no voice to hear, so this stands in for the speech gate's edges and logs the state.
  *
  * ```
- * adb shell am broadcast -a io.lightfallingonionroom.dsh_app.MEDIA_PROBE --es cmd speech --es edge start|end
- * adb shell am broadcast -a io.lightfallingonionroom.dsh_app.MEDIA_PROBE --es cmd state
+ * adb shell am broadcast -a io.github.lightfallingonionroom.dsh_app.MEDIA_PROBE --es cmd speech --es edge start|end
+ * adb shell am broadcast -a io.github.lightfallingonionroom.dsh_app.MEDIA_PROBE --es cmd state
  * ```
  * Every command logs `DshMedia: probe {…}`.
  */
 internal object NativeMediaProbe {
-    const val ACTION = "io.lightfallingonionroom.dsh_app.MEDIA_PROBE"
+    const val ACTION = "io.github.lightfallingonionroom.dsh_app.MEDIA_PROBE"
 
     fun register(context: Context, onEdge: (SpeechGate.Edge) -> Unit, state: () -> String): BroadcastReceiver {
         val receiver = object : BroadcastReceiver() {

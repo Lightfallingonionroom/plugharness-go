@@ -123,7 +123,7 @@ internal class LauncherIconProbe private constructor(
     }
 
     companion object {
-        private const val ACTION = "io.lightfallingonionroom.dsh_app.ICON_PROBE"
+        private const val ACTION = "io.github.lightfallingonionroom.dsh_app.ICON_PROBE"
 
         fun register(context: Context, plugin: LauncherIconPlugin): LauncherIconProbe? {
             if (context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE == 0) return null

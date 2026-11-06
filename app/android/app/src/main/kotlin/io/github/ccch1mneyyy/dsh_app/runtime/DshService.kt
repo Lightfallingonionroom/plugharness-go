@@ -166,11 +166,11 @@ class DshService : Service() {
     }
 
     companion object {
-        const val ACTION_INSTALL = "io.lightfallingonionroom.dsh_app.INSTALL"
-        const val ACTION_INSTALL_DONE = "io.lightfallingonionroom.dsh_app.INSTALL_DONE"
-        const val ACTION_START = "io.lightfallingonionroom.dsh_app.START"
-        const val ACTION_STOP = "io.lightfallingonionroom.dsh_app.STOP"
-        const val ACTION_PHONE_STOP = "io.lightfallingonionroom.dsh_app.PHONE_STOP"
+        const val ACTION_INSTALL = "io.github.lightfallingonionroom.dsh_app.INSTALL"
+        const val ACTION_INSTALL_DONE = "io.github.lightfallingonionroom.dsh_app.INSTALL_DONE"
+        const val ACTION_START = "io.github.lightfallingonionroom.dsh_app.START"
+        const val ACTION_STOP = "io.github.lightfallingonionroom.dsh_app.STOP"
+        const val ACTION_PHONE_STOP = "io.github.lightfallingonionroom.dsh_app.PHONE_STOP"
 
         /** With [ACTION_INSTALL_DONE]: the unpack finished (true) or stopped. */
         const val EXTRA_INSTALL_OK = "ok"

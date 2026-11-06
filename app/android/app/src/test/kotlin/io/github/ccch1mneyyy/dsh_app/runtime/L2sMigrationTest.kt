@@ -413,7 +413,7 @@ class L2sMigrationTest {
         link("root/a", "root/b")
         Files.write(store.resolve(".l2s.gone0001.0002"), "orphan".toByteArray())
         // The rootfs alias (`-b <rootfs>:<rootfs>`) puts its placeholder chain under data/.
-        val alias = "/data/user/0/io.lightfallingonionroom.dsh_app/files/runtime/rootfs"
+        val alias = "/data/user/0/io.github.lightfallingonionroom.dsh_app/files/runtime/rootfs"
         val result = unreadable("data") { migrate(binds = BINDS + alias) }
         assertEquals(L2sMigration.Result.Done(links = 2, removed = 0), result)
         assertTrue(regular("root/a") && regular("root/b"))

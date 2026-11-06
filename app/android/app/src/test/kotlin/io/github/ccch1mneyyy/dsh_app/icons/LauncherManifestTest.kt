@@ -10,7 +10,7 @@ import javax.xml.parsers.DocumentBuilderFactory
 /** AndroidManifest.xml and res/ against [LauncherIcons] (Gradle runs unit tests in app/android/app). */
 class LauncherManifestTest {
     private val main = File("src/main")
-    private val ns = "io.lightfallingonionroom.dsh_app"
+    private val ns = "io.github.lightfallingonionroom.dsh_app"
 
     private fun manifest(): Element {
         val factory = DocumentBuilderFactory.newInstance()

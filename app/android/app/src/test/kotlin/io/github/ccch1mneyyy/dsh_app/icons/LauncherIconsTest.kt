@@ -35,7 +35,7 @@ class LauncherIconsTest {
     private fun alias(variant: String) = LauncherIcons.aliases.first { it.variant == variant && it !== ORIGINAL }
 
     private companion object {
-        const val PKG = "io.lightfallingonionroom.dsh_app"
+        const val PKG = "io.github.lightfallingonionroom.dsh_app"
     }
 
     @Test fun aFreshInstallShowsMist() {

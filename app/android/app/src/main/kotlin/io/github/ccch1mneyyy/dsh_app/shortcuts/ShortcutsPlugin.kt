@@ -153,13 +153,13 @@ class ShortcutsPlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHa
 
     companion object {
         const val CHANNEL = "dsh/shortcuts"
-        const val ACTION_ENTRY = "io.lightfallingonionroom.dsh_app.action.ENTRY"
-        const val EXTRA_KIND = "io.lightfallingonionroom.dsh_app.entry.KIND"
-        const val EXTRA_SESSION = "io.lightfallingonionroom.dsh_app.entry.SESSION"
-        const val EXTRA_HOST = "io.lightfallingonionroom.dsh_app.entry.HOST"
-        const val EXTRA_TEXT = "io.lightfallingonionroom.dsh_app.entry.TEXT"
-        const val EXTRA_TOKEN = "io.lightfallingonionroom.dsh_app.entry.TOKEN"
-        private const val EXTRA_TAKEN = "io.lightfallingonionroom.dsh_app.entry.TAKEN"
+        const val ACTION_ENTRY = "io.github.lightfallingonionroom.dsh_app.action.ENTRY"
+        const val EXTRA_KIND = "io.github.lightfallingonionroom.dsh_app.entry.KIND"
+        const val EXTRA_SESSION = "io.github.lightfallingonionroom.dsh_app.entry.SESSION"
+        const val EXTRA_HOST = "io.github.lightfallingonionroom.dsh_app.entry.HOST"
+        const val EXTRA_TEXT = "io.github.lightfallingonionroom.dsh_app.entry.TEXT"
+        const val EXTRA_TOKEN = "io.github.lightfallingonionroom.dsh_app.entry.TOKEN"
+        private const val EXTRA_TAKEN = "io.github.lightfallingonionroom.dsh_app.entry.TAKEN"
 
         const val KIND_NEW = "new"
         const val KIND_VOICE = "voice"

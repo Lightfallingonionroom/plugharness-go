@@ -257,11 +257,11 @@ class SharePlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHandle
 
     companion object {
         const val CHANNEL = "dsh/share"
-        const val ACTION_SHARE = "io.lightfallingonionroom.dsh_app.action.SHARE"
+        const val ACTION_SHARE = "io.github.lightfallingonionroom.dsh_app.action.SHARE"
 
         /** The action the sender used (ACTION_SEND / ACTION_SEND_MULTIPLE). */
-        const val EXTRA_SENT_AS = "io.lightfallingonionroom.dsh_app.share.SENT_AS"
-        private const val EXTRA_TAKEN = "io.lightfallingonionroom.dsh_app.share.TAKEN"
+        const val EXTRA_SENT_AS = "io.github.lightfallingonionroom.dsh_app.share.SENT_AS"
+        private const val EXTRA_TAKEN = "io.github.lightfallingonionroom.dsh_app.share.TAKEN"
 
         /** The composer's limit (lib/state/attachments.dart `maxAttachments`). */
         const val MAX_ITEMS = 9

@@ -269,7 +269,7 @@
             android:name=".phone.background.AdbPairingNotification$Receiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="io.lightfallingonionroom.dsh_app.PHONE_ADB_PAIR_CODE" />
+                <action android:name="io.github.lightfallingonionroom.dsh_app.PHONE_ADB_PAIR_CODE" />
             </intent-filter>
         </receiver>
 
