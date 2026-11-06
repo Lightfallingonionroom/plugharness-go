@@ -15,7 +15,7 @@ import io.github.ccch1mneyyy.dsh_app.phone.TargetInfo
 /**
  * BACKGROUND [PhoneDriver] (screen ids `b<n>`): reads and drives the trusted virtual display
  * through whichever privileged channel is live (Shizuku or self-ADB). Registered in
- * [io.github.ccch1mneyyy.dsh_app.phone.PhoneRegistry].backgroundDriver only while a task uses it.
+ * [com.local.plugharness.go.phone.PhoneRegistry].backgroundDriver only while a task uses it.
  * All calls are serialised by the bridge; this class never retries a dispatched action.
  */
 class BackgroundDisplay(

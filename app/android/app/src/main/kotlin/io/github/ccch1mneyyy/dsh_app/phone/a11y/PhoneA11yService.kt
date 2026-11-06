@@ -23,8 +23,8 @@ import io.github.ccch1mneyyy.dsh_app.phone.PhoneRegistry
 
 /**
  * DSH's accessibility service (same process as the app). While connected it is the MAIN
- * [io.github.ccch1mneyyy.dsh_app.phone.PhoneDriver] and the overlay
- * [io.github.ccch1mneyyy.dsh_app.phone.UserGate]. It reads nothing on its own: the tree is
+ * [com.local.plugharness.go.phone.PhoneDriver] and the overlay
+ * [com.local.plugharness.go.phone.UserGate]. It reads nothing on its own: the tree is
  * read only when the bridge calls the driver.
  */
 class PhoneA11yService : AccessibilityService() {

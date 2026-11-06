@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit
  * Process-wide owner of phone control on Android: the master switch and app lists (prefs), the
  * bridge's lifecycle around the engine (started before DSH launches, stopped when it exits, never
  * in safe mode), the [PhoneEnv] the core runs against, the task's status line, the screen-off
- * stop, and the status pushed to Flutter. [io.github.ccch1mneyyy.dsh_app.runtime.RuntimeController]
+ * stop, and the status pushed to Flutter. [com.local.plugharness.go.runtime.RuntimeController]
  * calls [prepareLaunch] / [launched] / [onEngineReady] / [onEngineStopped].
  */
 class PhoneControl private constructor(private val app: Context) : PhoneEnv, ControlListener {

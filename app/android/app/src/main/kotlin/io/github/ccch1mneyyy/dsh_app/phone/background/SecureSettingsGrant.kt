@@ -1,7 +1,7 @@
 package io.github.ccch1mneyyy.dsh_app.phone.background
 
 /**
- * WRITE_SECURE_SETTINGS for 自动恢复无障碍 ([io.github.ccch1mneyyy.dsh_app.phone.a11y.A11yKeeper]):
+ * WRITE_SECURE_SETTINGS for 自动恢复无障碍 ([com.local.plugharness.go.phone.a11y.A11yKeeper]):
  * which one-tap way to it the shell-uid engine offers right now, and the command for granting it
  * by hand (its `pm grant` part also runs as is in a root shell).
  */
