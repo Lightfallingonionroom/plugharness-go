@@ -7,6 +7,8 @@ jobs:
   focused:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
+    env:
+      DSH_TEST_FONT_DIR: /usr/share/fonts/opentype/noto
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
