@@ -603,14 +603,6 @@ abstract final class Spots {
     keywords: (l) => l.searchKwCommunity,
   );
 
-  // 场景账户.
-  static final sceneAccounts = SettingSpot(
-    'scene-accounts',
-    page: SettingsPageId.hub,
-    title: (l) => l.sceneAccounts,
-    keywords: (l) => l.sceneAccountsHint,
-  );
-
   // 模型.
   static final addProvider = SettingSpot(
     'add-provider',
@@ -1070,7 +1062,6 @@ final _rows = <SettingSpot>[
   Spots.language,
   Spots.askAi,
   Spots.community,
-  Spots.sceneAccounts,
   Spots.addProvider,
   Spots.permissionCurrent,
   Spots.permissionDefault,

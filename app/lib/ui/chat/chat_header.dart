@@ -206,7 +206,7 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
                         key: const ValueKey('chat-title-pill'),
                         constraints: BoxConstraints(minHeight: pillHeight),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
                           // A new title or status, or the clock coming and
                           // going, glides the title block to its new width.
                           child: SmoothSize(

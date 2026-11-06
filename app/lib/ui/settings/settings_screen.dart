@@ -140,18 +140,6 @@ class SettingsScreen extends ConsumerWidget {
         ),
         const SettingsOverview(),
         SettingsSection(
-          children: [
-            SettingsTile(
-              icon: AppIcons.account,
-              tint: SettingsHues.ai,
-              title: l10n.sceneAccounts,
-              subtitle: l10n.sceneAccountsHint,
-              spot: Spots.sceneAccounts,
-              onTap: () => _push(context, const SceneAccountsPage()),
-            ),
-          ],
-        ),
-        SettingsSection(
           title: l10n.hubGroupAi,
           children: [
             SettingsTile(
@@ -240,6 +228,14 @@ class SettingsScreen extends ConsumerWidget {
         SettingsSection(
           title: l10n.hubGroupGeneral,
           children: [
+            SettingsTile(
+              icon: AppIcons.keepAlive,
+              tint: SettingsHues.general,
+              title: l10n.sceneAccounts,
+              subtitle: l10n.sceneAccountsHint,
+              spot: SettingsIndex.entry(SettingsPageId.sceneAccounts),
+              onTap: () => _push(context, const SceneAccountsPage()),
+            ),
             SettingsTile(
               icon: AppIcons.swap,
               tint: SettingsHues.general,

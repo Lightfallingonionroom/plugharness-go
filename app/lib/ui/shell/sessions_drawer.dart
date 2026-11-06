@@ -379,9 +379,12 @@ class NewChatButton extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       l10n.commonNewChat,
-                      style: Theme.of(
-                        context,
-                      ).textTheme.labelLarge?.copyWith(color: shell.onPrimaryAction, fontWeight: FontWeight.w600),
+                      maxLines: 1,
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: shell.onPrimaryAction,
+                        fontWeight: FontWeight.w600,
+                        height: 1.2,
+                      ),
                     ),
                   ],
                 ),
