@@ -91,8 +91,8 @@ enum SettingsPageId {
   diagnostics,
   about,
   account,
+  sceneAccounts,
 }
-
 /// One engine setting a spot anchors: the field [key] in any of [namespaces]
 /// (shell settings live in `bash-sandbox` or `pwsh-sandbox`).
 class SpotField {
@@ -549,6 +549,14 @@ final _pages = <SettingsPageMeta>[
     freq: Freq.medium,
     links: const ['account'],
   ),
+  // 场景账户: saved host / model / pet combinations.
+  SettingsPageMeta(
+    SettingsPageId.sceneAccounts,
+    title: (l) => l.sceneAccounts,
+    keywords: (l) => l.sceneAccountsHint,
+    freq: Freq.medium,
+    links: const ['scene-accounts'],
+  ),
 ];
 
 // ── Rows ─────────────────────────────────────────────────────────────────────
@@ -593,6 +601,14 @@ abstract final class Spots {
     group: _help,
     title: (l) => l.hubSettingsCommunity,
     keywords: (l) => l.searchKwCommunity,
+  );
+
+  // 场景账户.
+  static final sceneAccounts = SettingSpot(
+    'scene-accounts',
+    page: SettingsPageId.hub,
+    title: (l) => l.sceneAccounts,
+    keywords: (l) => l.sceneAccountsHint,
   );
 
   // 模型.
@@ -1054,6 +1070,7 @@ final _rows = <SettingSpot>[
   Spots.language,
   Spots.askAi,
   Spots.community,
+  Spots.sceneAccounts,
   Spots.addProvider,
   Spots.permissionCurrent,
   Spots.permissionDefault,

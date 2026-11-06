@@ -89,7 +89,7 @@ class ChatHeader extends ConsumerStatefulWidget {
   /// it for the title and the status line.
   static double pillHeightOf(BuildContext context) {
     final scaler = MediaQuery.textScalerOf(context);
-    return math.max(44.0, scaler.scale(16) * 1.3 + scaler.scale(11) * 1.25 + 6);
+    return math.max(44.0, scaler.scale(15) * 1.3 + scaler.scale(11) * 1.25 + 8);
   }
 
   static double barHeightOf(BuildContext context) => math.max(barHeight, pillHeightOf(context) + 12);
@@ -129,7 +129,7 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
     final barHeight = ChatHeader.barHeightOf(context);
     final pillHeight = ChatHeader.pillHeightOf(context);
     final titleStyle = theme.textTheme.titleMedium?.copyWith(
-      fontSize: 16,
+      fontSize: 15,
       height: 1.3,
       fontWeight: FontWeight.w600,
       color: ChatHeaderColors.of(context).primaryText,

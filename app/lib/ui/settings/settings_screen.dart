@@ -146,6 +146,7 @@ class SettingsScreen extends ConsumerWidget {
               tint: SettingsHues.ai,
               title: l10n.sceneAccounts,
               subtitle: l10n.sceneAccountsHint,
+              spot: Spots.sceneAccounts,
               onTap: () => _push(context, const SceneAccountsPage()),
             ),
           ],
