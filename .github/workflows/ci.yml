@@ -146,6 +146,9 @@ jobs:
           sudo install -Dm644 -t "$DSH_TEST_FONT_DIR" ~/test-fonts/NotoSansCJK-*.ttc
           sudo install -Dm644 ~/test-fonts/NotoColorEmoji.ttf /usr/share/fonts/noto/NotoColorEmoji.ttf
       - run: flutter pub get --enforce-lockfile
+      - name: Regenerate localization before analysis
+        if: matrix.shard == 0
+        run: python3 tool/l10n_merge.py
       - name: Analyze, and generated localization matches its source
         if: matrix.shard == 0
         run: |
