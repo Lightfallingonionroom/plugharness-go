@@ -34,7 +34,7 @@ jobs:
           path: runtime/.cache
           key: runtime-inputs-r15-${{ runner.os }}
       - name: Build the arm64 Linux runtime
-        run: runtime/build-runtime.sh arm64
+        run: runtime/build-runtime.sh arm64-v8a
       - name: Flutter plugins and Android SDK paths
         working-directory: app
         run: |
