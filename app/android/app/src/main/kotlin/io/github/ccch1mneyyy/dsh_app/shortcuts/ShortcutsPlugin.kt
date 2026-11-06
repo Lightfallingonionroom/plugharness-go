@@ -153,13 +153,13 @@ class ShortcutsPlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHa
 
     companion object {
         const val CHANNEL = "dsh/shortcuts"
-        const val ACTION_ENTRY = "com.local.plugharness.go.action.ENTRY"
-        const val EXTRA_KIND = "com.local.plugharness.go.entry.KIND"
-        const val EXTRA_SESSION = "com.local.plugharness.go.entry.SESSION"
-        const val EXTRA_HOST = "com.local.plugharness.go.entry.HOST"
-        const val EXTRA_TEXT = "com.local.plugharness.go.entry.TEXT"
-        const val EXTRA_TOKEN = "com.local.plugharness.go.entry.TOKEN"
-        private const val EXTRA_TAKEN = "com.local.plugharness.go.entry.TAKEN"
+        const val ACTION_ENTRY = "io.lightfallingonionroom.dsh_app.action.ENTRY"
+        const val EXTRA_KIND = "io.lightfallingonionroom.dsh_app.entry.KIND"
+        const val EXTRA_SESSION = "io.lightfallingonionroom.dsh_app.entry.SESSION"
+        const val EXTRA_HOST = "io.lightfallingonionroom.dsh_app.entry.HOST"
+        const val EXTRA_TEXT = "io.lightfallingonionroom.dsh_app.entry.TEXT"
+        const val EXTRA_TOKEN = "io.lightfallingonionroom.dsh_app.entry.TOKEN"
+        private const val EXTRA_TAKEN = "io.lightfallingonionroom.dsh_app.entry.TAKEN"
 
         const val KIND_NEW = "new"
         const val KIND_VOICE = "voice"

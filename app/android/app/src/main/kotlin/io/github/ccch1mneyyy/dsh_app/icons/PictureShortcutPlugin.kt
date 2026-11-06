@@ -106,7 +106,7 @@ class PictureShortcutPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
 
     companion object {
         const val CHANNEL = "dsh/picture_shortcut"
-        private const val ACTION_PINNED = "com.local.plugharness.go.action.PICTURE_SHORTCUT_PINNED"
+        private const val ACTION_PINNED = "io.lightfallingonionroom.dsh_app.action.PICTURE_SHORTCUT_PINNED"
         private const val REQUEST = 0x5049
     }
 }

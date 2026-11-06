@@ -35,7 +35,7 @@ internal object LauncherIcons {
     /** The mipmap a variant's launcher entry uses (its alias's android:icon; LaunchThemesTest checks). */
     fun mipmapOf(variant: String): String = if (variant == MIST) "ic_launcher" else "ic_launcher_$variant"
 
-    private const val PKG = "com.local.plugharness.go"
+    private const val PKG = "io.lightfallingonionroom.dsh_app"
 
     class Alias(val variant: String, val className: String, val enabledByManifest: Boolean) {
         override fun toString() = className.substringAfterLast('.')

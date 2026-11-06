@@ -16,7 +16,7 @@ import javax.xml.parsers.DocumentBuilderFactory
  */
 class LaunchThemesTest {
     private val main = File("src/main")
-    private val ns = "com.local.plugharness.go"
+    private val ns = "io.lightfallingonionroom.dsh_app"
 
     private fun xml(file: File): Element = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file).documentElement
 

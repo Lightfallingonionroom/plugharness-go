@@ -57,7 +57,7 @@ interface IPrivilegedDisplay : IInterface {
     }
 
     companion object {
-        const val DESCRIPTOR = "com.local.plugharness.go.phone.background.IPrivilegedDisplay"
+        const val DESCRIPTOR = "io.lightfallingonionroom.dsh_app.phone.background.IPrivilegedDisplay"
         const val TXN_EXECUTE = IBinder.FIRST_CALL_TRANSACTION
     }
 }

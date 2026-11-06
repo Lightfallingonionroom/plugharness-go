@@ -26,7 +26,7 @@ import java.util.concurrent.Executors
  * apps, including code in DSH's own Linux environment, can't send it. Results go to
  * `files/a11y-probe/last.txt` (+ `last.jpg`), read with `run-as`.
  *
- *   am broadcast -a com.local.plugharness.go.A11Y_PROBE --es cmd screen [--ez image true] [--ez detail true] --ei seq 1
+ *   am broadcast -a io.lightfallingonionroom.dsh_app.A11Y_PROBE --es cmd screen [--ez image true] [--ez detail true] --ei seq 1
  *   cmd: screen | target sid id | tap sid id [long] | type sid id text [submit] | scroll sid [id] dir |
  *        key back|home|recents|notifications | tapxy sid x y | open pkg | collect sid id [pages] [until] |
  *        fg | windows | status [text] | confirm sentence [app] [first] | handoff reason [ms] | injecttest [relax] | guard |
@@ -123,10 +123,10 @@ internal class A11yProbe(private val service: PhoneA11yService, private val driv
                 "press" -> { overlay.debugKey(a.s("key") ?: "pause"); "ok" }
                 "unlocks" -> {
                     overlay.debugUnlocks = when (a.s("set")) {
-                        "none" -> com.local.plugharness.go.phone.PhoneUnlocks()
-                        "system" -> com.local.plugharness.go.phone.PhoneUnlocks(systemPages = true)
-                        "secrets" -> com.local.plugharness.go.phone.PhoneUnlocks(secretFields = true)
-                        "all" -> com.local.plugharness.go.phone.PhoneUnlocks(systemPages = true, secretFields = true, ownApp = true)
+                        "none" -> io.lightfallingonionroom.dsh_app.phone.PhoneUnlocks()
+                        "system" -> io.lightfallingonionroom.dsh_app.phone.PhoneUnlocks(systemPages = true)
+                        "secrets" -> io.lightfallingonionroom.dsh_app.phone.PhoneUnlocks(secretFields = true)
+                        "all" -> io.lightfallingonionroom.dsh_app.phone.PhoneUnlocks(systemPages = true, secretFields = true, ownApp = true)
                         else -> null
                     }
                     "unlocks=${overlay.debugUnlocks}"
@@ -149,7 +149,7 @@ internal class A11yProbe(private val service: PhoneA11yService, private val driv
         text.chunked(3_000).forEach { Log.i(TAG, it) }
     }
 
-    private fun result(r: com.local.plugharness.go.phone.ActionResult) =
+    private fun result(r: io.lightfallingonionroom.dsh_app.phone.ActionResult) =
         "ok=${r.ok} msg=${r.message}\n----\n${r.screen?.let { "id=${it.id}\n${it.text}" }}"
 
     /**
@@ -213,6 +213,6 @@ internal class A11yProbe(private val service: PhoneA11yService, private val driv
 
     companion object {
         private const val TAG = "DshA11yProbe"
-        const val ACTION = "com.local.plugharness.go.A11Y_PROBE"
+        const val ACTION = "io.lightfallingonionroom.dsh_app.A11Y_PROBE"
     }
 }

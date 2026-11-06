@@ -179,7 +179,7 @@ class LinksPlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHandle
     companion object {
         const val CHANNEL = "dsh/links"
         const val SCHEME = "dshgo"
-        private const val EXTRA_TAKEN = "com.local.plugharness.go.links.TAKEN"
+        private const val EXTRA_TAKEN = "io.lightfallingonionroom.dsh_app.links.TAKEN"
         private const val MAX_FILE_BYTES = 4L * 1024 * 1024
         private const val KEEP_FILES = 6
 

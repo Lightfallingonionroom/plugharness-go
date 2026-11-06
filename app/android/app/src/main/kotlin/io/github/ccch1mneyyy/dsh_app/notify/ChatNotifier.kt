@@ -111,7 +111,7 @@ class ChatNotifier(private val app: Context) {
             .setContentIntent(openIntent(post, tag, id))
         if (post.attention) builder.setCategory(Notification.CATEGORY_REMINDER)
         // The floating pet is out and its bubble says 做完了 / 出错了: posted, but no banner, no sound.
-        com.local.plugharness.go.pet.ResultSilence.apply(builder, tag, post.attention)
+        io.lightfallingonionroom.dsh_app.pet.ResultSilence.apply(builder, tag, post.attention)
         // Approval buttons, in the approval card's order; not on the lock screen.
         if (post.canApprove) actions[tag to id] = ActionEntry(post, postedAt) else actions.remove(tag to id)
         if (post.canApprove && !locked) {
@@ -390,7 +390,7 @@ class ChatNotifier(private val app: Context) {
         /** Approval notifications of this process, by (tag, id). Main thread only. */
         private val actions = HashMap<Pair<String, Int>, ActionEntry>()
 
-        const val ACTION_OPEN = "com.local.plugharness.go.OPEN_SESSION"
+        const val ACTION_OPEN = "io.lightfallingonionroom.dsh_app.OPEN_SESSION"
         private const val EXTRA_TOKEN = "dsh.notify.token"
         private const val EXTRA_SESSION = "dsh.notify.session"
         private const val EXTRA_HOST = "dsh.notify.host"

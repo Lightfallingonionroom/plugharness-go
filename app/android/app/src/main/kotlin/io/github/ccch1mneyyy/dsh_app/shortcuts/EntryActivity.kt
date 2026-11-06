@@ -53,10 +53,10 @@ class EntryActivity : Activity() {
     }
 
     companion object {
-        const val ACTION_NEW_CHAT = "com.local.plugharness.go.action.NEW_CHAT"
-        const val ACTION_VOICE = "com.local.plugharness.go.action.VOICE_INPUT"
-        const val ACTION_OPEN_CHAT = "com.local.plugharness.go.action.OPEN_CHAT"
-        private const val ACTION_OPEN_APP = "com.local.plugharness.go.action.OPEN_APP"
+        const val ACTION_NEW_CHAT = "io.lightfallingonionroom.dsh_app.action.NEW_CHAT"
+        const val ACTION_VOICE = "io.lightfallingonionroom.dsh_app.action.VOICE_INPUT"
+        const val ACTION_OPEN_CHAT = "io.lightfallingonionroom.dsh_app.action.OPEN_CHAT"
+        private const val ACTION_OPEN_APP = "io.lightfallingonionroom.dsh_app.action.OPEN_APP"
         const val EXTRA_PET_GENERATION = "pet_generation"
         const val EXTRA_SESSION = "session_id"
         const val EXTRA_HOST = "host"

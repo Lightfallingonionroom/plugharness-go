@@ -194,7 +194,7 @@ class PhonePrompts(
     } == true
 
     companion object {
-        private const val ACTION_OPEN = "com.local.plugharness.go.phone.OPEN_PROMPT"
+        private const val ACTION_OPEN = "io.lightfallingonionroom.dsh_app.phone.OPEN_PROMPT"
         private const val EXTRA_NONCE = "phone_prompt_nonce"
         fun unavailable(reason: String) = PromptResult(PromptOutcome.UNAVAILABLE, PromptSurface.NONE, reason).toMap()
         fun openIntent(app: Context, p: PromptPresentation): Intent = Intent(app, MainActivity::class.java)
