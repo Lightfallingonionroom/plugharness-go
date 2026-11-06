@@ -73,6 +73,10 @@
   "commonReply": "回复",
   "commonUpdate": "更新",
   "commonViewLogs": "查看日志",
+  "commonRestore": "恢复",
+  "commonReset": "恢复默认",
+  "commonCompact": "紧凑布局",
+  "commonNone": "没有显示的功能",
   "commonItemCount": "{count} 项",
   "@commonItemCount": {
     "placeholders": {

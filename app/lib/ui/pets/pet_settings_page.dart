@@ -15,6 +15,7 @@ import '../common/expand_reveal.dart';
 import '../settings/settings_widgets.dart';
 import '../theme/app_icons.dart';
 import '../shell/page_frame.dart';
+import 'custom_pet_manager.dart';
 import 'overlay_settings_tile.dart';
 import 'pet_picker.dart';
 
@@ -59,6 +60,7 @@ class PetSettingsPage extends ConsumerWidget {
       title: l10n.botsPets,
       children: [
         SettingsSection(footer: Text(l10n.botsPetSource), children: const [PetPicker()]),
+        const SettingsSection(children: [CustomPetManager()]),
         ExpandReveal(
           open: prefs.enabled,
           child: Column(

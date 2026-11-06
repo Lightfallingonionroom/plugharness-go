@@ -1658,6 +1658,27 @@
   "botsPetDeepy": "Deepy 小鲸鱼",
   "botsPetWhaleGirl": "鲸娘",
   "botsPetNone": "不显示",
+  "botsPetCustom": "自定义宠物",
+  "botsPetCustomName": "给宠物起个名字",
+  "botsPetAddImage": "从图片添加宠物",
+  "botsPetAddImageHint": "支持相册图片，所有状态先使用同一形象",
+  "botsPetImportFailed": "图片无法导入，请换一张较小的常见格式图片",
+  "botsPetDeleteConfirm": "删除这个自定义宠物？只删除导入的形象，不影响对话。",
+  "sceneAccounts": "场景账户",
+  "sceneAccountsHint": "为不同用途保存主机、默认模型和宠物配置",
+  "sceneDefaultAccount": "主账户",
+  "sceneCreate": "新建场景账户",
+  "sceneAdmin": "主账户 · 配置场景",
+  "sceneConfigOnly": "配置场景",
+  "sceneDeleteConfirm": "删除场景“{name}”？只删除这份配置，不删除会话、文件或云端账号。",
+  "@sceneDeleteConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sceneIsolationNotice": "当前版本切换的是应用配置，不是完整数据沙箱。会话、插件进程和凭据的隔离仍需单独实现。",
   "botsPets": "宠物",
   "botsPetSource": "来自 DSH-TUI",
   "botsPetSize": "大小",
@@ -2832,6 +2853,10 @@
   "commonReply": "回复",
   "commonUpdate": "更新",
   "commonViewLogs": "查看日志",
+  "commonRestore": "恢复",
+  "commonReset": "恢复默认",
+  "commonCompact": "紧凑布局",
+  "commonNone": "没有显示的功能",
   "commonItemCount": "{count} 项",
   "@commonItemCount": {
     "placeholders": {

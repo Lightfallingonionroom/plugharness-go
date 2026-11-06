@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
+import '../../pets/custom_pets.dart';
 import '../../pets/pet_pack.dart';
 import '../../pets/pet_prefs.dart';
 import '../../pets/pet_signals.dart';
@@ -54,14 +55,17 @@ class PetPicker extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selected = ref.watch(petPrefsProvider.select((p) => p.packId));
+    final custom = ref.watch(customPetPacksProvider).value ?? const [];
+    final choices = [...builtInPets, ...custom.map((pack) => pack.id), noPetId];
     return Padding(
       padding: padding,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Wrap(
+        spacing: gap,
+        runSpacing: gap,
         children: [
-          for (final (i, id) in choices.indexed) ...[
-            if (i > 0) const SizedBox(width: gap),
-            Expanded(
+          for (final id in choices)
+            SizedBox(
+              width: 92,
               child: _Option(
                 id: id,
                 selected: id == selected,
@@ -71,7 +75,6 @@ class PetPicker extends ConsumerWidget {
                 },
               ),
             ),
-          ],
         ],
       ),
     );

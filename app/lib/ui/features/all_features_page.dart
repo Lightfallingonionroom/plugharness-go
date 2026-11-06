@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
 import '../../state/bots_state.dart';
+import '../../state/feature_layout_state.dart' show openFeature;
 import '../../state/sessions_state.dart';
 import '../common/app_sheet.dart' show groupTitleStyle;
 import '../common/feature_tile.dart';
@@ -60,15 +61,7 @@ class AllFeaturesPage extends ConsumerWidget {
         : ref.watch(sessionsProvider).value?.where((s) => s.sessionId == sessionId).firstOrNull?.projections.title;
 
     void openWeb(FeatureItem item) => ref.read(dshWebOpenerProvider)(context, ref, item.webFor(sessionId)!);
-    void open(FeatureItem item) {
-      if (item.native case final page?) {
-        Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => page(sessionId)));
-      } else if (item.action case final action?) {
-        unawaited(Future.sync(() => action(context, ref, sessionId)));
-      } else {
-        openWeb(item);
-      }
-    }
+    void open(FeatureItem item) => openFeature(context, ref, item, sessionId);
 
     final List<FeatureSection> all = sections ?? ref.watch(featureSectionsProvider);
     final page = AppPage.list(

@@ -17,6 +17,7 @@ import '../chat/model_sheet.dart';
 import '../plugins/native/native_taps.dart' show runNativeAction;
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
+import 'conversation_feature_grid.dart';
 import 'session_detail_page.dart';
 
 class ConversationOverview extends ConsumerWidget {
@@ -81,6 +82,7 @@ class ConversationOverview extends ConsumerWidget {
           onTap: readOnly ? null : () => _pickModel(context, ref, effective),
         ),
         _Row(icon: AppIcons.remoteHosts, label: l10n.shellPanelHost, value: host ?? l10n.commonThisPhone),
+        ConversationFeatureGrid(sessionId: sessionId),
         // What plugins can do to this conversation, each signed with whose it is.
         for (final action in ref.watch(nativeSessionActionsProvider))
           _Row(

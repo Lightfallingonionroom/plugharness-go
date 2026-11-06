@@ -20,6 +20,7 @@ import '../../state/settings_state.dart';
 import '../../state/ui_mode_state.dart';
 import '../../state/update_state.dart';
 import '../account/account_page.dart';
+import '../account/scene_accounts_page.dart';
 import '../account/account_widgets.dart';
 import '../chat/balance_widgets.dart' show formatMoney;
 import '../common/ask_ai.dart';
@@ -138,6 +139,17 @@ class SettingsScreen extends ConsumerWidget {
           ),
         ),
         const SettingsOverview(),
+        SettingsSection(
+          children: [
+            SettingsTile(
+              icon: AppIcons.account,
+              tint: SettingsHues.ai,
+              title: l10n.sceneAccounts,
+              subtitle: l10n.sceneAccountsHint,
+              onTap: () => _push(context, const SceneAccountsPage()),
+            ),
+          ],
+        ),
         SettingsSection(
           title: l10n.hubGroupAi,
           children: [

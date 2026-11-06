@@ -111,7 +111,7 @@ class PetPrefsController extends Notifier<PetPrefs> {
       await performanceReady(ref);
       if (!ref.mounted) return;
       final pack = prefs.getString(keys.pack);
-      final explicit = pack == noPetId || builtInPets.contains(pack);
+      final explicit = pack == noPetId || builtInPets.contains(pack) || (pack?.startsWith('custom-') ?? false);
       final hidden = prefs.getInt(keys.hidden);
       state = PetPrefs(
         packId: explicit

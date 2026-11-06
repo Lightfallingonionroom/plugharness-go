@@ -20,6 +20,7 @@ import '../state/notify_state.dart' show FlagController, appForegroundProvider, 
 import '../state/run_pulse.dart';
 import '../state/session_attention_state.dart';
 import '../ui/chat/run_info.dart';
+import 'custom_pets.dart';
 import 'pet_mood.dart';
 import 'pet_overlay_actions.dart';
 import 'pet_pack.dart';
@@ -30,7 +31,7 @@ import 'pet_state.dart';
 final petClockProvider = Provider<DateTime Function()>((ref) => DateTime.now);
 
 /// Where packs load from (tests swap in a file bundle).
-final petAssetBundleProvider = Provider<AssetBundle>((ref) => rootBundle);
+final petAssetBundleProvider = Provider<AssetBundle>((ref) => FilePetBundle(rootBundle));
 
 /// One pack, loaded once per id.
 final petPackProvider = FutureProvider.family<PetPack, String>(
