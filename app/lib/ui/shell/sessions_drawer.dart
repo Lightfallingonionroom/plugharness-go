@@ -209,7 +209,6 @@ class SessionsDrawer extends ConsumerWidget {
     );
 
     const radius = BorderRadius.only(topRight: Radius.circular(AppShape.xl), bottomRight: Radius.circular(AppShape.xl));
-    final shell = ChatGptShellColors.of(context);
     final content = Material(
       color: shell.sidebar,
       child: SafeArea(
