@@ -1,6 +1,11 @@
 name: Focused app checks
 on:
   workflow_dispatch:
+    inputs:
+      update_goldens:
+        description: Regenerate goldens for intentional UI changes
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
@@ -48,10 +53,16 @@ jobs:
           flutter pub get --enforce-lockfile
           python3 tool/l10n_merge.py
           flutter analyze --no-pub
-          flutter test --no-pub --reporter expanded \
+          flutter test --no-pub --reporter expanded ${{ inputs.update_goldens && '--update-goldens' || '' }} \
             test/pets/custom_pets_test.dart \
             test/pets/custom_pet_archive_test.dart \
             test/settings/scene_accounts_test.dart \
             test/features/feature_layout_test.dart \
             test/pets/pet_pack_test.dart \
             test/pets/pet_parts_test.dart
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: inputs.update_goldens
+        with:
+          name: updated-pet-goldens
+          path: app/test/pets/goldens/*pet_settings*.png
+          retention-days: 2
