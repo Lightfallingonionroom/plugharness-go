@@ -1,4 +1,4 @@
-name: Regen stragglers (temporary)
+name: Regen three more suites
 on:
   workflow_dispatch:
 permissions:
