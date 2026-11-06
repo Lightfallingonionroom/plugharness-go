@@ -16,12 +16,31 @@ jobs:
           flutter-version: 3.47.7
           channel: stable
           cache: true
+      - name: Restore test fonts
+        id: fonts
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: ~/test-fonts
+          key: test-fonts-1:20230817+repack1-3-v2.051
       - name: Install test fonts
+        if: steps.fonts.outputs.cache-hit != 'true'
         run: |
           sudo apt-get update -q
-          sudo apt-get install -y -q fonts-noto-cjk
-          curl -fsSL --retry 3 -o /tmp/NotoColorEmoji.ttf https://raw.githubusercontent.com/googlefonts/noto-emoji/v2.051/fonts/NotoColorEmoji.ttf
-          sudo install -Dm644 /tmp/NotoColorEmoji.ttf /usr/share/fonts/noto/NotoColorEmoji.ttf
+          apt-get download fonts-noto-cjk="1:20230817+repack1-3" fonts-noto-cjk-extra="1:20230817+repack1-3"
+          for deb in fonts-noto-cjk*.deb; do dpkg-deb -x "$deb" unpacked; done
+          mkdir -p ~/test-fonts
+          cp unpacked/usr/share/fonts/opentype/noto/NotoSansCJK-{Regular,Bold,Light}.ttc ~/test-fonts/
+          curl -fsSL --retry 3 -o ~/test-fonts/NotoColorEmoji.ttf https://raw.githubusercontent.com/googlefonts/noto-emoji/v2.051/fonts/NotoColorEmoji.ttf
+      - name: Save test fonts
+        if: steps.fonts.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: ~/test-fonts
+          key: test-fonts-1:20230817+repack1-3-v2.051
+      - name: Activate test fonts
+        run: |
+          sudo install -Dm644 -t /usr/share/fonts/opentype/noto ~/test-fonts/NotoSansCJK-*.ttc
+          sudo install -Dm644 ~/test-fonts/NotoColorEmoji.ttf /usr/share/fonts/noto/NotoColorEmoji.ttf
       - working-directory: app
         run: |
           flutter pub get --enforce-lockfile
