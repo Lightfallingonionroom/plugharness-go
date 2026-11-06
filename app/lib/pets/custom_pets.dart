@@ -33,7 +33,7 @@ class CustomPetStore {
   }
 
   Future<PetPack> importImage(List<int> bytes, String name) async {
-    if (bytes.isEmpty || bytes.length > 20 * 1024 * 1024) throw const FormatException('image size');
+    if (bytes.isEmpty || bytes.length > 8 * 1024 * 1024) throw const FormatException('image size');
     final dimensions = await decodeImageFromList(Uint8List.fromList(bytes));
     final w = dimensions.width, h = dimensions.height;
     dimensions.dispose();

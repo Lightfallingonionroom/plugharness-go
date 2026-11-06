@@ -187,7 +187,12 @@ class SceneAccountsController extends Notifier<SceneAccountsState> {
   }
 
   Future<void> _apply(SceneAccount target) async {
-    if (target.host case final host?) ref.read(activeHostProvider.notifier).select(HostRef.decode(host));
+    if (target.host case final host?) {
+      ref.read(activeHostProvider.notifier).select(HostRef.decode(host));
+    }
+    // A scene owns new-chat configuration. Do not leave an old host's open
+    // chat looking as if it belonged to the newly selected scene.
+    if (ref.read(currentSessionProvider) != null) ref.read(currentSessionProvider.notifier).select(null);
     // Host selection clears the pending model; restore the scene after it.
     ref.read(pendingModelProvider.notifier).select(target.model);
     if (target.petId case final pet?) await ref.read(petPrefsProvider.notifier).setPack(pet);
