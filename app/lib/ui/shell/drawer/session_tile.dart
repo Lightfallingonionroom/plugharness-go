@@ -9,7 +9,7 @@ import '../../theme/app_icons.dart';
 import '../../theme/theme.dart';
 import '../sessions_drawer.dart' show sessionSelectionColor;
 
-/// One conversation row: 36 high, a rounded highlight inside the panel's
+/// One conversation row: 44 high, a rounded highlight inside the panel's
 /// 10 line, the title on one line. At the end, one marker at most: what it
 /// waits for (待确认 / 待回答), a breathing dot while it works, or a quiet
 /// dot when it moved on since it was last seen. In multi-select a check
@@ -48,7 +48,7 @@ class SessionTile extends StatelessWidget {
   final bool selecting;
   final bool selected;
 
-  static const height = 36.0;
+  static const height = 44.0;
 
   /// A folder's glyph (20) plus its gap (10): members' titles line up with
   /// the folder's name.
@@ -125,9 +125,9 @@ class SessionTile extends StatelessWidget {
                     title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontSize: 14,
-                      height: 1.3,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      fontSize: 14.5,
+                      height: 1.35,
                       color: highlighted ? ChatGptShellColors.of(context).primaryText : scheme.onSurface,
                       fontWeight: highlighted && !selecting ? FontWeight.w500 : FontWeight.w400,
                     ),

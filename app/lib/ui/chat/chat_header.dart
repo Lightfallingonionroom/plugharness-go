@@ -199,9 +199,12 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
                   Semantics(
                     button: widget.onTitleTap != null,
                     hint: widget.onTitleTap == null ? null : l10n.chatViewChatDetails,
-                    child: GestureDetector(
+                    child: GlassSurface(
+                      tier: GlassTier.chrome,
+                      borderRadius: BorderRadius.circular(AppShape.sm),
+                      grouped: true,
+                      style: ChatHeaderColors.of(context).flatChrome,
                       onTap: widget.onTitleTap,
-                      behavior: HitTestBehavior.opaque,
                       child: ConstrainedBox(
                         key: const ValueKey('chat-title-pill'),
                         constraints: BoxConstraints(minHeight: pillHeight),
