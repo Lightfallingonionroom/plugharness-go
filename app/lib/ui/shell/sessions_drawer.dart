@@ -45,6 +45,7 @@ import '../web/mode_home.dart';
 import '../workspace/workspace_switcher.dart';
 import '../workspace/workspaces_page.dart';
 import 'adaptive/adaptive_layout.dart' show WindowClass;
+import 'brand_mark.dart';
 import 'drawer/drawer_actions.dart';
 import 'drawer/drawer_destination.dart';
 import 'drawer/archive_notice.dart';
@@ -157,7 +158,7 @@ class SessionsDrawer extends ConsumerWidget {
                   children: [
                     // On a narrow drawer with large text the lockup gives
                     // way a little rather than the keys.
-                    const Expanded(
+                    Expanded(
                       child: Align(
                         alignment: AlignmentDirectional.centerStart,
                         child: FittedBox(
