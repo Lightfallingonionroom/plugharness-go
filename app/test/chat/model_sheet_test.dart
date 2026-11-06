@@ -215,8 +215,11 @@ void main() {
       await _openSheet(tester, _harness(testCatalog));
       expect(find.text('选择模型'), findsOneWidget);
       expect(find.text('DeepSeek'), findsOneWidget);
-      expect(find.text('V4 Pro'), findsOneWidget);
-      expect(find.text('V41 Flash'), findsOneWidget);
+      // Inside the sheet: the bar behind it also names the model now, so the
+      // count is 2 for the model that is current and 1 for the other.
+      final sheet = find.byType(Overlay).last;
+      expect(find.descendant(of: sheet, matching: find.text('V4 Pro')), findsOneWidget);
+      expect(find.descendant(of: sheet, matching: find.text('V41 Flash')), findsOneWidget);
       expect(find.text('思考深度'), findsOneWidget);
       // Only the effort selector is a segmented pill.
       expect(find.byType(SegmentedPill<String>), findsOneWidget);
