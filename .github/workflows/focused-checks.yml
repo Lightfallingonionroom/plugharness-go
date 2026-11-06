@@ -19,6 +19,7 @@ jobs:
       - working-directory: app
         run: |
           flutter pub get --enforce-lockfile
+          python3 tool/l10n_merge.py
           flutter analyze --no-pub
           flutter test --no-pub --reporter expanded \
             test/pets/custom_pets_test.dart \

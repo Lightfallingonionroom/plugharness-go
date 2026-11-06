@@ -64,12 +64,15 @@ class _CustomPetManagerState extends ConsumerState<CustomPetManager> {
   Future<void> addPack() async {
     setState(() => busy = true);
     try {
-      final files = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['zip'], withData: true);
+      final files = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['zip']);
       final file = files.singleOrNull;
       if (file == null) return;
-      final bytes = file.bytes;
-      if (bytes == null) throw const FormatException('no file bytes');
-      final pack = await ref.read(customPetStoreProvider).importArchive(bytes);
+      final bytes = BytesBuilder(copy: false);
+      await for (final chunk in file.readAsByteStream()) {
+        if (bytes.length + chunk.length > 32 * 1024 * 1024) throw const FormatException('archive size');
+        bytes.add(chunk);
+      }
+      final pack = await ref.read(customPetStoreProvider).importArchive(bytes.takeBytes());
       ref.invalidate(customPetPacksProvider);
       ref.invalidate(petPackProvider(pack.id));
       await ref.read(petPrefsProvider.notifier).setPack(pack.id);
