@@ -688,18 +688,17 @@ class _RenderComposerRows extends RenderBox
     final loose = BoxConstraints(maxWidth: width);
     final lead = layoutChild(leading, loose);
     final trail = layoutChild(trailing, loose);
-    // The footer only takes room once it has unfolded. While it is folded it is
-    // drawn at zero opacity but used to be measured all the same, so the row was
-    // a footer taller than the keys it sits beside — the empty band under the
-    // text that read as a transparent box around the input.
-    final foot = _footerLive
-        ? layoutChild(
-            footer,
-            BoxConstraints(maxWidth: math.max(0.0, width - lead.width - trail.width - 2 * _rowGap)),
-          )
-        : layoutChild(footer, const BoxConstraints.tightFor(width: 0, height: 0));
+    // The footer is always laid out — its words stay in the semantics tree, and
+    // it was laid out before it unfolded too — but while folded it does not add
+    // to the row's height. It used to: a footer taller than the keys it sits
+    // beside left an empty band under the text that read as a transparent box
+    // around the input.
+    final foot = layoutChild(
+      footer,
+      BoxConstraints(maxWidth: math.max(0.0, width - lead.width - trail.width - 2 * _rowGap)),
+    );
     final field = layoutChild(text, BoxConstraints.tightFor(width: _textWidth(width, lead.width, trail.width)));
-    final keys = math.max(math.max(lead.height, trail.height), foot.height);
+    final keys = math.max(math.max(lead.height, trail.height), _footerLive ? foot.height : 0.0);
     final height = ui.lerpDouble(math.max(field.height, keys), field.height + _rows + keys, _open.value)!;
     return constraints.constrain(Size(width, height));
   }

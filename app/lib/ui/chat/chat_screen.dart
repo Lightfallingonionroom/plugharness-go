@@ -1263,6 +1263,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
   }
 
   void _onSuggestion(ChatSuggestion suggestion) {
+    // The suggest-to-composer contract: a tap puts the prompt in the field,
+    // focused, for the person to word in their own way. ChatGPT sends on the
+    // tap instead — a behaviour change for the product owner to call, not a
+    // side effect of a layout pass (chat_shell_test and chat_screen_test both
+    // pin the fill-only behaviour).
     _input.value = TextEditingValue(
       text: suggestion.prompt,
       selection: TextSelection.collapsed(offset: suggestion.prompt.length),
