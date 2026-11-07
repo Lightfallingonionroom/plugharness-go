@@ -698,7 +698,7 @@ class _RenderComposerRows extends RenderBox
       BoxConstraints(maxWidth: math.max(0.0, width - lead.width - trail.width - 2 * _rowGap)),
     );
     final field = layoutChild(text, BoxConstraints.tightFor(width: _textWidth(width, lead.width, trail.width)));
-    final keys = math.max(math.max(lead.height, trail.height), _footerLive ? foot.height : 0.0);
+    final keys = math.max(math.max(lead.height, trail.height), foot.height);
     final height = ui.lerpDouble(math.max(field.height, keys), field.height + _rows + keys, _open.value)!;
     return constraints.constrain(Size(width, height));
   }

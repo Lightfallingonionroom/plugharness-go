@@ -1676,16 +1676,21 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                             : () => SessionDetailPage.open(context, sessionId, toggle: true),
                         // A phone has no room for it: the model is shown and picked at the
                         // composer's foot while typing.
-                        // A phone has no room for it… but ChatGPT's phone header
-                        // is exactly where the model lives: tapping the name
-                        // opens the picker, and the composer keeps only + and
-                        // send. The chip folds to its chevron when the title
-                        // needs the room.
-                        trailing: ModelChip(
-                          selection: sessionId == null ? pendingModel : chat?.model,
-                          onSelected: _modelTarget(),
-                          grouped: true,
-                        ),
+                        // A phone's header has no model chip. ChatGPT puts the model there,
+                        // but our composer's pill is the one element the tests
+                        // and the screen reader both name ("模型：…，思考深度…"),
+                        // and a second chip with the same words makes that name
+                        // ambiguous (model_sheet_test: "Finder returned more than
+                        // one element"). Making the header the only one would
+                        // mean removing the composer's, which is the pill a phone
+                        // reaches while typing — see docs/ui-refresh-status.md.
+                        trailing: narrow
+                            ? null
+                            : ModelChip(
+                                selection: sessionId == null ? pendingModel : chat?.model,
+                                onSelected: _modelTarget(),
+                                grouped: true,
+                              ),
                       ),
                     ),
                   ),
