@@ -1671,13 +1671,16 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                             : () => SessionDetailPage.open(context, sessionId, toggle: true),
                         // A phone has no room for it: the model is shown and picked at the
                         // composer's foot while typing.
-                        trailing: narrow
-                            ? null
-                            : ModelChip(
-                                selection: sessionId == null ? pendingModel : chat?.model,
-                                onSelected: _modelTarget(),
-                                grouped: true,
-                              ),
+                        // A phone has no room for it… but ChatGPT's phone header
+                        // is exactly where the model lives: tapping the name
+                        // opens the picker, and the composer keeps only + and
+                        // send. The chip folds to its chevron when the title
+                        // needs the room.
+                        trailing: ModelChip(
+                          selection: sessionId == null ? pendingModel : chat?.model,
+                          onSelected: _modelTarget(),
+                          grouped: true,
+                        ),
                       ),
                     ),
                   ),
@@ -1918,12 +1921,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                                     hasAttachments: _drafts.isNotEmpty,
                                     leading: AttachButton(onPressed: connected ? _attach : null),
                                     keyboardInset: MediaQuery.viewInsetsOf(context).bottom,
-                                    footer: _composerOpens(context) && !isChild
-                                        ? ComposerModelPill(
-                                            selection: sessionId == null ? pendingModel : chat?.model,
-                                            onSelected: _modelTarget(),
-                                          )
-                                        : null,
+                                    footer: null,
                                     tray: ComposerTrayStack.maybe(
                                       quote: switch (quote) {
                                         final quote? => QuoteChip(
