@@ -295,9 +295,9 @@ class _HomeShellState extends ConsumerState<HomeShell> with TickerProviderStateM
     final sidebar = layout.left == LeftPane.sidebar;
     // The quick panel's destinations are drawn inside the drawer now (see
     // SessionsDrawer): one column holding both the app's rooms and its
-    // conversations, the way ChatGPT lays it out. There is no second panel
-    // to pull in from the right, so nothing here turns it on.
-    const quickPanelOn = false;
+    // conversations, the way ChatGPT lays it out. QuickPanelPrefs.available
+    // is false, so there is no second panel to pull in from the right.
+    final quickPanelOn = !sidebar && ref.watch(quickPanelProvider.select((p) => p.available));
     if (!quickPanelOn && _quickPanel.value > 0) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) _quickPanel.value = 0;

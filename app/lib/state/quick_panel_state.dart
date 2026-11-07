@@ -20,7 +20,14 @@ class QuickPanelPrefs {
   final List<DrawerDestination> items;
 
   /// There is a panel to pull: the swipe is on and it would list something.
-  bool get available => swipe && items.isNotEmpty;
+  ///
+  /// Always false now. Every destination the panel listed is a row in the
+  /// drawer's own column (SessionsDrawer draws them above the conversation
+  /// list), so a second panel sliding in from the right would show the same
+  /// things twice. The stored [swipe] and [items] are still what the drawer
+  /// reads, and 设置 › 界面 still edits them — only the right-hand panel is
+  /// gone. Bringing it back means returning `swipe && items.isNotEmpty`.
+  bool get available => false;
 
   QuickPanelPrefs copyWith({bool? swipe, List<DrawerDestination>? items}) =>
       QuickPanelPrefs(swipe: swipe ?? this.swipe, items: items ?? this.items);

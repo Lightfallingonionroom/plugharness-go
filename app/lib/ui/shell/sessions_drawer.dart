@@ -260,7 +260,6 @@ class SessionsDrawer extends ConsumerWidget {
                         child: IdentityBar(
                           onHost: () => showHostSheet(context, onManage: () => onOpen(DrawerDestination.remote)),
                           onLocalDetails: () => onOpen(DrawerDestination.engine),
-                          onFeatures: () => onOpen(DrawerDestination.features),
                           onSettings: () => onOpen(DrawerDestination.settings),
                           onSettingsHold: () => onOpen(DrawerDestination.settingsSearch),
                         ),
@@ -357,7 +356,9 @@ class _RenderReportHeight extends RenderProxyBox {
   }
 }
 
-/// "新对话": the drawer's one solid primary element, a 36dp pill.
+/// "新对话": the drawer's one solid primary element. ChatGPT draws it as a
+/// 36dp circle holding just the compose glyph; the words live in the tooltip
+/// and the semantics label, so the brand row keeps its room.
 class NewChatButton extends StatelessWidget {
   const NewChatButton({super.key, required this.onTap});
 
@@ -367,39 +368,24 @@ class NewChatButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final shell = ChatGptShellColors.of(context);
-    return Semantics(
-      button: true,
-      label: l10n.commonNewChat,
-      onTap: onTap,
-      excludeSemantics: true,
-      child: Pressable(
-        child: Material(
-          color: shell.primaryAction,
-          shape: const StadiumBorder(),
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            onTap: onTap,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 36),
-              child: Padding(
-                // The glyph carries ~3dp of its own air on the left: 12 + 3
-                // reads as the 15 on the right.
-                padding: const EdgeInsets.fromLTRB(12, 0, 15, 0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(AppIcons.newChat, size: 20, color: shell.onPrimaryAction),
-                    const SizedBox(width: 4),
-                    Text(
-                      l10n.commonNewChat,
-                      maxLines: 1,
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: shell.onPrimaryAction,
-                        fontWeight: FontWeight.w600,
-                        height: 1.2,
-                      ),
-                    ),
-                  ],
+    return Tooltip(
+      message: l10n.commonNewChat,
+      child: Semantics(
+        button: true,
+        label: l10n.commonNewChat,
+        onTap: onTap,
+        excludeSemantics: true,
+        child: Pressable(
+          child: Material(
+            color: shell.primaryAction,
+            shape: const CircleBorder(),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: onTap,
+              child: SizedBox.square(
+                dimension: 36,
+                child: Center(
+                  child: Icon(AppIcons.newChat, size: 19, color: shell.onPrimaryAction),
                 ),
               ),
             ),
@@ -954,25 +940,18 @@ class _RemoteEmptyState extends ConsumerWidget {
 }
 
 /// The drawer's footer: the host icon opens its details; the name and dropdown
-/// switch hosts. 全部功能 and 设置 follow as two equal round buttons.
+/// switch hosts. 设置 follows as a round key.
 class IdentityBar extends ConsumerWidget {
   const IdentityBar({
     super.key,
     required this.onHost,
-    required this.onFeatures,
     required this.onSettings,
     this.onSettingsHold,
     this.onLocalDetails,
   });
-
   final VoidCallback onHost;
-
   /// Local hosts have engine details, not a remote network path.
   final VoidCallback? onLocalDetails;
-
-  /// 全部功能: what there is to do now. (网页版 is in 全部功能, in 设置 ›
-  /// 界面 and on the brand row's switch.)
-  final VoidCallback onFeatures;
   final VoidCallback onSettings;
 
   /// ⚙ held down: straight to settings search.
@@ -1089,8 +1068,8 @@ class IdentityBar extends ConsumerWidget {
             ),
           ),
           const SizedBox(width: 8),
-          _RoundButton(icon: AppIcons.allFeatures, tooltip: l10n.hubSettingsAllFeatures, onTap: onFeatures),
-          const SizedBox(width: 8),
+          // No 全部功能 key: every destination it opened is a row in the
+          // column above now, where ChatGPT keeps them.
           _RoundButton(
             icon: AppIcons.settings,
             tooltip: l10n.commonSettings,
