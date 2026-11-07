@@ -17843,25 +17843,25 @@ class L10nZh extends L10n {
   String get viewUiMultiple => '可多选';
 
   @override
-  String get viewSuggestWorkspace => '看看工作区有什么';
+  String get viewSuggestWorkspace => '看看工作区';
 
   @override
   String get viewSuggestWorkspacePrompt => '看看工作区里现在有哪些文件和项目，简单介绍一下。';
 
   @override
-  String get viewSuggestWordCount => '写个词频统计脚本';
+  String get viewSuggestWordCount => '词频统计脚本';
 
   @override
   String get viewSuggestWordCountPrompt => '写一个 Python 脚本：统计一个文本文件里出现最多的 20 个词，并运行一次给我看结果。';
 
   @override
-  String get viewSuggestNode => '新建 Node.js 项目';
+  String get viewSuggestNode => '新建 Node 项目';
 
   @override
   String get viewSuggestNodePrompt => '在工作区新建一个 Node.js 项目，配好 TypeScript 和一个最小的单元测试。';
 
   @override
-  String get viewSuggestGit => 'rebase 还是 merge';
+  String get viewSuggestGit => 'rebase 或 merge';
 
   @override
   String get viewSuggestGitPrompt => '用一个具体例子解释 git rebase 和 git merge 的区别，各自什么时候用。';
