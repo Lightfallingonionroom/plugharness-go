@@ -32543,49 +32543,49 @@ abstract class L10n {
   /// No description provided for @viewSuggestWorkspace.
   ///
   /// In zh, this message translates to:
-  /// **'看看工作区有什么'**
+  /// **'看看工作区'**
   String get viewSuggestWorkspace;
 
   /// No description provided for @viewSuggestWorkspacePrompt.
   ///
   /// In zh, this message translates to:
-  /// **'看看工作区里现在有哪些文件和项目，简单介绍一下。'**
+  /// **'看看工作区'**
   String get viewSuggestWorkspacePrompt;
 
   /// No description provided for @viewSuggestWordCount.
   ///
   /// In zh, this message translates to:
-  /// **'写个词频统计脚本'**
+  /// **'词频统计脚本'**
   String get viewSuggestWordCount;
 
   /// No description provided for @viewSuggestWordCountPrompt.
   ///
   /// In zh, this message translates to:
-  /// **'写一个 Python 脚本：统计一个文本文件里出现最多的 20 个词，并运行一次给我看结果。'**
+  /// **'词频统计脚本'**
   String get viewSuggestWordCountPrompt;
 
   /// No description provided for @viewSuggestNode.
   ///
   /// In zh, this message translates to:
-  /// **'新建 Node.js 项目'**
+  /// **'新建 Node 项目'**
   String get viewSuggestNode;
 
   /// No description provided for @viewSuggestNodePrompt.
   ///
   /// In zh, this message translates to:
-  /// **'在工作区新建一个 Node.js 项目，配好 TypeScript 和一个最小的单元测试。'**
+  /// **'新建 Node 项目'**
   String get viewSuggestNodePrompt;
 
   /// No description provided for @viewSuggestGit.
   ///
   /// In zh, this message translates to:
-  /// **'rebase 还是 merge'**
+  /// **'rebase 或 merge'**
   String get viewSuggestGit;
 
   /// No description provided for @viewSuggestGitPrompt.
   ///
   /// In zh, this message translates to:
-  /// **'用一个具体例子解释 git rebase 和 git merge 的区别，各自什么时候用。'**
+  /// **'rebase 或 merge'**
   String get viewSuggestGitPrompt;
 
   /// No description provided for @viewGreetingMorning.
