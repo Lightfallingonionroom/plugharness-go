@@ -87,7 +87,7 @@ class UserBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final shell = ChatGptShellColors.of(context);
-    final style = AppType.chatBody(context, color: shell.primaryText);
+    final style = AppType.chatBody(context, color: shell.onUserBubble);
     // A generation request (generation mode's parameter header on the first
     // line): the description is the bubble, the parameters a small line under
     // the bubble; the header itself is for the host's plugin.
@@ -120,7 +120,7 @@ class UserBubble extends StatelessWidget {
         onLongPress: () => _menu(context),
         child: DecoratedBox(
           decoration: ShapeDecoration(
-            color: shell.isDark ? shell.rowSelected : shell.rowHover,
+            color: shell.userBubble,
             shape: const _UserBubbleShape(),
           ),
           child: Padding(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10), child: content),

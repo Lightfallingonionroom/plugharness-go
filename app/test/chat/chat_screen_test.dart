@@ -390,8 +390,9 @@ void main() {
     testWidgets('greets and fills the composer from a suggestion', (tester) async {
       await pumpScreen(tester, ChatHarness());
       expect(find.text('有什么可以帮你？'), findsOneWidget);
-      // The bar says 「新对话」; the model is picked at the composer's foot.
-      expect(find.descendant(of: find.byType(ChatHeader), matching: find.text('新对话')), findsOneWidget);
+      // The bar shows the model, not a page title (ChatGPT's layout). The
+      // header label is a Text.rich, so the sheet's find.text lookups stay unambiguous.
+      expect(find.byKey(const ValueKey('chat-header-model-name')), findsOneWidget);
 
       await tester.tap(find.text(defaultSuggestions.first.label));
       await tester.pump();

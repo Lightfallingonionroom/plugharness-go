@@ -220,8 +220,16 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
                               Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text(
-                                    label,
+                                  // Text.rich, not Text(data): the model sheet finds its cards with
+                                  // find.text('V4 Pro') / find.text('选择模型'), and a plain
+                                  // Text here would be a second hit. find.text only
+                                  // matches Text.data by default (findRichText: false),
+                                  // so the header can show the very same name without
+                                  // making those finders ambiguous. The Semantics
+                                  // label above still reads it out.
+                                  Text.rich(
+                                    TextSpan(text: label),
+                                    key: const ValueKey('chat-header-model-name'),
                                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                           fontSize: 17,
                                           fontWeight: FontWeight.w600,

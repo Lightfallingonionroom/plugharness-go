@@ -182,6 +182,9 @@ class SessionsDrawer extends ConsumerWidget {
         onDetails: () => onOpen(DrawerDestination.engine),
       ),
       SessionSearchBar(onClose: onClose),
+      // ChatGPT splits its one column into labelled sections. Ours: the
+      // app's rooms first, then the conversations themselves.
+      _sectionLabel(context, l10n.searchFeatures),
       // The quick panel's destinations live here now, where ChatGPT keeps
       // them: one column that holds both the app's rooms and its
       // conversations, instead of a second panel sliding in from the right.
@@ -197,6 +200,18 @@ class SessionsDrawer extends ConsumerWidget {
             ],
           ),
         ),
+      // Rooms ChatGPT has but we route through pages we already own.
+      for (final destination in const [
+        DrawerDestination.web,
+        DrawerDestination.remote,
+        DrawerDestination.features,
+      ])
+        if (!quickItems.contains(destination))
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: QuickPanelRow(destination: destination, onTap: () => onOpen(destination)),
+          ),
+      _sectionLabel(context, l10n.chatChat),
       // The workspace switcher (once the host's workspace list has
       // arrived) and the list's options, then the status filters.
       SmoothSize(
@@ -244,6 +259,12 @@ class SessionsDrawer extends ConsumerWidget {
               ...top,
               Expanded(child: list),
             ],
+            // ChatGPT's bottom action: one wide, filled pill that starts a chat.
+            // The host/status row stays below it as account chrome.
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 6, 10, 0),
+              child: _NewChatPill(onTap: newChat, label: l10n.commonNewChat),
+            ),
             // The action bar lies exactly over the identity bar, which
             // keeps its size while hidden: same height at any text size.
             _ReportHeight(
@@ -324,6 +345,67 @@ class SessionsDrawer extends ConsumerWidget {
     );
   }
 }
+
+/// ChatGPT's bottom-of-drawer action: a wide filled pill with the compose
+/// glyph and a label, rather than the small round key in the brand row.
+class _NewChatPill extends StatelessWidget {
+  const _NewChatPill({required this.onTap, required this.label});
+
+  final VoidCallback onTap;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final shell = ChatGptShellColors.of(context);
+    return Semantics(
+      button: true,
+      label: label,
+      excludeSemantics: true,
+      child: Material(
+        color: shell.primaryAction,
+        shape: const StadiumBorder(),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 44),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(AppIcons.newChat, size: 19, color: shell.onPrimaryAction),
+                  const SizedBox(width: 8),
+                  Text(
+                    label,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          color: shell.onPrimaryAction,
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A section heading in the one-column drawer, the way ChatGPT labels
+/// its pinned rooms and its conversation list: small, quiet, left aligned.
+Widget _sectionLabel(BuildContext context, String text) => Padding(
+      padding: const EdgeInsets.fromLTRB(20, 10, 20, 2),
+      child: Text(
+        text,
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: ChatGptShellColors.of(context).tertiaryText,
+            ),
+      ),
+    );
 
 /// Tells [height] the child's height after each layout that changes it (on
 /// the next frame: nothing above is rebuilt while laying out).

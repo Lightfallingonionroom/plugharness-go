@@ -28,6 +28,8 @@ class ChatGptShellColors extends ThemeExtension<ChatGptShellColors> {
     required this.tertiaryText,
     required this.primaryAction,
     required this.onPrimaryAction,
+    required this.userBubble,
+    required this.onUserBubble,
   });
 
   /// Behind the conversation.
@@ -57,6 +59,9 @@ class ChatGptShellColors extends ThemeExtension<ChatGptShellColors> {
   /// 新对话: the one filled element in the shell.
   final Color primaryAction;
   final Color onPrimaryAction;
+  /// The sent message: a filled, right-aligned bubble like ChatGPT's.
+  final Color userBubble;
+  final Color onUserBubble;
 
   /// True when the shell paints light-on-dark.
   bool get isDark => page.computeLuminance() < 0.5;
@@ -94,7 +99,9 @@ class ChatGptShellColors extends ThemeExtension<ChatGptShellColors> {
   );
 
   /// Light: page near-white; the sidebar is the same family one step down.
-  /// The action uses the app accent's light seed, not ChatGPT's own blue.
+  /// The action and the sent bubble use ChatGPT's blue, not the app accent:
+  /// the shell is a fixed surface, so a lavender/teal theme cannot tint it.
+  /// [accent] is kept for the caller's convenience and deliberately unused.
   factory ChatGptShellColors.light(AppAccent accent) => ChatGptShellColors(
     page: const Color(0xFFFCFCFC),
     sidebar: const Color(0xFFF4F4F4),
@@ -106,8 +113,10 @@ class ChatGptShellColors extends ThemeExtension<ChatGptShellColors> {
     primaryText: const Color(0xFF0D0D0D),
     secondaryText: const Color(0xFF5D5D5D),
     tertiaryText: const Color(0xFF8F8F8F),
-    primaryAction: accent.seed,
-    onPrimaryAction: accent.onSeed,
+    primaryAction: const Color(0xFF2F6FED),
+    onPrimaryAction: const Color(0xFFFFFFFF),
+    userBubble: const Color(0xFF2F6FED),
+    onUserBubble: const Color(0xFFFFFFFF),
   );
 
   /// Dark: page #212121, sidebar #171717, composer #303030 — three steps
@@ -123,8 +132,10 @@ class ChatGptShellColors extends ThemeExtension<ChatGptShellColors> {
     primaryText: const Color(0xFFECECEC),
     secondaryText: const Color(0xFFB4B4B4),
     tertiaryText: const Color(0xFF8B8B8B),
-    primaryAction: accent.seedDark,
-    onPrimaryAction: accent.onSeedDark,
+    primaryAction: const Color(0xFF2F6FED),
+    onPrimaryAction: const Color(0xFFFFFFFF),
+    userBubble: const Color(0xFF2F6FED),
+    onUserBubble: const Color(0xFFFFFFFF),
   );
 
   @override
@@ -141,6 +152,8 @@ class ChatGptShellColors extends ThemeExtension<ChatGptShellColors> {
     Color? tertiaryText,
     Color? primaryAction,
     Color? onPrimaryAction,
+    Color? userBubble,
+    Color? onUserBubble,
   }) => ChatGptShellColors(
     page: page ?? this.page,
     sidebar: sidebar ?? this.sidebar,
@@ -154,6 +167,8 @@ class ChatGptShellColors extends ThemeExtension<ChatGptShellColors> {
     tertiaryText: tertiaryText ?? this.tertiaryText,
     primaryAction: primaryAction ?? this.primaryAction,
     onPrimaryAction: onPrimaryAction ?? this.onPrimaryAction,
+    userBubble: userBubble ?? this.userBubble,
+    onUserBubble: onUserBubble ?? this.onUserBubble,
   );
 
   @override
@@ -173,6 +188,8 @@ class ChatGptShellColors extends ThemeExtension<ChatGptShellColors> {
       tertiaryText: mix(tertiaryText, other.tertiaryText),
       primaryAction: mix(primaryAction, other.primaryAction),
       onPrimaryAction: mix(onPrimaryAction, other.onPrimaryAction),
+      userBubble: mix(userBubble, other.userBubble),
+      onUserBubble: mix(onUserBubble, other.onUserBubble),
     );
   }
 }

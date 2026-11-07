@@ -1396,6 +1396,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
             sessionsProvider.select((async) => async.value?.where((s) => s.sessionId == sessionId).firstOrNull?.title),
           );
     final pendingModel = ref.watch(pendingModelProvider);
+    final modelCatalog = ref.watch(currentModelCatalogProvider);
+    // ChatGPT's centre line is the model, not the page title. Keep the sheet
+    // free of a duplicate: the sheet finds models by text, so the header's
+    // label carries its own key and the sheet's cards keep theirs.
+    final centerModel = modelShortName(
+      sessionId == null ? pendingModel : chat?.model,
+      modelCatalog,
+    );
     final newFolder = sessionId == null
         ? ref.watch(drawerViewProvider).byId(ref.watch(pendingSessionFolderProvider))
         : null;
@@ -1676,7 +1684,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                             : () => SessionDetailPage.open(context, sessionId, toggle: true),
                         // A phone has no room for it: the model is shown and picked at the
                         // composer's foot while typing.
-                        centerLabel: sessionId == null && narrow ? title : null,
+                        centerLabel: sessionId == null && narrow ? centerModel : null,
                         onCenterTap: _showModelSheet,
                         // A phone's header has no model chip. ChatGPT puts the model there,
                         // but our composer's pill is the one element the tests
