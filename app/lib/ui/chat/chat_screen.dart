@@ -1676,6 +1676,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                             : () => SessionDetailPage.open(context, sessionId, toggle: true),
                         // A phone has no room for it: the model is shown and picked at the
                         // composer's foot while typing.
+                        centerLabel: sessionId == null && narrow ? title : null,
+                        onCenterTap: _showModelSheet,
                         // A phone's header has no model chip. ChatGPT puts the model there,
                         // but our composer's pill is the one element the tests
                         // and the screen reader both name ("模型：…，思考深度…"),

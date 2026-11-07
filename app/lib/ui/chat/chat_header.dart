@@ -60,10 +60,20 @@ class ChatHeader extends ConsumerStatefulWidget {
     this.onTitleTap,
     this.onNewChat,
     this.scrolledUnder,
+    this.centerLabel,
+    this.onCenterTap,
   });
 
   final String title;
   final HeaderStatus status;
+
+  /// ChatGPT-style centred model selector on the new-chat screen. When set,
+  /// the bar is rebuilt as three zones (menu | centred dropdown | new chat)
+  /// instead of the left-aligned title pill. The label is deliberately not a
+  /// model name: the sheet that opens lists those names, and two copies of the
+  /// same Text would break every `find.text` in model_sheet_test.
+  final String? centerLabel;
+  final Future<void> Function()? onCenterTap;
 
   /// What follows the status under the title (a phone: the workspace). Shortens first.
   final String? detail;
@@ -120,6 +130,147 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
     super.dispose();
   }
 
+  bool _centerPressed = false;
+  bool _centerOpen = false;
+
+  /// ChatGPT's conversation header: three zones, the tappable model dropdown
+  /// dead centre. Built only for the new-chat screen; every other conversation
+  /// keeps the title pill with its details, schedule clock and workspace line.
+  Widget _centeredBar(
+    BuildContext context, {
+    required String label,
+    required double top,
+    required double barHeight,
+  }) {
+    final l10n = context.l10n;
+    final colors = ChatHeaderColors.of(context);
+    final standard = AppMotion.of(context, AppMotion.standard);
+    final quick = AppMotion.of(context, AppMotion.quick);
+
+    Widget roundKey({
+      required Key? key,
+      required IconData icon,
+      required String tooltip,
+      required VoidCallback? onTap,
+    }) =>
+        SizedBox.square(
+          key: key,
+          dimension: 44,
+          child: GlassSurface(
+            tier: GlassTier.chrome,
+            circle: true,
+            grouped: true,
+            style: colors.flatChrome,
+            onTap: onTap,
+            child: Tooltip(
+              message: tooltip,
+              child: Center(child: Icon(icon, size: 22, color: colors.primaryText)),
+            ),
+          ),
+        );
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(12, top, 12, 0),
+      child: BackdropGroup(
+        child: SizedBox(
+          key: const ValueKey('chat-header-bar'),
+          height: barHeight,
+          child: Stack(
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: roundKey(
+                  key: const ValueKey('chat-menu'),
+                  icon: AppIcons.menu,
+                  tooltip: l10n.chatChats,
+                  onTap: widget.onOpenDrawer,
+                ),
+              ),
+              // Stack + Center, not a three-cell Row: the dropdown is centred
+              // on the screen, not on the gap between two unequal keys.
+              Center(
+                child: TweenAnimationBuilder<double>(
+                  key: const ValueKey('chat-model-select'),
+                  tween: Tween<double>(begin: 0, end: 1),
+                  duration: standard,
+                  curve: AppMotion.std,
+                  builder: (context, t, child) => Opacity(
+                    opacity: t,
+                    child: Transform.translate(offset: Offset(0, (1 - t) * 8), child: child),
+                  ),
+                  child: Semantics(
+                    button: true,
+                    label: label,
+                    excludeSemantics: true,
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTapDown: (_) => setState(() => _centerPressed = true),
+                      onTapUp: (_) => setState(() => _centerPressed = false),
+                      onTapCancel: () => setState(() => _centerPressed = false),
+                      onTap: _openCenter,
+                      child: AnimatedScale(
+                        scale: _centerPressed ? 0.94 : 1,
+                        duration: quick,
+                        curve: AppMotion.std,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                label,
+                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w600,
+                                      color: colors.primaryText,
+                                    ),
+                              ),
+                              const SizedBox(width: 6),
+                              AnimatedRotation(
+                                turns: _centerOpen ? 0.5 : 0,
+                                duration: quick,
+                                curve: AppMotion.std,
+                                child: Icon(AppIcons.dropdown, size: 18, color: colors.tertiaryText),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: widget.onNewChat == null
+                    // Chat GPT's right-hand key has no action on the new-chat
+                    // screen. Keep an equal empty cell so the middle stays
+                    // optically centred; it must not answer `chat-new-chat`,
+                    // which the new-chat screen deliberately does not show.
+                    ? const SizedBox.square(key: ValueKey('chat-header-balance'), dimension: 44)
+                    : roundKey(
+                        key: const ValueKey('chat-new-chat'),
+                        icon: AppIcons.newChat,
+                        tooltip: l10n.commonNewChat,
+                        onTap: widget.onNewChat,
+                      ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openCenter() async {
+    setState(() => _centerOpen = true);
+    try {
+      await widget.onCenterTap?.call();
+    } finally {
+      if (mounted) setState(() => _centerOpen = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -128,6 +279,13 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
     final top = MediaQuery.paddingOf(context).top;
     final barHeight = ChatHeader.barHeightOf(context);
     final pillHeight = ChatHeader.pillHeightOf(context);
+    // The new-chat screen uses ChatGPT's three-zone bar: the model dropdown
+    // sits in the middle and is the thing you tap. Every other conversation
+    // keeps the title pill below (its details, schedule clock and workspace
+    // line all live there).
+    if (widget.centerLabel case final centerLabel?) {
+      return _centeredBar(context, label: centerLabel, top: top, barHeight: barHeight);
+    }
     final titleStyle = theme.textTheme.titleMedium?.copyWith(
       fontSize: 15,
       height: 1.3,
