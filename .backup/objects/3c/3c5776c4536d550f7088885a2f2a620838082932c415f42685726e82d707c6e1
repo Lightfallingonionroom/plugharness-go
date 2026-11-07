@@ -1,0 +1,72 @@
+name: Build PlugHarness Go APK
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  apk:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      FLUTTER_VERSION: 3.47.7
+      NODE_VERSION: 24.22.1
+      GRADLE_VERSION: 9.3.1
+      DSH_MAVEN_MIRRORS: 0
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Cache runtime inputs
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: runtime/.cache
+          key: runtime-inputs-r15-${{ runner.os }}
+      - name: Build the arm64 Linux runtime
+        run: runtime/build-runtime.sh arm64-v8a
+      - name: Reclaim runtime build workspace
+        run: |
+          echo 'Disk before cleanup:'
+          df -h .
+          du -sh runtime/out runtime/.work runtime/.cache 2>/dev/null || true
+          # runtime/out is the only runtime directory consumed by Gradle.
+          # The extracted rootfs, npm work tree and verified download cache are
+          # no longer needed after runtime/build-runtime.sh finishes.
+          rm -rf runtime/.work runtime/.cache
+          echo 'Disk after cleanup:'
+          df -h .
+      - name: Flutter plugins and Android SDK paths
+        working-directory: app
+        run: |
+          flutter pub get --enforce-lockfile
+          printf 'sdk.dir=%s\nflutter.sdk=%s\n' "$ANDROID_HOME" "$FLUTTER_ROOT" > android/local.properties
+      - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c
+        with:
+          gradle-version: ${{ env.GRADLE_VERSION }}
+      - name: Build release APK
+        run: tooling/build-apk.sh --release -f arm64
+      - name: Verify application identity
+        run: |
+          apk=app/build/app/outputs/flutter-apk/app-arm64-release.apk
+          ls -lh "$apk"
+          AAPT2=$(ls -1d "$ANDROID_HOME"/build-tools/*/aapt2 2>/dev/null | sort -V | tail -1)
+          echo "aapt2=$AAPT2"
+          "$AAPT2" dump badging "$apk" | head -3
+          "$AAPT2" dump badging "$apk" | grep -F "package: name='io.github.lightfallingonionroom.dsh_app'"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: always()
+        with:
+          name: plugharness-go-arm64-apk
+          path: app/build/app/outputs/flutter-apk/app-arm64-release.apk
+          retention-days: 7

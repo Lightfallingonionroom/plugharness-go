@@ -1,0 +1,260 @@
+import 'package:flutter/material.dart';
+
+import '../../l10n/l10n.dart';
+import '../common/expand_reveal.dart';
+import '../common/fade_in.dart';
+import '../theme/app_icons.dart';
+import '../theme/theme.dart';
+import 'empty_actions.dart';
+
+/// 一条建议:一枚线性小图标 + 一行字,点了把 [prompt] 填进输入条。
+class ChatSuggestion {
+  const ChatSuggestion(this.icon, String label, String prompt) : _label = label, _prompt = prompt, _defaultIndex = null;
+
+  const ChatSuggestion._default(this.icon, this._defaultIndex) : _label = null, _prompt = null;
+
+  final IconData icon;
+  final String? _label;
+  final String? _prompt;
+  final int? _defaultIndex;
+
+  String get label =>
+      _label ??
+      switch (_defaultIndex) {
+        0 => appL10n.viewSuggestWorkspace,
+        1 => appL10n.viewSuggestWordCount,
+        2 => appL10n.viewSuggestNode,
+        _ => appL10n.viewSuggestGit,
+      };
+  String get prompt =>
+      _prompt ??
+      switch (_defaultIndex) {
+        0 => appL10n.viewSuggestWorkspacePrompt,
+        1 => appL10n.viewSuggestWordCountPrompt,
+        2 => appL10n.viewSuggestNodePrompt,
+        _ => appL10n.viewSuggestGitPrompt,
+      };
+}
+
+const defaultSuggestions = <ChatSuggestion>[
+  ChatSuggestion._default(AppIcons.folderOpen, 0),
+  ChatSuggestion._default(AppIcons.code, 1),
+  ChatSuggestion._default(AppIcons.terminal, 2),
+  ChatSuggestion._default(AppIcons.tip, 3),
+];
+
+/// 当前时间的来源(测试里固定它,让问候语可复现)。
+@visibleForTesting
+DateTime Function() chatClock = DateTime.now;
+
+/// 问候语:按本地时间。
+String greetingFor(DateTime now) {
+  final h = now.hour;
+  if (h >= 5 && h < 11) return appL10n.viewGreetingMorning;
+  if (h >= 11 && h < 13) return appL10n.viewGreetingNoon;
+  if (h >= 13 && h < 18) return appL10n.viewGreetingAfternoon;
+  if (h >= 18 && h < 23) return appL10n.viewGreetingEvening;
+  return appL10n.viewGreetingNight;
+}
+
+/// 新对话的空状态:ChatGPT 式**一句大标题居中偏上**,下面是一条短副标题和
+/// 少量起点。没有插画、没有鲸尾:输入框才是这一屏唯一的主角。
+///
+/// ```
+///                你想做点什么？
+///
+///          ( ▢ 在「dsh-app」中 ⌄ )
+///
+///   ( ▢ 看看工作区 ) ( </> 词频统计脚本 )
+///   ( >_ 新建 Node 项目 ) ( ◌ rebase 或 merge )
+/// ```
+///
+/// 左右与顶栏、输入条一样离屏幕 12,宽屏时与输入条同宽居中;第一次出现时
+/// 由上到下依次淡入。连不上引擎时建议收起,只留「重新连接」。
+class ChatEmptyState extends StatelessWidget {
+  const ChatEmptyState({
+    super.key,
+    required this.connected,
+    required this.onSuggestion,
+    this.connecting = false,
+    this.starting = false,
+    this.tidying = false,
+    this.onReconnect,
+    this.idle,
+    this.now,
+    this.suggestions = defaultSuggestions,
+    this.workspace,
+    this.onWorkspace,
+    this.folderPicker,
+  });
+
+  final bool connected;
+  final bool connecting;
+
+  /// The on-device engine is booting.
+  final bool starting;
+
+  /// Booting includes the one-time tidy of plugin files (RuntimeStatus.tidyingFiles).
+  final bool tidying;
+
+  /// The engine could not be reached: the one primary pill, 「重新连接」,
+  /// where the workspace chip goes; the suggestions fold away.
+  final VoidCallback? onReconnect;
+
+  /// 本机 is down and won't come up by itself (not installed, or stopped
+  /// with 打开 App 时自动启动 off): the subtitle says so and the one primary
+  /// pill fixes it (「安装运行环境」 / 「启动引擎」).
+  final ChatIdleAction? idle;
+  final ValueChanged<ChatSuggestion> onSuggestion;
+
+  /// The workspace the new conversation starts in (null: the default).
+  final String? workspace;
+
+  /// Switches [workspace].
+  final VoidCallback? onWorkspace;
+
+  /// Optional drawer-folder choice for the new conversation.
+  final Widget? folderPicker;
+
+  /// 测试注入;默认取当前时间。
+  final DateTime? now;
+  final List<ChatSuggestion> suggestions;
+
+  /// Same side margin and width cap as the header pills and the composer.
+  static const sideMargin = AppSpace.floatInset;
+  static const maxWidth = AppSpace.floatingWidth;
+
+  /// Subtitle → the pill or chip under it.
+  static const slotGap = 12.0;
+
+  /// The pill or chip → the suggestions.
+  static const suggestionsGap = 32.0;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+    final retry = connected ? null : onReconnect;
+    final idle = connected || retry != null ? null : this.idle;
+    // Connected, the title is the whole line: a subtitle here only repeated
+    // it ("有什么可以帮你？" over "今天想做点什么？"). Everything else still says
+    // what is going on, and why the composer will not send.
+    final subtitle = connected
+        ? null
+        : retry != null
+        ? l10n.commonEngineUnreachable
+        : idle != null
+        ? idle.message
+        : starting
+        ? (tidying ? l10n.phoneEngineTidyingFilesEllipsis : l10n.viewEmptyStarting)
+        : connecting
+        ? l10n.viewEmptyConnecting
+        : l10n.viewEmptyDisconnected;
+
+    // Fixed slots, not a running counter: the subtitle comes and goes with
+    // the connection, and a counter would shift every later fade-in with it.
+    var order = 0;
+    Widget enter(Widget child) => FadeSlideIn(index: order++, child: child);
+    final titleFade = enter(
+      Text(
+        l10n.viewEmptyTitle,
+        textAlign: TextAlign.center,
+        style: theme.textTheme.headlineMedium?.copyWith(
+          fontSize: 28,
+          height: 1.25,
+          fontWeight: FontWeight.w500,
+          color: ChatGptShellColors.of(context).primaryText,
+        ),
+      ),
+    );
+    final subtitleFade = subtitle == null
+        ? null
+        : enter(
+            AnimatedSwitcher(
+              duration: AppMotion.of(context, AppMotion.quick),
+              child: Text(
+                subtitle,
+                key: ValueKey(subtitle),
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: ChatGptShellColors.of(context).secondaryText,
+                ),
+              ),
+            ),
+          );
+
+    // One slot under the subtitle: the primary pill or the workspace chip,
+    // the same height, swapped in place.
+    final Widget? slot = retry != null
+        ? EmptyPrimaryPill(key: const ValueKey('reconnect'), label: l10n.viewEmptyReconnect, onTap: retry)
+        : idle != null
+        ? EmptyPrimaryPill(key: ValueKey(idle.label), label: idle.label, onTap: idle.onTap)
+        : workspace != null && connected
+        ? ConstrainedBox(
+            key: const ValueKey('workspace'),
+            constraints: const BoxConstraints(maxWidth: 280),
+            child: QuietChip(
+              icon: AppIcons.workspace,
+              label: l10n.viewEmptyWorkspace(workspace!),
+              trailing: onWorkspace == null ? null : AppIcons.expand,
+              onTap: onWorkspace,
+              onTapHint: l10n.viewEmptySwitchWorkspace,
+            ),
+          )
+        : null;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: sideMargin),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: maxWidth),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // ChatGPT's new-chat screen is a single question. No mascot, no
+              // greeting by the hour: the composer below is the one thing to
+              // look at, and a fixed line does not go stale at 3 a.m.
+              titleFade,
+              if (subtitleFade != null) ...[const SizedBox(height: 8), subtitleFade],
+              if (slot != null) ...[
+                const SizedBox(height: slotGap),
+                enter(
+                  Center(
+                    child: AnimatedSwitcher(duration: AppMotion.of(context, AppMotion.quick), child: slot),
+                  ),
+                ),
+              ],
+              if (connected && folderPicker != null) ...[
+                const SizedBox(height: 8),
+                enter(Center(child: folderPicker!)),
+              ],
+              if (suggestions.isNotEmpty)
+                ExpandReveal(
+                  open: retry == null && idle == null,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: suggestionsGap),
+                    child: SuggestionChips(
+                      suggestions: suggestions,
+                      enabled: connected,
+                      onSuggestion: onSuggestion,
+                      firstIndex: order,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// [ChatEmptyState.idle]: what the subtitle says and the pill under it.
+class ChatIdleAction {
+  const ChatIdleAction({required this.message, required this.label, required this.onTap});
+
+  final String message;
+  final String label;
+  final VoidCallback onTap;
+}

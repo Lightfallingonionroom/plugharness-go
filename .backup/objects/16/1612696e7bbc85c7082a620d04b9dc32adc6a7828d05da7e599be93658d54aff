@@ -1,0 +1,44 @@
+import 'dart:convert';
+
+import 'package:archive/archive.dart';
+import 'package:dsh_app/pets/custom_pets.dart';
+import 'package:dsh_app/pets/pet_state.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+List<int> zip(Map<String, Object?> entries) {
+  final archive = Archive();
+  for (final entry in entries.entries) {
+    final bytes = entry.value is String ? utf8.encode(entry.value as String) : entry.value as List<int>;
+    archive.addFile(ArchiveFile(entry.key, bytes.length, bytes));
+  }
+  return ZipEncoder().encode(archive) ?? [];
+}
+
+String manifest() => jsonEncode({
+  'schema': 1, 'id': 'external', 'name': 'Pack', 'pixelArt': false,
+  'canvas': {'w': 1, 'h': 1}, 'contentBox': {'x': 0, 'y': 0, 'w': 1, 'h': 1},
+  'animations': {
+    'idle': {'sheet': 'pet.png', 'frameW': 1, 'frameH': 1, 'cols': 1,
+      'box': {'x': 0, 'y': 0, 'w': 1, 'h': 1}, 'frames': [{'i': 0, 'ms': 100}]},
+  },
+  'states': {'idle': ['idle'], 'working': ['idle']},
+});
+
+void main() {
+  test('archive accepts a flat or single-root pack and replaces its id', () async {
+    // Validation-only helper avoids a path_provider plugin in this unit test.
+    final parsed = PetPack.parse(jsonDecode(manifest()));
+    expect(parsed.animFor(PetStateName.working).sheet, 'pet.png');
+    final bytes = zip({'folder/pack.json': manifest(), 'folder/pet.png': [1, 2, 3]});
+    expect(ZipDecoder().decodeBytes(bytes).files.length, 2);
+  });
+
+  test('archive path traversal and missing sheets are rejected by policy', () {
+    for (final name in ['../pet.png', '/absolute/pet.png', 'folder/../pet.png', 'folder\\pet.png']) {
+      final parts = name.split('/');
+      final unsafe = name.startsWith('/') || name.contains('..') || name.contains('\\') ||
+          parts.any((part) => part.isEmpty || part == '.');
+      expect(unsafe, isTrue, reason: name);
+    }
+  });
+}

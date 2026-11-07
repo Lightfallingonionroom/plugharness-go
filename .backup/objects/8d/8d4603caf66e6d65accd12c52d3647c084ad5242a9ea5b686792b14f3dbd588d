@@ -1,0 +1,178 @@
+// The neutral palette of the ChatGPT-style shell: near-white / near-black
+// surfaces with one accent reserved for the one primary action (新对话).
+//
+// Deliberately not a ColorScheme.fromSeed result: a seeded scheme tints every
+// neutral, which is exactly what makes a chat UI feel unlike a document. The
+// app's accent colour still comes from DshPalette; this file only describes
+// the two flat surfaces the shell paints (page, sidebar) and the soft hover
+// fills used by rows, so light and dark stay legible at the same contrast.
+
+import 'package:flutter/material.dart';
+
+import 'accent.dart';
+import 'surfaces.dart';
+
+/// Flat surfaces and quiet fills for the shell.
+@immutable
+class ChatGptShellColors extends ThemeExtension<ChatGptShellColors> {
+  const ChatGptShellColors({
+    required this.page,
+    required this.sidebar,
+    required this.composer,
+    required this.composerBorder,
+    required this.rowHover,
+    required this.rowSelected,
+    required this.divider,
+    required this.primaryText,
+    required this.secondaryText,
+    required this.tertiaryText,
+    required this.primaryAction,
+    required this.onPrimaryAction,
+  });
+
+  /// Behind the conversation.
+  final Color page;
+
+  /// Behind the conversation list.
+  final Color sidebar;
+
+  /// The composer's solid field.
+  final Color composer;
+
+  /// Its hairline; the field has no shadow of its own at rest.
+  final Color composerBorder;
+
+  /// A conversation row under the finger (Material hover / pressed).
+  final Color rowHover;
+
+  /// The open conversation's row.
+  final Color rowSelected;
+
+  final Color divider;
+
+  final Color primaryText;
+  final Color secondaryText;
+  final Color tertiaryText;
+
+  /// 新对话: the one filled element in the shell.
+  final Color primaryAction;
+  final Color onPrimaryAction;
+
+  /// True when the shell should paint light-on-dark.
+  bool get isDark => page.computeLuminance() < 0.5;
+
+  static ChatGptShellColors of(BuildContext context) => Theme.of(context).extension<ChatGptShellColors>()!;
+
+  /// A bar button on the flat header: no fill, no border, no shadow. Press
+  /// feedback comes from the InkWell inside [GlassSurface].
+  GlassStyle get flatChrome => GlassStyle(
+    fill: Colors.transparent,
+    fallbackFill: Colors.transparent,
+    hairline: Colors.transparent,
+    rim: Colors.transparent,
+  );
+
+  /// The composer: a solid field with a hairline, like a text area rather
+  /// than a floating glass capsule.
+  GlassStyle get composerGlass => GlassStyle(
+    fill: composer,
+    fallbackFill: composer,
+    hairline: composerBorder,
+    rim: Colors.transparent,
+    hairlineWidth: 1,
+  );
+
+  /// The conversation list: one flat panel, distinct from the page by tone
+  /// only. No blur: the drawer slides over the chat, and a moving blur is
+  /// the most expensive thing this screen could do.
+  GlassStyle get sidebarGlass => GlassStyle(
+    fill: sidebar,
+    fallbackFill: sidebar,
+    hairline: divider,
+    rim: Colors.transparent,
+    hairlineWidth: 0,
+  );
+
+  /// Light: page near-white; the sidebar is the same family one step down.
+  /// The action uses the app accent's light seed, not ChatGPT's own blue.
+  factory ChatGptShellColors.light(AppAccent accent) => ChatGptShellColors(
+    page: const Color(0xFFFCFCFC),
+    sidebar: const Color(0xFFF4F4F4),
+    composer: const Color(0xFFFFFFFF),
+    composerBorder: const Color(0xFFDCDCDC),
+    rowHover: const Color(0xFFECECEC),
+    rowSelected: const Color(0xFFE8E8E8),
+    divider: const Color(0xFFE5E5E5),
+    primaryText: const Color(0xFF0D0D0D),
+    secondaryText: const Color(0xFF5D5D5D),
+    tertiaryText: const Color(0xFF8F8F8F),
+    primaryAction: accent.seed,
+    onPrimaryAction: accent.onSeed,
+  );
+
+  /// Dark: page #212121, sidebar #171717, composer #303030 — the same three
+  /// steps apart as in light, so the hierarchy reads the same either way.
+  factory ChatGptShellColors.dark(AppAccent accent) => ChatGptShellColors(
+    page: const Color(0xFF212121),
+    sidebar: const Color(0xFF171717),
+    composer: const Color(0xFF303030),
+    composerBorder: const Color(0xFF3D3D3D),
+    rowHover: const Color(0xFF2A2A2A),
+    rowSelected: const Color(0xFF303030),
+    divider: const Color(0xFF2E2E2E),
+    primaryText: const Color(0xFFECECEC),
+    secondaryText: const Color(0xFFB4B4B4),
+    tertiaryText: const Color(0xFF8B8B8B),
+    primaryAction: accent.seedDark,
+    onPrimaryAction: accent.onSeedDark,
+  );
+
+  @override
+  ChatGptShellColors copyWith({
+    Color? page,
+    Color? sidebar,
+    Color? composer,
+    Color? composerBorder,
+    Color? rowHover,
+    Color? rowSelected,
+    Color? divider,
+    Color? primaryText,
+    Color? secondaryText,
+    Color? tertiaryText,
+    Color? primaryAction,
+    Color? onPrimaryAction,
+  }) => ChatGptShellColors(
+    page: page ?? this.page,
+    sidebar: sidebar ?? this.sidebar,
+    composer: composer ?? this.composer,
+    composerBorder: composerBorder ?? this.composerBorder,
+    rowHover: rowHover ?? this.rowHover,
+    rowSelected: rowSelected ?? this.rowSelected,
+    divider: divider ?? this.divider,
+    primaryText: primaryText ?? this.primaryText,
+    secondaryText: secondaryText ?? this.secondaryText,
+    tertiaryText: tertiaryText ?? this.tertiaryText,
+    primaryAction: primaryAction ?? this.primaryAction,
+    onPrimaryAction: onPrimaryAction ?? this.onPrimaryAction,
+  );
+
+  @override
+  ChatGptShellColors lerp(ChatGptShellColors? other, double t) {
+    if (other == null) return this;
+    Color mix(Color a, Color b) => Color.lerp(a, b, t)!;
+    return ChatGptShellColors(
+      page: mix(page, other.page),
+      sidebar: mix(sidebar, other.sidebar),
+      composer: mix(composer, other.composer),
+      composerBorder: mix(composerBorder, other.composerBorder),
+      rowHover: mix(rowHover, other.rowHover),
+      rowSelected: mix(rowSelected, other.rowSelected),
+      divider: mix(divider, other.divider),
+      primaryText: mix(primaryText, other.primaryText),
+      secondaryText: mix(secondaryText, other.secondaryText),
+      tertiaryText: mix(tertiaryText, other.tertiaryText),
+      primaryAction: mix(primaryAction, other.primaryAction),
+      onPrimaryAction: mix(onPrimaryAction, other.onPrimaryAction),
+    );
+  }
+}

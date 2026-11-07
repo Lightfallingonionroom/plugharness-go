@@ -1,0 +1,29 @@
+name: Generate app lockfile
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  lockfile:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2
+        with:
+          flutter-version: 3.47.7
+          channel: stable
+      - working-directory: app
+        run: |
+          flutter pub get
+          python3 tool/l10n_merge.py
+          dart format --output=write --set-exit-if-changed lib test || true
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: generated-app-files
+          path: |
+            app/pubspec.lock
+            app/lib/l10n/gen/
+          retention-days: 2

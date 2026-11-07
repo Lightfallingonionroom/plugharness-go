@@ -575,21 +575,25 @@ class _ComposerGlass extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final open = this.open;
-    final glass = ChatGptShellColors.of(context).composerGlass;
+    final shell = ChatGptShellColors.of(context);
+    // ChatGPT's composer is a solid field with one hairline — no backdrop blur,
+    // no rim highlight, no outer shadow. The glass chrome this used to be was
+    // what read as "a transparent box wrapped around the input": on a flat page
+    // there is nothing behind it to blur, so all that was left was the halo.
+    final decoration = BoxDecoration(
+      color: shell.composer,
+      border: Border.all(color: shell.composerBorder, width: 1),
+      borderRadius: AppShape.radiusXl,
+    );
     if (open == null) {
-      return GlassSurface(
-        tier: GlassTier.chrome,
-        borderRadius: AppShape.radiusXl,
-        style: glass,
-        child: child,
-      );
+      return DecoratedBox(decoration: decoration, child: child);
     }
     return AnimatedBuilder(
       animation: open,
-      builder: (context, child) => GlassSurface(
-        tier: GlassTier.chrome,
-        borderRadius: BorderRadius.lerp(AppShape.radiusXl, _opened, open.value),
-        style: glass,
+      builder: (context, child) => DecoratedBox(
+        decoration: decoration.copyWith(
+          borderRadius: BorderRadius.lerp(AppShape.radiusXl, _opened, open.value),
+        ),
         child: child,
       ),
       child: child,
@@ -684,10 +688,16 @@ class _RenderComposerRows extends RenderBox
     final loose = BoxConstraints(maxWidth: width);
     final lead = layoutChild(leading, loose);
     final trail = layoutChild(trailing, loose);
-    final foot = layoutChild(
-      footer,
-      BoxConstraints(maxWidth: math.max(0.0, width - lead.width - trail.width - 2 * _rowGap)),
-    );
+    // The footer only takes room once it has unfolded. While it is folded it is
+    // drawn at zero opacity but used to be measured all the same, so the row was
+    // a footer taller than the keys it sits beside — the empty band under the
+    // text that read as a transparent box around the input.
+    final foot = _footerLive
+        ? layoutChild(
+            footer,
+            BoxConstraints(maxWidth: math.max(0.0, width - lead.width - trail.width - 2 * _rowGap)),
+          )
+        : layoutChild(footer, const BoxConstraints.tightFor(width: 0, height: 0));
     final field = layoutChild(text, BoxConstraints.tightFor(width: _textWidth(width, lead.width, trail.width)));
     final keys = math.max(math.max(lead.height, trail.height), foot.height);
     final height = ui.lerpDouble(math.max(field.height, keys), field.height + _rows + keys, _open.value)!;

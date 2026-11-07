@@ -1,0 +1,197 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:math';
+
+import 'package:dsh_client/dsh_client.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../l10n/l10n.dart';
+import '../pets/pet_prefs.dart';
+import 'hosts_state.dart';
+import 'models_state.dart';
+
+/// A local scene account: a stable identity and its app-level configuration.
+/// It is NOT a DSH cloud account and does not claim process/session isolation.
+@immutable
+class SceneAccount {
+  const SceneAccount({
+    required this.id,
+    required this.name,
+    required this.createdAt,
+    required this.updatedAt,
+    this.host,
+    this.model,
+    this.petId,
+    this.admin = false,
+    this.disabled = false,
+  });
+
+  final String id;
+  final String name;
+  final int createdAt;
+  final int updatedAt;
+  final String? host;
+  final ModelSelection? model;
+  final String? petId;
+  final bool admin;
+  final bool disabled;
+
+  SceneAccount copyWith({String? name, String? host, ModelSelection? model, String? petId, bool? disabled}) => SceneAccount(
+    id: id,
+    name: name ?? this.name,
+    createdAt: createdAt,
+    updatedAt: DateTime.now().millisecondsSinceEpoch,
+    host: host ?? this.host,
+    model: model ?? this.model,
+    petId: petId ?? this.petId,
+    admin: admin,
+    disabled: disabled ?? this.disabled,
+  );
+
+  Map<String, Object?> toJson() => {
+    'id': id, 'name': name, 'createdAt': createdAt, 'updatedAt': updatedAt,
+    'host': ?host,
+    'model': model == null ? null : {
+      'provider': model!.provider, 'model': model!.model, 'reasoningEffort': ?model!.reasoningEffort,
+    },
+    'petId': ?petId, 'admin': admin, 'disabled': disabled,
+  };
+
+  static SceneAccount? parse(Object? raw) {
+    if (raw is! Map) return null;
+    final id = raw['id'], name = raw['name'], created = raw['createdAt'], updated = raw['updatedAt'];
+    if (id is! String || !RegExp(r'^acct-[0-9a-f]{16}$').hasMatch(id) ||
+        name is! String || name.trim().isEmpty || name.length > 64 ||
+        created is! int || updated is! int) return null;
+    return SceneAccount(
+      id: id, name: name, createdAt: created, updatedAt: updated,
+      host: raw['host'] is String ? raw['host'] as String : null,
+      model: ModelSelection.fromJson(raw['model']),
+      petId: raw['petId'] is String ? raw['petId'] as String : null,
+      admin: raw['admin'] == true, disabled: raw['disabled'] == true,
+    );
+  }
+}
+
+@immutable
+class SceneAccountsState {
+  const SceneAccountsState({this.accounts = const [], this.currentId, this.loaded = false});
+  final List<SceneAccount> accounts;
+  final String? currentId;
+  final bool loaded;
+  SceneAccount? get current => accounts.where((a) => a.id == currentId && !a.disabled).firstOrNull;
+}
+
+class SceneAccountsController extends Notifier<SceneAccountsState> {
+  static const key = 'scene.accounts.v1';
+  static const currentKey = 'scene.accounts.current.v1';
+  late Future<void> _loaded;
+
+  @override
+  SceneAccountsState build() {
+    _loaded = _load();
+    return const SceneAccountsState();
+  }
+
+  Future<void> _load() async {
+    try {
+      final p = await SharedPreferences.getInstance();
+      final raw = jsonDecode(p.getString(key) ?? '[]');
+      final accounts = raw is List ? raw.map(SceneAccount.parse).whereType<SceneAccount>().toList() : <SceneAccount>[];
+      if (accounts.isEmpty) {
+        final now = DateTime.now().millisecondsSinceEpoch;
+        accounts.add(SceneAccount(id: _newId(), name: appL10n.sceneDefaultAccount, createdAt: now, updatedAt: now, admin: true));
+      }
+      final wanted = p.getString(currentKey);
+      final current = accounts.any((a) => a.id == wanted && !a.disabled) ? wanted : accounts.firstWhere((a) => !a.disabled).id;
+      state = SceneAccountsState(accounts: accounts, currentId: current, loaded: true);
+      await _persist();
+    } catch (_) {
+      final now = DateTime.now().millisecondsSinceEpoch;
+      final account = SceneAccount(id: _newId(), name: appL10n.sceneDefaultAccount, createdAt: now, updatedAt: now, admin: true);
+      state = SceneAccountsState(accounts: [account], currentId: account.id, loaded: true);
+    }
+  }
+
+  static String _newId() {
+    final random = Random.secure();
+    final value = List.generate(16, (_) => '0123456789abcdef'[random.nextInt(16)]).join();
+    return 'acct-$value';
+  }
+
+  Future<void> _persist() async {
+    final p = await SharedPreferences.getInstance();
+    await p.setString(key, jsonEncode([for (final a in state.accounts) a.toJson()]));
+    if (state.currentId != null) await p.setString(currentKey, state.currentId!);
+  }
+
+  Future<void> _update(SceneAccountsState next) async {
+    await _loaded;
+    if (!ref.mounted) return;
+    state = next;
+    await _persist();
+  }
+
+  Future<void> create(String name) async {
+    final clean = name.trim();
+    if (clean.isEmpty) return;
+    await _loaded;
+    await captureCurrent();
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final account = SceneAccount(id: _newId(), name: clean, createdAt: now, updatedAt: now);
+    await _update(SceneAccountsState(accounts: [...state.accounts, account], currentId: account.id, loaded: true));
+  }
+
+  Future<void> rename(String id, String name) async {
+    if (name.trim().isEmpty) return;
+    await _update(state.copyWithAccounts([for (final a in state.accounts) a.id == id ? a.copyWith(name: name.trim()) : a]));
+  }
+
+  Future<void> captureCurrent() async {
+    final current = state.current;
+    if (current == null) return;
+    final host = ref.read(activeHostProvider);
+    final model = ref.read(pendingModelProvider) ?? ref.read(currentModelCatalogProvider)?.defaultSelection;
+    final pet = ref.read(petPrefsProvider).packId;
+    await _update(state.copyWithAccounts([
+      for (final a in state.accounts) a.id == current.id ? a.copyWith(host: host.encode(), model: model, petId: pet) : a,
+    ]));
+  }
+
+  Future<bool> select(String id) async {
+    await _loaded;
+    final target = state.accounts.where((a) => a.id == id && !a.disabled).firstOrNull;
+    if (target == null || target.id == state.currentId) return target != null;
+    await captureCurrent();
+    // Only switch identity after the previous scene was captured.
+    await _update(SceneAccountsState(accounts: state.accounts, currentId: id, loaded: true));
+    if (target.host case final host?) ref.read(activeHostProvider.notifier).select(HostRef.decode(host));
+    ref.read(pendingModelProvider.notifier).select(target.model);
+    if (target.petId case final pet?) await ref.read(petPrefsProvider.notifier).setPack(pet);
+    return true;
+  }
+
+  Future<void> remove(String id) async {
+    final target = state.accounts.where((a) => a.id == id).firstOrNull;
+    if (target == null || target.admin || state.accounts.where((a) => !a.disabled).length <= 1) return;
+    final remaining = state.accounts.where((a) => a.id != id).toList();
+    final wasCurrent = state.currentId == id;
+    final nextId = wasCurrent ? remaining.first.id : state.currentId;
+    await _update(SceneAccountsState(accounts: remaining, currentId: nextId, loaded: true));
+    if (wasCurrent) await _apply(remaining.first);
+  }
+
+  Future<void> _apply(SceneAccount target) async {
+    if (target.host case final host?) ref.read(activeHostProvider.notifier).select(HostRef.decode(host));
+    ref.read(pendingModelProvider.notifier).select(target.model);
+    if (target.petId case final pet?) await ref.read(petPrefsProvider.notifier).setPack(pet);
+  }
+}
+
+extension on SceneAccountsState {
+  SceneAccountsState copyWithAccounts(List<SceneAccount> accounts) => SceneAccountsState(accounts: accounts, currentId: currentId, loaded: loaded);
+}
+
+final sceneAccountsProvider = NotifierProvider<SceneAccountsController, SceneAccountsState>(SceneAccountsController.new);
