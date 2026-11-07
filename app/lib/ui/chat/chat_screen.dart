@@ -1523,11 +1523,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     final headerHeight = typing ? MediaQuery.paddingOf(context).top + AppSpace.sm : ChatHeader.heightOf(context);
 
     Widget backdrop(Widget child) => widget.backdrop ? WallpaperBackdrop(child: child) : child;
-    // The conversation sits on the shell's flat page colour. When a custom
-    // wallpaper is in use (or the chat is embedded in the shell, which paints
-    // the backdrop itself) this stays transparent and the page shows through.
+    // The conversation sits on the shell's flat page colour — the ChatGPT
+    // look: one field of colour, no gradient, no glowing blobs behind it.
+    // It used to stay transparent when embedded in the shell so the shell's
+    // gradient backdrop showed through; that gradient is what made the page
+    // read as "the old app" no matter how the controls were redrawn.
     final shell = ChatGptShellColors.of(context);
-    final pageColor = widget.backdrop ? shell.page : Colors.transparent;
+    final pageColor = shell.page;
     final screen = AnnotatedRegion<SystemUiOverlayStyle>(
       value: dshSystemOverlay(Theme.of(context).brightness),
       child: backdrop(
