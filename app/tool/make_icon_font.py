@@ -332,8 +332,10 @@ def openai(name):
     svg = open(os.path.join(OPENAI_VENDOR, stem + '.svg'), encoding='utf-8').read()
     for d in re.findall(r'<path[^>]*\sd="([^"]+)"', svg):
         p = path_from_d(d)
-        # 24 -> 256 units
-        p.transform(256 / 24, 0, 0, 256 / 24, 0, 0)
+        # 24 -> 256 units. Path.transform RETURNS a new path; ignoring the
+        # result leaves the 24-unit outline and the glyph renders as a tiny
+        # dot above the em box (invisible on screen).
+        p = p.transform(256 / 24, 0, 0, 256 / 24, 0, 0)
         path.addPath(p)
     return simplify(path)
 
