@@ -195,9 +195,22 @@ class _HomeShellState extends ConsumerState<HomeShell> with TickerProviderStateM
   }
 
   /// [opening]: pixels towards fully open.
+  ///
+  /// Near either anchor the finger's travel is damped instead of being clamped,
+  /// which is what `AnchoredDraggableState` does on the official client: the
+  /// panel keeps responding to the hand but asymptotically approaches the
+  /// anchor, so there is no hard "hit the wall" stop at 0 or 1. The damping
+  /// band is a fraction of the drawer's width; outside it the drag is 1:1.
   void _onDragDelta(AnimationController side, double width, double opening) {
     if (width <= 0) return;
-    side.value = (side.value + opening / width).clamp(0.0, 1.0);
+    const band = 0.10; // 10% of the width on each side
+    final value = side.value;
+    final distanceToEdge = math.min(value, 1 - value);
+    // 0 at the anchor, 1 once past the band.
+    final t = (distanceToEdge / band).clamp(0.0, 1.0);
+    // 35% of the travel at the anchor, full travel past the band.
+    final damped = opening * (0.35 + 0.65 * t);
+    side.value = (value + damped / width).clamp(0.0, 1.0);
   }
 
   /// [velocity]: pixels a second towards fully open.
