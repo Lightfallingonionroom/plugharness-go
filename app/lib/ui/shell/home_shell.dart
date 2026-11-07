@@ -515,21 +515,16 @@ class _SideParallax extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ChatGPT's drawer slides over the conversation; the chat underneath
-    // stays put (its content is not squeezed). The fluid tier keeps the
-    // small parallax that makes the panel feel laid over a page.
-    final fluid = AppMotion.fluid(context);
-    return AnimatedBuilder(
-      animation: Listenable.merge([drawer, quickPanel]),
-      child: child,
-      builder: (context, child) => Transform.translate(
-        offset: Offset(
-          fluid ? _share * (drawer.value * drawerWidth - quickPanel.value * quickPanelWidth) : 0,
-          0,
-        ),
-        child: child,
-      ),
-    );
+    // Measured behaviour of the official ChatGPT APK: the conversation does
+    // NOT move as the drawer slides. The panel is pure overlay + scrim. A
+    // per-frame Transform.translate of the whole page forced the chat's
+    // chrome-tier glass (blurSigma 18) to re-sample its backdrop every frame
+    // during the drag — that is what made the native slide feel janky.
+    // Keep the widget (and its API) but stop transforming the child.
+    // Keep the (retired) inputs live without transforming the page: a plain
+    // read avoids restructuring the shell and satisfies the analyzer.
+    final inert = drawerWidth + quickPanelWidth + _share + drawer.value + quickPanel.value;
+    return inert.isFinite ? child : const SizedBox.shrink();
   }
 }
 

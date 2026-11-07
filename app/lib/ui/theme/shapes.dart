@@ -24,6 +24,9 @@ abstract final class AppShape {
   static const sm = 10.0;
   static const md = 14.0;
   static const lg = 20.0;
+
+  /// 官方 APK `res/drawable/search_background.xml` 实测 22dp。
+  static const searchField = 22.0;
   static const xl = 28.0;
 
   static const radiusXs = BorderRadius.all(Radius.circular(xs));

@@ -50,7 +50,7 @@ class SessionSearchBar extends ConsumerWidget {
         excludeSemantics: true,
         child: Material(
           color: shell.rowHover,
-          shape: const StadiumBorder(),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppShape.searchField)),
           clipBehavior: Clip.antiAlias,
           child: InkWell(
             onTap: () => _open(context, ref),

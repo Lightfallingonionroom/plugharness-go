@@ -29,9 +29,10 @@ abstract final class AppMotion {
   /// 胶囊变形(顶栏展开、模型选择)、抽屉落位。
   static const emphasized = Duration(milliseconds: 340);
 
-  /// 底部弹层进 / 出(showModalBottomSheet 只认时长)。
-  static const sheetIn = Duration(milliseconds: 380);
-  static const sheetOut = Duration(milliseconds: 260);
+  /// 底部弹层进 / 出。官方 APK res/anim/mtrl_bottom_sheet_slide_{in,out}
+  /// 实测 250ms / 200ms（见 docs/chatgpt-apk-spec.md）。
+  static const sheetIn = Duration(milliseconds: 250);
+  static const sheetOut = Duration(milliseconds: 200);
 
   /// 弹层停稳后,模糊透出来。
   static const glassIn = Duration(milliseconds: 120);
@@ -42,20 +43,23 @@ abstract final class AppMotion {
   /// 环境呼吸(安装进度光晕、连接中的状态点)。
   static const breath = Duration(milliseconds: 2400);
 
-  /// 标准缓动(M3 standard,DSH Web 的 cubic-bezier(.4,0,.2,1) 同族)。
-  static const std = Easing.standard;
+  /// Curves measured from the official ChatGPT APK (`com.openai.chatgpt`
+  /// 1.2026.300), res/interpolator/m3_sys_motion_easing_*.xml. See
+  /// docs/chatgpt-apk-spec.md. Flutter's built-in Easing.standard is close
+  /// but not identical; these are the exact control points.
+  static const std = Cubic(0.2, 0.0, 0.0, 1.0);
 
-  /// 进场:快出慢停。
-  static const enter = Easing.emphasizedDecelerate;
+  /// Emphasized decelerate (0.1, 0.7, 0.1, 1).
+  static const enter = Cubic(0.1, 0.7, 0.1, 1.0);
 
-  /// 退场:慢起快走。
-  static const exit = Easing.emphasizedAccelerate;
+  /// Emphasized accelerate (0.3, 0, 0.8, 0.2).
+  static const exit = Cubic(0.3, 0.0, 0.8, 0.2);
+
+  /// Standard decelerate (0, 0, 0, 1) — long-tail arrival.
+  static const glide = Cubic(0.0, 0.0, 0.0, 1.0);
 
   /// 折叠展开。
   static const collapseCurve = Curves.easeInOutCubic;
-
-  /// 滑行:抽屉、胶囊位移这类"跟手后落位"的运动,iOS 式长尾减速。
-  static const glide = Cubic(0.32, 0.72, 0.0, 1.0);
 
   /// 弹簧,时长 + 回弹,取 Apple 的默认值:回弹 0 最通用,0.15 几乎看不出在弹,
   /// 超过 0.4 就夸张了。按压落位。

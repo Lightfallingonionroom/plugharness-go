@@ -119,15 +119,15 @@ class ChatGptShellColors extends ThemeExtension<ChatGptShellColors> {
     onUserBubble: const Color(0xFFFFFFFF),
   );
 
-  /// Dark: page #212121, sidebar #171717, composer #303030 — three steps
-  /// apart like the light set, so the hierarchy reads the same either way.
+  /// Dark: measured from the official APK's res/drawable/surface_background.xml
+  /// (#1F1E20) and search_background.xml (#343338). See docs/chatgpt-apk-spec.md.
   factory ChatGptShellColors.dark(AppAccent accent) => ChatGptShellColors(
-    page: const Color(0xFF212121),
+    page: const Color(0xFF1F1E20),
     sidebar: const Color(0xFF171717),
-    composer: const Color(0xFF303030),
+    composer: const Color(0xFF343338),
     composerBorder: const Color(0xFF3D3D3D),
-    rowHover: const Color(0xFF2A2A2A),
-    rowSelected: const Color(0xFF303030),
+    rowHover: const Color(0xFF2F2E31),
+    rowSelected: const Color(0xFF343338),
     divider: const Color(0xFF2E2E2E),
     primaryText: const Color(0xFFECECEC),
     secondaryText: const Color(0xFFB4B4B4),
