@@ -214,23 +214,49 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
                         curve: AppMotion.std,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                          child: Row(
+                          child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(
-                                label,
-                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w600,
-                                      color: colors.primaryText,
-                                    ),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    label,
+                                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.w600,
+                                          color: colors.primaryText,
+                                        ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  AnimatedRotation(
+                                    turns: _centerOpen ? 0.5 : 0,
+                                    duration: quick,
+                                    curve: AppMotion.std,
+                                    child: Icon(AppIcons.dropdown, size: 18, color: colors.tertiaryText),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(width: 6),
-                              AnimatedRotation(
-                                turns: _centerOpen ? 0.5 : 0,
-                                duration: quick,
-                                curve: AppMotion.std,
-                                child: Icon(AppIcons.dropdown, size: 18, color: colors.tertiaryText),
+                              // The engine's state still has a home: a small
+                              // second line under the tappable label, the way
+                              // ChatGPT leaves room for a short status.
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  StatusDot(tone: widget.status.tone, size: 6),
+                                  const SizedBox(width: 5),
+                                  Flexible(
+                                    child: Text(
+                                      widget.status.label,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                            fontSize: 11,
+                                            color: colors.tertiaryText,
+                                          ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
