@@ -313,8 +313,29 @@ CUSTOM = {
 
 # ── Sources ──────────────────────────────────────────────────────────────────────────
 
+OPENAI_VENDOR = os.path.join(ICONS, 'openai')
+
+
 def kebab(name):
     return re.sub(r'([A-Z])', lambda m: '-' + m.group(1).lower(), name)
+
+
+def openai(name):
+    """A glyph measured from the official ChatGPT APK's ds_* vector set.
+
+    Sources are 24x24 viewBox, single-colour filled paths. The font grid is
+    256, so the 24-unit path is scaled up to fill it (Phosphor's grid leaves
+    more air; these glyphs are drawn edge-to-edge at 24).
+    """
+    stem = name[2].lower() + name[3:]
+    path = pathops.Path()
+    svg = open(os.path.join(OPENAI_VENDOR, stem + '.svg'), encoding='utf-8').read()
+    for d in re.findall(r'<path[^>]*\sd="([^"]+)"', svg):
+        p = path_from_d(d)
+        # 24 -> 256 units
+        p.transform(256 / 24, 0, 0, 256 / 24, 0, 0)
+        path.addPath(p)
+    return simplify(path)
 
 
 def source_of(name):
@@ -330,7 +351,7 @@ def vendored(stem, weight):
 
 def vendor(names, package):
     """Copies missing Phosphor sources in from the package; fails on what it cannot find."""
-    stems = {source_of(n) for n in names if n not in CUSTOM}
+    stems = {source_of(n) for n in names if n not in CUSTOM and not (n.startswith('oa') and len(n) > 2 and n[2].isupper())}
     # The drawn glyphs are built from these.
     stems |= {('regular', s) for s in ('key', 'folder', 'puzzle-piece', 'magnifying-glass', 'sidebar-simple')}
     missing = []
@@ -365,6 +386,8 @@ def glyph_names():
 def outline(name):
     if name in CUSTOM:
         return simplify(CUSTOM[name]())
+    if name.startswith('oa') and len(name) > 2 and name[2].isupper():
+        return openai(name)
     weight, stem = source_of(name)
     return phosphor(stem, weight)
 

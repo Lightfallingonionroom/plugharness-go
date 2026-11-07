@@ -55,9 +55,9 @@ abstract final class SettingsMetrics {
 TextStyle? settingsTitleStyle(BuildContext context) =>
     Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 15, height: 1.4);
 
-/// Round tinted icon for a settings row. [tint] picks one of the 8 fixed identity
-/// pairs (pastel container + deep glyph). On hub pages every row of a group uses
-/// the group's one tint.
+/// Settings icon. The official ChatGPT APK uses a single-colour line glyph
+/// with no tinted disc; the old pastel circle made the page read as a
+/// different product. [tint] is kept for callers but no longer paints a disc.
 class SettingsIcon extends StatelessWidget {
   const SettingsIcon(this.icon, {super.key, this.tint = 0, this.danger = false});
 
@@ -67,14 +67,14 @@ class SettingsIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     final colors = DshColors.of(context);
-    final bg = danger ? colors.dangerContainer : colors.identity[tint % colors.identity.length];
-    final fg = danger ? colors.onDangerContainer : colors.onIdentity[tint % colors.onIdentity.length];
-    return DecoratedBox(
-      decoration: ShapeDecoration(color: bg, shape: const CircleBorder()),
-      child: SizedBox.square(
-        dimension: SettingsMetrics.icon,
-        child: Icon(icon, size: SettingsMetrics.iconGlyph, color: fg),
+    return SizedBox.square(
+      dimension: SettingsMetrics.icon,
+      child: Icon(
+        icon,
+        size: SettingsMetrics.lineGlyph,
+        color: danger ? colors.danger : scheme.onSurfaceVariant,
       ),
     );
   }

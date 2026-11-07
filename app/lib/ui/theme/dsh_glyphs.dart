@@ -24,7 +24,6 @@ abstract final class DshGlyphs {
   static const arrowLeft = IconData(0xe000, fontFamily: family, matchTextDirection: true);
   static const arrowRight = IconData(0xe001, fontFamily: family, matchTextDirection: true);
   static const arrowSquareOut = IconData(0xe00a, fontFamily: family, matchTextDirection: true);
-  static const arrowUp = IconData(0xe014, fontFamily: family);
   static const arrowUpRight = IconData(0xe00b, fontFamily: family);
   static const arrowsClockwise = IconData(0xe076, fontFamily: family);
   static const arrowsDownUp = IconData(0xe051, fontFamily: family);
@@ -49,7 +48,6 @@ abstract final class DshGlyphs {
   static const calendarBlank = IconData(0xe0df, fontFamily: family);
   static const calendarDot = IconData(0xe0cf, fontFamily: family);
   static const calendarDots = IconData(0xe0d0, fontFamily: family);
-  static const camera = IconData(0xe01a, fontFamily: family);
   static const cards = IconData(0xe0d5, fontFamily: family);
   static const caretDown = IconData(0xe007, fontFamily: family);
   static const caretLeft = IconData(0xe012, fontFamily: family);
@@ -59,7 +57,6 @@ abstract final class DshGlyphs {
   static const chartBar = IconData(0xe0bd, fontFamily: family);
   static const chartLineUp = IconData(0xe0af, fontFamily: family);
   static const chatCenteredDots = IconData(0xe0b3, fontFamily: family);
-  static const chatCircle = IconData(0xe0ca, fontFamily: family);
   static const chatCircleFill = IconData(0xe0e0, fontFamily: family);
   static const chatTeardropText = IconData(0xe0d7, fontFamily: family);
   static const chats = IconData(0xe0c5, fontFamily: family);
@@ -80,7 +77,6 @@ abstract final class DshGlyphs {
   static const cloudSlash = IconData(0xe074, fontFamily: family);
   static const code = IconData(0xe09b, fontFamily: family);
   static const copy = IconData(0xe01e, fontFamily: family);
-  static const cpu = IconData(0xe077, fontFamily: family);
   static const crownSimple = IconData(0xe0c8, fontFamily: family);
   static const cursorText = IconData(0xe04b, fontFamily: family);
   static const deviceMobile = IconData(0xe07a, fontFamily: family);
@@ -95,7 +91,6 @@ abstract final class DshGlyphs {
   static const export = IconData(0xe020, fontFamily: family);
   static const eye = IconData(0xe02e, fontFamily: family);
   static const eyeSlash = IconData(0xe03e, fontFamily: family);
-  static const file = IconData(0xe08f, fontFamily: family);
   static const fileAudio = IconData(0xe095, fontFamily: family);
   static const filePdf = IconData(0xe092, fontFamily: family);
   static const filePlus = IconData(0xe090, fontFamily: family);
@@ -136,7 +131,6 @@ abstract final class DshGlyphs {
   static const identificationBadge = IconData(0xe0cc, fontFamily: family);
   static const image = IconData(0xe01d, fontFamily: family);
   static const imageBroken = IconData(0xe06e, fontFamily: family);
-  static const images = IconData(0xe01b, fontFamily: family);
   static const info = IconData(0xe062, fontFamily: family);
   static const key = IconData(0xe087, fontFamily: family);
   static const keySlash = IconData(0xe088, fontFamily: family);  // drawn
@@ -158,12 +152,38 @@ abstract final class DshGlyphs {
   static const mapTrifold = IconData(0xe0a6, fontFamily: family);
   static const medal = IconData(0xe0d9, fontFamily: family);
   static const megaphone = IconData(0xe0cb, fontFamily: family);
-  static const microphone = IconData(0xe016, fontFamily: family);
   static const minus = IconData(0xe032, fontFamily: family);
   static const minusCircle = IconData(0xe033, fontFamily: family);
   static const musicNote = IconData(0xe096, fontFamily: family);
   static const note = IconData(0xe09f, fontFamily: family);
   static const notePencil = IconData(0xe03f, fontFamily: family);
+  static const oaBarChart = IconData(0xe0fa, fontFamily: family);
+  static const oaBook = IconData(0xe0f9, fontFamily: family);
+  static const oaBrain = IconData(0xe0e8, fontFamily: family);
+  static const oaCamera = IconData(0xe0e9, fontFamily: family);
+  static const oaChatBubble = IconData(0xe0f3, fontFamily: family);
+  static const oaCodex = IconData(0xe0f7, fontFamily: family);
+  static const oaFolder = IconData(0xe0ec, fontFamily: family);
+  static const oaGlobe = IconData(0xe0f6, fontFamily: family);
+  static const oaMicrophone = IconData(0xe0ef, fontFamily: family);
+  static const oaMicrophoneFill = IconData(0xe0f0, fontFamily: family);
+  static const oaMusic = IconData(0xe101, fontFamily: family);
+  static const oaOpenai = IconData(0xe0ff, fontFamily: family);
+  static const oaPalette = IconData(0xe0fc, fontFamily: family);
+  static const oaPencil = IconData(0xe0ed, fontFamily: family);
+  static const oaPencilBrush = IconData(0xe0ee, fontFamily: family);
+  static const oaPersonalization = IconData(0xe0fd, fontFamily: family);
+  static const oaPhoto = IconData(0xe0ea, fontFamily: family);
+  static const oaPhotoOnSquare = IconData(0xe0eb, fontFamily: family);
+  static const oaPlane = IconData(0xe102, fontFamily: family);
+  static const oaSend = IconData(0xe0f5, fontFamily: family);
+  static const oaShare = IconData(0xe0f4, fontFamily: family);
+  static const oaStarOfLife = IconData(0xe0fe, fontFamily: family);
+  static const oaStop = IconData(0xe0f2, fontFamily: family);
+  static const oaSuitcase = IconData(0xe100, fontFamily: family);
+  static const oaTerminal = IconData(0xe0f8, fontFamily: family);
+  static const oaVoiceButton = IconData(0xe0f1, fontFamily: family);
+  static const oaWrench = IconData(0xe0fb, fontFamily: family);
   static const package = IconData(0xe09d, fontFamily: family);
   static const palette = IconData(0xe0ce, fontFamily: family);
   static const paperPlaneRight = IconData(0xe0e2, fontFamily: family, matchTextDirection: true);
@@ -202,7 +222,6 @@ abstract final class DshGlyphs {
   static const slidersHorizontal = IconData(0xe03b, fontFamily: family);
   static const slideshow = IconData(0xe098, fontFamily: family);
   static const smiley = IconData(0xe0d8, fontFamily: family);
-  static const sparkle = IconData(0xe09e, fontFamily: family);
   static const square = IconData(0xe056, fontFamily: family);
   static const squaresFour = IconData(0xe0b2, fontFamily: family);
   static const stack = IconData(0xe0c1, fontFamily: family);
@@ -211,7 +230,6 @@ abstract final class DshGlyphs {
   static const stethoscope = IconData(0xe0b1, fontFamily: family);
   static const stop = IconData(0xe0e7, fontFamily: family);
   static const stopCircle = IconData(0xe019, fontFamily: family);
-  static const stopFill = IconData(0xe015, fontFamily: family);
   static const suitcase = IconData(0xe0de, fontFamily: family);
   static const table = IconData(0xe099, fontFamily: family);
   static const terminalWindow = IconData(0xe04d, fontFamily: family);
@@ -254,7 +272,6 @@ abstract final class DshGlyphs {
     'arrowLeft': arrowLeft,
     'arrowRight': arrowRight,
     'arrowSquareOut': arrowSquareOut,
-    'arrowUp': arrowUp,
     'arrowUpRight': arrowUpRight,
     'arrowsClockwise': arrowsClockwise,
     'arrowsDownUp': arrowsDownUp,
@@ -279,7 +296,6 @@ abstract final class DshGlyphs {
     'calendarBlank': calendarBlank,
     'calendarDot': calendarDot,
     'calendarDots': calendarDots,
-    'camera': camera,
     'cards': cards,
     'caretDown': caretDown,
     'caretLeft': caretLeft,
@@ -289,7 +305,6 @@ abstract final class DshGlyphs {
     'chartBar': chartBar,
     'chartLineUp': chartLineUp,
     'chatCenteredDots': chatCenteredDots,
-    'chatCircle': chatCircle,
     'chatCircleFill': chatCircleFill,
     'chatTeardropText': chatTeardropText,
     'chats': chats,
@@ -310,7 +325,6 @@ abstract final class DshGlyphs {
     'cloudSlash': cloudSlash,
     'code': code,
     'copy': copy,
-    'cpu': cpu,
     'crownSimple': crownSimple,
     'cursorText': cursorText,
     'deviceMobile': deviceMobile,
@@ -325,7 +339,6 @@ abstract final class DshGlyphs {
     'export': export,
     'eye': eye,
     'eyeSlash': eyeSlash,
-    'file': file,
     'fileAudio': fileAudio,
     'filePdf': filePdf,
     'filePlus': filePlus,
@@ -366,7 +379,6 @@ abstract final class DshGlyphs {
     'identificationBadge': identificationBadge,
     'image': image,
     'imageBroken': imageBroken,
-    'images': images,
     'info': info,
     'key': key,
     'keySlash': keySlash,
@@ -388,12 +400,38 @@ abstract final class DshGlyphs {
     'mapTrifold': mapTrifold,
     'medal': medal,
     'megaphone': megaphone,
-    'microphone': microphone,
     'minus': minus,
     'minusCircle': minusCircle,
     'musicNote': musicNote,
     'note': note,
     'notePencil': notePencil,
+    'oaBarChart': oaBarChart,
+    'oaBook': oaBook,
+    'oaBrain': oaBrain,
+    'oaCamera': oaCamera,
+    'oaChatBubble': oaChatBubble,
+    'oaCodex': oaCodex,
+    'oaFolder': oaFolder,
+    'oaGlobe': oaGlobe,
+    'oaMicrophone': oaMicrophone,
+    'oaMicrophoneFill': oaMicrophoneFill,
+    'oaMusic': oaMusic,
+    'oaOpenai': oaOpenai,
+    'oaPalette': oaPalette,
+    'oaPencil': oaPencil,
+    'oaPencilBrush': oaPencilBrush,
+    'oaPersonalization': oaPersonalization,
+    'oaPhoto': oaPhoto,
+    'oaPhotoOnSquare': oaPhotoOnSquare,
+    'oaPlane': oaPlane,
+    'oaSend': oaSend,
+    'oaShare': oaShare,
+    'oaStarOfLife': oaStarOfLife,
+    'oaStop': oaStop,
+    'oaSuitcase': oaSuitcase,
+    'oaTerminal': oaTerminal,
+    'oaVoiceButton': oaVoiceButton,
+    'oaWrench': oaWrench,
     'package': package,
     'palette': palette,
     'paperPlaneRight': paperPlaneRight,
@@ -432,7 +470,6 @@ abstract final class DshGlyphs {
     'slidersHorizontal': slidersHorizontal,
     'slideshow': slideshow,
     'smiley': smiley,
-    'sparkle': sparkle,
     'square': square,
     'squaresFour': squaresFour,
     'stack': stack,
@@ -441,7 +478,6 @@ abstract final class DshGlyphs {
     'stethoscope': stethoscope,
     'stop': stop,
     'stopCircle': stopCircle,
-    'stopFill': stopFill,
     'suitcase': suitcase,
     'table': table,
     'terminalWindow': terminalWindow,

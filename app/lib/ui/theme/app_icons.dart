@@ -32,7 +32,7 @@ abstract final class AppIcons {
   static const openExternal = DshGlyphs.arrowSquareOut;
   static const openLink = DshGlyphs.arrowUpRight;
   static const openWith = DshGlyphs.dotsNine;
-  static const allFeatures = DshGlyphs.dotsNine;
+  static const allFeatures = DshGlyphs.oaStarOfLife;
   static const browser = DshGlyphs.browser;
   static const scrollToBottom = DshGlyphs.arrowDown;
   static const sidebar = DshGlyphs.sidebarSimpleRight;
@@ -51,11 +51,11 @@ abstract final class AppIcons {
   static const pageNext = DshGlyphs.caretRight;
 
   // ── 输入框 ──────────────────────────────────────────────────
-  static const send = DshGlyphs.arrowUp;
+  static const send = DshGlyphs.oaPlane;
 
   /// 输入框圆键里的停止(生成、语音):实心方块。
-  static const stopGenerating = DshGlyphs.stopFill;
-  static const voice = DshGlyphs.microphone;
+  static const stopGenerating = DshGlyphs.oaStop;
+  static const voice = DshGlyphs.oaMicrophone;
 
   /// 插话:本轮中途送进去。
   static const steer = DshGlyphs.arrowElbowDownRight;
@@ -65,15 +65,15 @@ abstract final class AppIcons {
 
   /// 打断:停掉本轮再发。
   static const interrupt = DshGlyphs.stopCircle;
-  static const camera = DshGlyphs.camera;
-  static const gallery = DshGlyphs.images;
-  static const files = DshGlyphs.folderOpen;
-  static const addImage = DshGlyphs.image;
+  static const camera = DshGlyphs.oaCamera;
+  static const gallery = DshGlyphs.oaPhoto;
+  static const files = DshGlyphs.oaFolder;
+  static const addImage = DshGlyphs.oaPhotoOnSquare;
 
   // ── 消息操作 ────────────────────────────────────────────────
   static const copy = DshGlyphs.copy;
   static const quote = DshGlyphs.quotes;
-  static const share = DshGlyphs.export;
+  static const share = DshGlyphs.oaShare;
   static const qrCode = DshGlyphs.qrCode;
   static const shareImage = DshGlyphs.image;
 
@@ -90,7 +90,7 @@ abstract final class AppIcons {
   static const selectText = DshGlyphs.textT;
   static const fork = DshGlyphs.gitFork;
   static const regenerate = DshGlyphs.arrowClockwise;
-  static const edit = DshGlyphs.pencilSimple;
+  static const edit = DshGlyphs.oaPencil;
   static const reply = DshGlyphs.arrowBendUpLeft;
 
   /// 代码、diff 的自动换行开关。
@@ -125,13 +125,13 @@ abstract final class AppIcons {
   static const restart = DshGlyphs.arrowCounterClockwise;
   static const search = DshGlyphs.magnifyingGlass;
   static const configure = DshGlyphs.slidersHorizontal;
-  static const settings = DshGlyphs.gearSix;
+  static const settings = DshGlyphs.oaWrench;
   static const link = DshGlyphs.link;
   static const showSecret = DshGlyphs.eye;
   static const hideSecret = DshGlyphs.eyeSlash;
-  static const newChat = DshGlyphs.notePencil;
+  static const newChat = DshGlyphs.oaPencil;
   static const newFolder = DshGlyphs.folderPlus;
-  static const newPost = DshGlyphs.notePencil;
+  static const newPost = DshGlyphs.oaPencil;
   static const moveToFolder = DshGlyphs.folderArrowRight;
   static const multiSelect = DshGlyphs.checkCircle;
   static const archive = DshGlyphs.archive;
@@ -232,7 +232,7 @@ abstract final class AppIcons {
   static const offline = DshGlyphs.cloudSlash;
   static const disconnected = DshGlyphs.linkBreak;
   static const reconnecting = DshGlyphs.arrowsClockwise;
-  static const engine = DshGlyphs.cpu;
+  static const engine = DshGlyphs.oaTerminal;
   static const engineStarting = DshGlyphs.lightning;
   static const autoSwitch = DshGlyphs.arrowsClockwise;
   static const cloud = DshGlyphs.cloud;
@@ -241,7 +241,7 @@ abstract final class AppIcons {
   static const sshHost = DshGlyphs.terminalWindow;
   static const remoteHost = DshGlyphs.devices;
   static const remoteHosts = DshGlyphs.devices;
-  static const webConsole = DshGlyphs.globe;
+  static const webConsole = DshGlyphs.oaGlobe;
   static const checkUpdate = DshGlyphs.arrowCircleUp;
   static const autoUpdate = DshGlyphs.clockClockwise;
 
@@ -263,7 +263,7 @@ abstract final class AppIcons {
   static const autoApprove = DshGlyphs.checks;
 
   // ── 文件与内容 ──────────────────────────────────────────────
-  static const folder = DshGlyphs.folder;
+  static const folder = DshGlyphs.oaFolder;
 
   /// 带分组色的实心文件夹(抽屉文件夹、文件列表)。
   static const folderMark = DshGlyphs.folderFill;
@@ -277,7 +277,7 @@ abstract final class AppIcons {
   static const downloads = DshGlyphs.downloadSimple;
   static const document = DshGlyphs.fileText;
   static const instructions = DshGlyphs.fileText;
-  static const file = DshGlyphs.file;
+  static const file = DshGlyphs.oaFolder;
   static const fileNew = DshGlyphs.filePlus;
   static const diff = DshGlyphs.gitDiff;
   static const pdf = DshGlyphs.filePdf;
@@ -298,7 +298,7 @@ abstract final class AppIcons {
   static const shareBundle = DshGlyphs.package;
 
   /// 文件还在生成。
-  static const generating = DshGlyphs.sparkle;
+  static const generating = DshGlyphs.oaStarOfLife;
 
   // ── 图像与视频生成(docs/design/media-generation.md)──────────────
   /// ＋ 面板的「生成」磁贴、设置 › 图像与视频。
@@ -318,7 +318,7 @@ abstract final class AppIcons {
 
   /// 权限胶囊:比工作区内修改更宽松。
   static const permissionRisky = DshGlyphs.warning;
-  static const web = DshGlyphs.globe;
+  static const web = DshGlyphs.oaGlobe;
   static const readText = DshGlyphs.note;
 
   // ── 功能 ────────────────────────────────────────────────────
@@ -326,11 +326,11 @@ abstract final class AppIcons {
   static const plugin = DshGlyphs.puzzlePiece;
   static const pluginInventory = DshGlyphs.listBullets;
   static const skill = DshGlyphs.bookOpen;
-  static const model = DshGlyphs.cpu;
-  static const providers = DshGlyphs.sparkle;
+  static const model = DshGlyphs.oaBrain;
+  static const providers = DshGlyphs.oaStarOfLife;
 
   /// 模型列表里的一个模型。
-  static const modelItem = DshGlyphs.cpu;
+  static const modelItem = DshGlyphs.oaBrain;
   static const subagents = DshGlyphs.treeStructure;
   static const workflow = DshGlyphs.flowArrow;
   static const todo = DshGlyphs.listChecks;
@@ -346,7 +346,7 @@ abstract final class AppIcons {
   static const commandTimeout = DshGlyphs.timer;
   static const agentLoop = DshGlyphs.arrowsClockwise;
   static const webSearch = DshGlyphs.globeHemisphereWest;
-  static const webApp = DshGlyphs.globe;
+  static const webApp = DshGlyphs.oaGlobe;
   static const mention = DshGlyphs.at;
   static const translate = DshGlyphs.translate;
   static const history = DshGlyphs.clockCounterClockwise;
@@ -368,12 +368,12 @@ abstract final class AppIcons {
   static const companionVoice = DshGlyphs.musicNote;
 
   /// 「问 AI」: a question about the app for the agent (ui/common/ask_ai.dart).
-  static const askAi = DshGlyphs.sparkle;
+  static const askAi = DshGlyphs.oaStarOfLife;
 
   /// 「给 dsh-go 点个 star」: the project on GitHub (ui/star/).
   static const starProject = DshGlyphs.star;
   static const important = DshGlyphs.sealWarning;
-  static const theme = DshGlyphs.palette;
+  static const theme = DshGlyphs.oaPalette;
   static const textSize = DshGlyphs.textAa;
   static const phoneLayout = DshGlyphs.deviceMobile;
   static const account = DshGlyphs.userCircle;
@@ -432,7 +432,7 @@ abstract final class AppIcons {
   static const makeAdmin = DshGlyphs.crownSimple;
   static const team = DshGlyphs.usersThree;
   static const conversations = DshGlyphs.chats;
-  static const chat = DshGlyphs.chatCircle;
+  static const chat = DshGlyphs.oaChatBubble;
   static const announcement = DshGlyphs.megaphone;
   static const nameTag = DshGlyphs.identificationBadge;
   static const botRole = DshGlyphs.briefcase;
@@ -460,7 +460,7 @@ abstract final class AppIcons {
   static const playVideo = DshGlyphs.playCircle;
   static const mail = DshGlyphs.envelopeSimple;
   static const write = DshGlyphs.notePencil;
-  static const featured = DshGlyphs.sparkle;
+  static const featured = DshGlyphs.oaStarOfLife;
   static const bug = DshGlyphs.bug;
   static const school = DshGlyphs.graduationCap;
   static const travel = DshGlyphs.suitcase;
@@ -471,4 +471,34 @@ abstract final class AppIcons {
   static const qq = DshGlyphs.usersThreeFill;
   static const telegram = DshGlyphs.paperPlaneRight;
   static const discord = DshGlyphs.headset;
+
+  // ── OpenAI `ds_*` 图标集（从官方 APK 反编译实测，24×24dp viewport） ──
+  // 见 docs/chatgpt-apk-spec.md。生成：python3 tool/make_icon_font.py
+  static const oaBrain = DshGlyphs.oaBrain;
+  static const oaCamera = DshGlyphs.oaCamera;
+  static const oaPhoto = DshGlyphs.oaPhoto;
+  static const oaPhotoOnSquare = DshGlyphs.oaPhotoOnSquare;
+  static const oaFolder = DshGlyphs.oaFolder;
+  static const oaPencil = DshGlyphs.oaPencil;
+  static const oaPencilBrush = DshGlyphs.oaPencilBrush;
+  static const oaMicrophone = DshGlyphs.oaMicrophone;
+  static const oaMicrophoneFill = DshGlyphs.oaMicrophoneFill;
+  static const oaVoiceButton = DshGlyphs.oaVoiceButton;
+  static const oaStop = DshGlyphs.oaStop;
+  static const oaChatBubble = DshGlyphs.oaChatBubble;
+  static const oaShare = DshGlyphs.oaShare;
+  static const oaSend = DshGlyphs.oaSend;
+  static const oaGlobe = DshGlyphs.oaGlobe;
+  static const oaCodex = DshGlyphs.oaCodex;
+  static const oaTerminal = DshGlyphs.oaTerminal;
+  static const oaBook = DshGlyphs.oaBook;
+  static const oaBarChart = DshGlyphs.oaBarChart;
+  static const oaWrench = DshGlyphs.oaWrench;
+  static const oaPalette = DshGlyphs.oaPalette;
+  static const oaPersonalization = DshGlyphs.oaPersonalization;
+  static const oaStarOfLife = DshGlyphs.oaStarOfLife;
+  static const oaOpenai = DshGlyphs.oaOpenai;
+  static const oaSuitcase = DshGlyphs.oaSuitcase;
+  static const oaMusic = DshGlyphs.oaMusic;
+  static const oaPlane = DshGlyphs.oaPlane;
 }

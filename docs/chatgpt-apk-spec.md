@@ -63,6 +63,31 @@ CUSTOMIZE / SETTINGS / UPGRADE / NEW_CHAT / NEW_NOTE / HELP_CENTER / ASSISTANT /
 `FlingResult(distanceCoefficient=…)`、`VelocityTracker`。
 → 官方是**锚点 + spring 落位**，不是逐帧手写线性跟随。
 
+## 4b. 图标集（res/drawable/ds_*.xml，48 个）
+
+官方不用 Material/Phosphor，而是自绘 `ds_<name>_regular_24` 系列：
+全部 **24×24dp、viewport 24×24、`fillColor #FF000000`、1–7 条 path**。
+
+实读清单（部分）：`ds_brain`（思考）、`ds_camera`（拍照）、`ds_photo` /
+`ds_photo_on_tilted_square`（照片）、`ds_folder`（文件）、`ds_pencil` /
+`ds_paintbrush_on_pencil`（新建/编辑）、`ds_microphone(_fill)`、
+`ds_voice_button`（语音键）、`ds_circle_stop_fill` / `ds_stop_fill`（停止）、
+`ds_chat_bubble`（对话）、`ds_share_android`（分享）、`ds_plane_up_right`（发送）、
+`ds_globe`、`ds_codex`、`ds_terminal`、`ds_book`、`ds_bar_chart`、
+`ds_wrench`、`ds_paint_palette`、`ds_personalization`、`ds_star_of_life`、
+`ds_openai_blossom`、`ds_suitcase`、`ds_music_note`。
+
+**本仓库落地方式**：把这 27 个常用角色的 path 转成
+`app/tool/icons/openai/*.svg`（24×24 viewBox），`tool/make_icon_font.py` 新增
+`openai()` 源（按 `oaFoo` 前缀分派，24→256 网格缩放），重新生成
+`assets/fonts/DshIcons.ttf` 与 `dsh_glyphs.dart`；`AppIcons` 的角色
+（send / voice / camera / gallery / files / share / edit / newChat / engine /
+web / model / theme / chat / settings …）改指向 `DshGlyphs.oa*`。
+这样所有按钮一次换装，不需要逐个改 widget。
+
+设置页 `SettingsIcon` 原本给每个图标套彩色圆底（`colors.identity[tint]`），
+官方是**无底色单色线性图标**，已去掉圆底。
+
 ## 5. 对本仓库的落地清单
 
 1. `AppMotion` 的曲线改为上表实值（当前是自定义 `Easing.standard`）。
