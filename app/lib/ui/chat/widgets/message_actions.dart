@@ -127,6 +127,10 @@ class _ReplyActionRowState extends State<ReplyActionRow> {
     final onBranch = widget.onBranch;
     final onRegenerate = widget.onRegenerate;
     final onMore = widget.onMore;
+    // Chrome labels, not translated content: no ARB key needed.
+    final good = AppLocale.isEnglish ? 'Good response' : '好评';
+    final bad = AppLocale.isEnglish ? 'Bad response' : '差评';
+    final aloud = AppLocale.isEnglish ? 'Read aloud' : '朗读';
     final icons = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -153,12 +157,7 @@ class _ReplyActionRowState extends State<ReplyActionRow> {
           ),
         // ChatGPT's rating pair, then read-aloud. Local-only: no backend
         // feedback endpoint exists in this fork, so a tap records the
-        // choice in this row and gives haptic feedback. Tooltips are
-        // constant strings: these three are chrome labels, not translated
-        // content, so they need no ARB key.
-        final good = AppLocale.isEnglish ? 'Good response' : '好评';
-        final bad = AppLocale.isEnglish ? 'Bad response' : '差评';
-        final aloud = AppLocale.isEnglish ? 'Read aloud' : '朗读';
+        // choice in this row and gives haptic feedback.
         IconButton(
           key: const ValueKey('reply-good'),
           tooltip: good,
