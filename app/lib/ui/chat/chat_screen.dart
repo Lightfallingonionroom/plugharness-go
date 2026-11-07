@@ -1921,7 +1921,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                                     hasAttachments: _drafts.isNotEmpty,
                                     leading: AttachButton(onPressed: connected ? _attach : null),
                                     keyboardInset: MediaQuery.viewInsetsOf(context).bottom,
-                                    footer: null,
+                                    footer: _composerOpens(context) && !isChild
+                                        ? ComposerModelPill(
+                                            selection: sessionId == null ? pendingModel : chat?.model,
+                                            onSelected: _modelTarget(),
+                                          )
+                                        : null,
                                     tray: ComposerTrayStack.maybe(
                                       quote: switch (quote) {
                                         final quote? => QuoteChip(
