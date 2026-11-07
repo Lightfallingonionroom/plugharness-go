@@ -14,20 +14,24 @@ import 'squircle.dart';
 /// | sm | 10 | Chip、工具图标块、小按钮、菜单项高亮 |
 /// | md | 14 | 卡片、代码井、输入框、菜单、主按钮 |
 /// | lg | 20 | 用户气泡、审批卡、设置分组卡 |
-/// | xl | 28 | 输入条(composer)、底部弹层、对话框 |
+/// | xl | 24 | 输入条(composer)、底部弹层、对话框 |
 /// | pill | — | 顶栏胶囊、模型胶囊、发送键、思考胶囊(StadiumBorder) |
 ///
-/// DSH 官方 Web 的阶梯是 4/8/12/16/20/28(panel = 28),这里在触屏上整体
-/// 放大一点,但保留 28 作为最外层容器半径,与官方 composer 一致。
+/// 数值来自官方 `@openai/apps-sdk-ui` 的圆角阶梯
+/// (`--radius-sm 6 / -md 8 / -lg 10 / -xl 12 / -2xl 16 / -3xl 20 / -4xl 24`),
+/// 见 docs/openai-sdk-ui-spec.md §1。官方 composer 是 `--radius-4xl` = 24,
+/// 搜索框是 `--radius-xl` = 12,卡片/气泡是 `--radius-2xl` = 16 一档。
 abstract final class AppShape {
   static const xs = 6.0;
   static const sm = 10.0;
   static const md = 14.0;
   static const lg = 20.0;
 
-  /// 官方 APK `res/drawable/search_background.xml` 实测 22dp。
-  static const searchField = 22.0;
-  static const xl = 28.0;
+  /// 官方 `--radius-xl` = 12：侧栏搜索框、菜单、弹层。
+  static const searchField = 12.0;
+
+  /// 官方 `--radius-4xl` = 24：composer、底部弹层、对话框。
+  static const xl = 24.0;
 
   static const radiusXs = BorderRadius.all(Radius.circular(xs));
   static const radiusSm = BorderRadius.all(Radius.circular(sm));

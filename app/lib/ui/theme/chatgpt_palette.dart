@@ -99,8 +99,10 @@ class ChatGptShellColors extends ThemeExtension<ChatGptShellColors> {
   );
 
   /// Light: page near-white; the sidebar is the same family one step down.
-  /// The action and the sent bubble use ChatGPT's blue, not the app accent:
-  /// the shell is a fixed surface, so a lavender/teal theme cannot tint it.
+  /// Values from the official `@openai/apps-sdk-ui` tokens (docs/openai-sdk-ui-spec.md):
+  /// surface #ffffff, surface-secondary #f9f9f9, text #0d0d0d / #5d5d5d / #8f8f8f.
+  /// The primary action is a near-black solid, not a coloured fill: OpenAI keeps
+  /// blue for the focus ring and links only (--color-ring / --link-primary).
   /// [accent] is kept for the caller's convenience and deliberately unused.
   factory ChatGptShellColors.light(AppAccent accent) => ChatGptShellColors(
     page: const Color(0xFFFCFCFC),
@@ -113,29 +115,35 @@ class ChatGptShellColors extends ThemeExtension<ChatGptShellColors> {
     primaryText: const Color(0xFF0D0D0D),
     secondaryText: const Color(0xFF5D5D5D),
     tertiaryText: const Color(0xFF8F8F8F),
-    primaryAction: const Color(0xFF2F6FED),
+    // --color-background-primary-solid (light) = gray-900.
+    primaryAction: const Color(0xFF181818),
     onPrimaryAction: const Color(0xFFFFFFFF),
-    userBubble: const Color(0xFF2F6FED),
-    onUserBubble: const Color(0xFFFFFFFF),
+    // --user-message-background-color: alpha 5% over the surface, not a fill colour.
+    userBubble: const Color(0x0D0D0D0D),
+    onUserBubble: const Color(0xFF0D0D0D),
   );
 
-  /// Dark: measured from the official APK's res/drawable/surface_background.xml
-  /// (#1F1E20) and search_background.xml (#343338). See docs/chatgpt-apk-spec.md.
+  /// Dark: page #212121 (SDK gray-200 / MUI's measured `bg`), sidebar #171717,
+  /// composer and row fills #2f2f2f, borders #424242 — the values the official
+  /// ChatGPT-style layout uses. See docs/openai-sdk-ui-spec.md and
+  /// docs/external-refs-summary.md §2.
   factory ChatGptShellColors.dark(AppAccent accent) => ChatGptShellColors(
-    page: const Color(0xFF1F1E20),
+    page: const Color(0xFF212121),
     sidebar: const Color(0xFF171717),
-    composer: const Color(0xFF343338),
-    composerBorder: const Color(0xFF3D3D3D),
-    rowHover: const Color(0xFF2F2E31),
-    rowSelected: const Color(0xFF343338),
-    divider: const Color(0xFF2E2E2E),
+    composer: const Color(0xFF2F2F2F),
+    composerBorder: const Color(0xFF424242),
+    rowHover: const Color(0xFF2F2F2F),
+    rowSelected: const Color(0xFF2F2F2F),
+    divider: const Color(0xFF2F2F2F),
     primaryText: const Color(0xFFECECEC),
     secondaryText: const Color(0xFFB4B4B4),
-    tertiaryText: const Color(0xFF8B8B8B),
-    primaryAction: const Color(0xFF2F6FED),
-    onPrimaryAction: const Color(0xFFFFFFFF),
-    userBubble: const Color(0xFF2F6FED),
-    onUserBubble: const Color(0xFFFFFFFF),
+    tertiaryText: const Color(0xFF8E8E8E),
+    // --color-background-primary-solid (dark) = gray-950: near-white.
+    primaryAction: const Color(0xFFF3F3F3),
+    onPrimaryAction: const Color(0xFF0D0D0D),
+    // alpha 8% white over the page, the official user-message fill.
+    userBubble: const Color(0x14FFFFFF),
+    onUserBubble: const Color(0xFFECECEC),
   );
 
   @override

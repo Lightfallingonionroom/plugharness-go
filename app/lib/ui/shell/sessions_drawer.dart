@@ -45,7 +45,6 @@ import '../theme/theme.dart';
 import '../web/mode_home.dart';
 import '../workspace/workspace_switcher.dart';
 import '../workspace/workspaces_page.dart';
-import 'adaptive/adaptive_layout.dart' show WindowClass;
 import 'brand_mark.dart';
 import 'drawer/drawer_actions.dart';
 import 'drawer/drawer_destination.dart';
@@ -144,10 +143,9 @@ class SessionsDrawer extends ConsumerWidget {
     final quick = AppMotion.of(context, AppMotion.quick);
     final shell = ChatGptShellColors.of(context);
     final quickItems = ref.watch(quickPanelProvider.select((p) => p.items));
-    // A phone on its side: the top of the drawer (brand, search, filters)
-    // would leave room for two conversations, so it scrolls away with them.
-    final short = MediaQuery.sizeOf(context).height < WindowClass.compactHeight;
-    final top = <Widget>[
+    // Pinned above the scroll body: the brand row and the search field. ChatGPT
+    // keeps exactly these two in place while everything below them scrolls.
+    final pinned = <Widget>[
       AnimatedSwitcher(
         duration: quick,
         child: selecting
@@ -183,6 +181,10 @@ class SessionsDrawer extends ConsumerWidget {
         onDetails: () => onOpen(DrawerDestination.engine),
       ),
       SessionSearchBar(onClose: onClose),
+    ];
+    // Scrolls with the conversations: the feature rows, their section labels
+    // and the filters. This is the part the one-scroll-body rule is about.
+    final top = <Widget>[
       // ChatGPT splits its one column into labelled sections. Ours: the
       // app's rooms first, then the conversations themselves.
       _sectionLabel(context, l10n.searchFeatures),
@@ -245,27 +247,28 @@ class SessionsDrawer extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (short)
-              Expanded(
-                child: NestedScrollView(
-                  headerSliverBuilder: (context, _) => [
-                    SliverToBoxAdapter(
-                      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: top),
-                    ),
-                  ],
-                  body: list,
-                ),
-              )
-            else ...[
-              ...top,
-              Expanded(child: list),
-            ],
-            // ChatGPT's bottom action: one wide, filled pill that starts a chat.
-            // The host/status row stays below it as account chrome.
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10, 6, 10, 0),
-              child: _NewChatPill(onTap: newChat, label: l10n.commonNewChat),
+            // Pinned: brand row + search. Stays put while the body scrolls.
+            ...pinned,
+            // One scroll body for the whole column: the app's rooms and the
+            // conversations scroll together, the way ChatGPT's sidebar does.
+            //
+            // This used to be `Column(top..., Expanded(list))`, which pinned
+            // every feature row and left only the conversation list scrollable
+            // — the exact complaint that drove this rewrite.
+            Expanded(
+              child: NestedScrollView(
+                headerSliverBuilder: (context, _) => [
+                  SliverToBoxAdapter(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: top),
+                  ),
+                ],
+                body: list,
+              ),
             ),
+            // No wide filled 新对话 pill down here: ChatGPT keeps a single round
+            // compose key in the brand row above, and the bottom of its sidebar
+            // is the account row. Two competing "new chat" affordances was one
+            // of the things that made this drawer read as a different product.
             // The action bar lies exactly over the identity bar, which
             // keeps its size while hidden: same height at any text size.
             _ReportHeight(
@@ -343,53 +346,6 @@ class SessionsDrawer extends ConsumerWidget {
       borderRadius: radius,
       style: shell.sidebarGlass,
       child: content,
-    );
-  }
-}
-
-/// ChatGPT's bottom-of-drawer action: a wide filled pill with the compose
-/// glyph and a label, rather than the small round key in the brand row.
-class _NewChatPill extends StatelessWidget {
-  const _NewChatPill({required this.onTap, required this.label});
-
-  final VoidCallback onTap;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    final shell = ChatGptShellColors.of(context);
-    return Semantics(
-      button: true,
-      label: label,
-      excludeSemantics: true,
-      child: Material(
-        color: shell.primaryAction,
-        shape: const StadiumBorder(),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 44),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(AppIcons.newChat, size: 19, color: shell.onPrimaryAction),
-                  const SizedBox(width: 8),
-                  Text(
-                    label,
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          color: shell.onPrimaryAction,
-                          fontWeight: FontWeight.w600,
-                        ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }
@@ -1151,13 +1107,15 @@ class IdentityBar extends ConsumerWidget {
             ),
           ),
           const SizedBox(width: 8),
-          // No 全部功能 key: every destination it opened is a row in the
-          // column above now, where ChatGPT keeps them.
-          _RoundButton(
-            icon: AppIcons.settings,
-            tooltip: l10n.commonSettings,
+          // Account avatar: the way into settings. ChatGPT's sidebar ends with
+          // a round account picture, not a gear; a settings placeholder stands
+          // in until the app has real avatars (the user asked for exactly this).
+          // Single-colour line glyph on a hairline ring — no tinted disc, which
+          // is what made the old footer read as a different product.
+          _DrawerAvatar(
             onTap: onSettings,
             onLongPress: onSettingsHold,
+            tooltip: l10n.commonSettings,
           ),
         ],
       ),
@@ -1165,48 +1123,54 @@ class IdentityBar extends ConsumerWidget {
   }
 }
 
-/// 44dp pill-glass circle (no blur: the drawer is already glass).
-class _RoundButton extends StatelessWidget {
-  const _RoundButton({required this.icon, required this.tooltip, required this.onTap, this.onLongPress});
+/// The drawer's account entry: a 44dp tap target holding a 32dp circle with a
+/// hairline ring and the `circle_person` glyph. No colour: the identity hues
+/// belong to host kinds, not to the account.
+class _DrawerAvatar extends StatelessWidget {
+  const _DrawerAvatar({required this.onTap, required this.tooltip, this.onLongPress});
 
-  final IconData icon;
-  final String tooltip;
   final VoidCallback onTap;
   final VoidCallback? onLongPress;
+  final String tooltip;
+
+  static const _ring = 32.0;
 
   @override
   Widget build(BuildContext context) {
-    final hold = onLongPress;
-    Widget button = SizedBox.square(
-      dimension: IdentityBar.keySize,
-      child: GlassSurface(
-        tier: GlassTier.pill,
-        circle: true,
-        onTap: onTap,
-        child: Center(child: Icon(icon, size: 22, color: Theme.of(context).colorScheme.onSurface)),
-      ),
-    );
-    if (hold != null) {
-      button = GestureDetector(
-        onLongPress: () {
-          unawaited(HapticFeedback.mediumImpact());
-          hold();
-        },
-        child: button,
-      );
-    }
+    final shell = ChatGptShellColors.of(context);
     return Tooltip(
       message: tooltip,
-      // Holding it does something of its own.
-      triggerMode: hold == null ? null : TooltipTriggerMode.manual,
       child: Semantics(
         button: true,
         label: tooltip,
         onTap: onTap,
-        onLongPress: hold,
         excludeSemantics: true,
-        child: button,
+        child: InkResponse(
+          onTap: onTap,
+          onLongPress: onLongPress,
+          radius: IdentityBar.keySize / 2,
+          child: SizedBox.square(
+            dimension: IdentityBar.keySize,
+            child: Center(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: shell.composerBorder, width: 1),
+                ),
+                child: SizedBox.square(
+                  dimension: _ring,
+                  child: Icon(
+                    AppIcons.avatar,
+                    size: 20,
+                    color: shell.secondaryText,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
 }
+

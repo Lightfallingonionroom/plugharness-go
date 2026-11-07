@@ -18,7 +18,8 @@ abstract final class AppMotion {
   static const press = Duration(milliseconds: 90);
 
   /// 淡入淡出、图标交叉切换、复制成功对勾。
-  static const quick = Duration(milliseconds: 160);
+  /// 官方 `--transition-duration-basic` 是 150ms（docs/openai-sdk-ui-spec.md §12）。
+  static const quick = Duration(milliseconds: 150);
 
   /// 小块展开收起、列表项进出。
   static const standard = Duration(milliseconds: 240);
@@ -43,20 +44,28 @@ abstract final class AppMotion {
   /// 环境呼吸(安装进度光晕、连接中的状态点)。
   static const breath = Duration(milliseconds: 2400);
 
-  /// Curves measured from the official ChatGPT APK (`com.openai.chatgpt`
-  /// 1.2026.300), res/interpolator/m3_sys_motion_easing_*.xml. See
-  /// docs/chatgpt-apk-spec.md. Flutter's built-in Easing.standard is close
-  /// but not identical; these are the exact control points.
-  static const std = Cubic(0.2, 0.0, 0.0, 1.0);
+  /// Curves measured from the official `@openai/apps-sdk-ui` design tokens
+  /// (`src/styles/variables-semantic.css`, docs/openai-sdk-ui-spec.md §12).
+  /// These are the exact control points OpenAI ships:
+  ///   --cubic-enter       (0.19, 1, 0.22, 1)   arrival, long tail
+  ///   --cubic-exit        (0.8, 0, 0.4, 1)     departure
+  ///   --cubic-exit-snappy (0.65, 0, 0.4, 1)    less inertia delay
+  ///   --cubic-move        (0.65, 0, 0.35, 1)   position changes
+  /// The APK's M3 tokens (m3_sys_motion_easing_*) are kept below for the
+  /// surfaces that visibly follow the Android client instead of the web tokens.
+  static const std = Cubic(0.19, 1.0, 0.22, 1.0);
 
-  /// Emphasized decelerate (0.1, 0.7, 0.1, 1).
+  /// Emphasized decelerate (0.1, 0.7, 0.1, 1) — M3, kept for sheets.
   static const enter = Cubic(0.1, 0.7, 0.1, 1.0);
 
-  /// Emphasized accelerate (0.3, 0, 0.8, 0.2).
-  static const exit = Cubic(0.3, 0.0, 0.8, 0.2);
+  /// `--cubic-exit` (0.8, 0, 0.4, 1).
+  static const exit = Cubic(0.8, 0.0, 0.4, 1.0);
 
-  /// Standard decelerate (0, 0, 0, 1) — long-tail arrival.
-  static const glide = Cubic(0.0, 0.0, 0.0, 1.0);
+  /// `--cubic-move` (0.65, 0, 0.35, 1) — slides and position changes.
+  static const glide = Cubic(0.65, 0.0, 0.35, 1.0);
+
+  /// `--cubic-exit-snappy` (0.65, 0, 0.4, 1) — dismissals that should not drag.
+  static const snappy = Cubic(0.65, 0.0, 0.4, 1.0);
 
   /// 折叠展开。
   static const collapseCurve = Curves.easeInOutCubic;
