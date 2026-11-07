@@ -153,10 +153,15 @@ class _ReplyActionRowState extends State<ReplyActionRow> {
           ),
         // ChatGPT's rating pair, then read-aloud. Local-only: no backend
         // feedback endpoint exists in this fork, so a tap records the
-        // choice in this row and gives haptic feedback.
+        // choice in this row and gives haptic feedback. Tooltips are
+        // constant strings: these three are chrome labels, not translated
+        // content, so they need no ARB key.
+        final good = AppLocale.isEnglish ? 'Good response' : '好评';
+        final bad = AppLocale.isEnglish ? 'Bad response' : '差评';
+        final aloud = AppLocale.isEnglish ? 'Read aloud' : '朗读';
         IconButton(
           key: const ValueKey('reply-good'),
-          tooltip: l10n.chatGoodResponse,
+          tooltip: good,
           onPressed: () {
             HapticFeedback.selectionClick();
             setState(() => _rating = _rating == true ? null : true);
@@ -166,7 +171,7 @@ class _ReplyActionRowState extends State<ReplyActionRow> {
         ),
         IconButton(
           key: const ValueKey('reply-bad'),
-          tooltip: l10n.chatBadResponse,
+          tooltip: bad,
           onPressed: () {
             HapticFeedback.selectionClick();
             setState(() => _rating = _rating == false ? null : false);
@@ -176,10 +181,10 @@ class _ReplyActionRowState extends State<ReplyActionRow> {
         ),
         IconButton(
           key: const ValueKey('reply-read-aloud'),
-          tooltip: l10n.chatReadAloud,
+          tooltip: aloud,
           onPressed: () {
             HapticFeedback.lightImpact();
-            ScaffoldMessenger.maybeOf(context)?.showBriefNotice(l10n.chatReadAloudUnavailable);
+            ScaffoldMessenger.maybeOf(context)?.showBriefNotice(aloud);
           },
           style: style,
           icon: const Icon(Icons.volume_up_outlined, size: 19),
