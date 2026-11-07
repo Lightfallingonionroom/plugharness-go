@@ -127,10 +127,12 @@ class _ReplyActionRowState extends State<ReplyActionRow> {
     final onBranch = widget.onBranch;
     final onRegenerate = widget.onRegenerate;
     final onMore = widget.onMore;
-    // Chrome labels, not translated content: no ARB key needed.
-    final good = AppLocale.isEnglish ? 'Good response' : '好评';
-    final bad = AppLocale.isEnglish ? 'Bad response' : '差评';
-    final aloud = AppLocale.isEnglish ? 'Read aloud' : '朗读';
+    // These already exist in the ARB (chatGoodResponse / chatBadResponse /
+    // chatReadAloud): use them instead of hard-coded strings so the bar is
+    // translated like the rest of the shell.
+    final good = l10n.chatGoodResponse;
+    final bad = l10n.chatBadResponse;
+    final aloud = l10n.chatReadAloud;
     // A turn footnote needs the room: no rating keys in that row.
     // ChatGPT's reply bar reads: copy · good · bad · read aloud · share · more.
     // The icons come from AppIcons (official ds_* where one exists) rather than
