@@ -257,5 +257,13 @@
  "oaOpenai": 57599,
  "oaSuitcase": 57600,
  "oaMusic": 57601,
- "oaPlane": 57602
+ "oaPlane": 57602,
+ "oaArrowLeft": 57603,
+ "oaArrowRight": 57604,
+ "oaBraces": 57605,
+ "oaHeart": 57606,
+ "oaLaptop": 57607,
+ "oaPaw": 57608,
+ "oaFlask": 57609,
+ "oaGraduationCap": 57610
 }
