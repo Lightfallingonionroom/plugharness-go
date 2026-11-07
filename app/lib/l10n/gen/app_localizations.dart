@@ -32549,7 +32549,7 @@ abstract class L10n {
   /// No description provided for @viewSuggestWorkspacePrompt.
   ///
   /// In zh, this message translates to:
-  /// **'看看工作区'**
+  /// **'看看工作区里现在有哪些文件和项目，简单介绍一下。'**
   String get viewSuggestWorkspacePrompt;
 
   /// No description provided for @viewSuggestWordCount.
@@ -32561,7 +32561,7 @@ abstract class L10n {
   /// No description provided for @viewSuggestWordCountPrompt.
   ///
   /// In zh, this message translates to:
-  /// **'词频统计脚本'**
+  /// **'写一个 Python 脚本：统计一个文本文件里出现最多的 20 个词，并运行一次给我看结果。'**
   String get viewSuggestWordCountPrompt;
 
   /// No description provided for @viewSuggestNode.
@@ -32573,7 +32573,7 @@ abstract class L10n {
   /// No description provided for @viewSuggestNodePrompt.
   ///
   /// In zh, this message translates to:
-  /// **'新建 Node 项目'**
+  /// **'在工作区新建一个 Node.js 项目，配好 TypeScript 和一个最小的单元测试。'**
   String get viewSuggestNodePrompt;
 
   /// No description provided for @viewSuggestGit.
@@ -32585,7 +32585,7 @@ abstract class L10n {
   /// No description provided for @viewSuggestGitPrompt.
   ///
   /// In zh, this message translates to:
-  /// **'rebase 或 merge'**
+  /// **'用一个具体例子解释 git rebase 和 git merge 的区别，各自什么时候用。'**
   String get viewSuggestGitPrompt;
 
   /// No description provided for @viewGreetingMorning.
