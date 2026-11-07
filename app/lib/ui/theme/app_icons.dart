@@ -58,13 +58,13 @@ abstract final class AppIcons {
   static const voice = DshGlyphs.oaMicrophone;
 
   /// 插话:本轮中途送进去。
-  static const steer = DshGlyphs.oaStarOfLife;
+  static const steer = DshGlyphs.oaArrowRight;
 
   /// 排队:本轮结束后发送。
-  static const queued = DshGlyphs.oaStarOfLife;
+  static const queued = DshGlyphs.oaBalance;
 
   /// 打断:停掉本轮再发。
-  static const interrupt = DshGlyphs.oaStarOfLife;
+  static const interrupt = DshGlyphs.oaStopFill;
   static const camera = DshGlyphs.oaCamera;
   static const gallery = DshGlyphs.oaPhoto;
   static const files = DshGlyphs.oaFolder;
@@ -167,7 +167,7 @@ abstract final class AppIcons {
   static const manageFolders = DshGlyphs.oaFolder;
 
   /// /compact:压缩上下文。
-  static const compact = DshGlyphs.oaStarOfLife;
+  static const compact = DshGlyphs.oaBraces;
 
   /// 完成后把思考与工具调用收成一行。
   static const foldTurns = DshGlyphs.oaStarOfLife;
@@ -246,7 +246,7 @@ abstract final class AppIcons {
   static const autoUpdate = DshGlyphs.oaGlobe;
 
   // ── 安全与权限 ──────────────────────────────────────────────
-  static const lock = DshGlyphs.oaStarOfLife;
+  static const lock = DshGlyphs.oaPaw;
   static const lockActive = DshGlyphs.oaStarOfLife;
   static const unlock = DshGlyphs.oaStarOfLife;
 
@@ -254,7 +254,7 @@ abstract final class AppIcons {
   static const localOnly = DshGlyphs.oaStarOfLife;
   static const approval = DshGlyphs.oaStarOfLife;
   static const securityWarning = DshGlyphs.oaStarOfLife;
-  static const permissions = DshGlyphs.oaStarOfLife;
+  static const permissions = DshGlyphs.oaWrench;
   static const safeMode = DshGlyphs.oaStarOfLife;
   static const verified = DshGlyphs.oaStarOfLife;
   static const fingerprint = DshGlyphs.oaStarOfLife;
@@ -325,7 +325,7 @@ abstract final class AppIcons {
   static const terminal = DshGlyphs.oaTerminal;
   static const plugin = DshGlyphs.oaTerminal;
   static const pluginInventory = DshGlyphs.oaTerminal;
-  static const skill = DshGlyphs.oaTerminal;
+  static const skill = DshGlyphs.oaCodex;
   static const model = DshGlyphs.oaBrain;
   static const providers = DshGlyphs.oaStarOfLife;
 
@@ -334,8 +334,8 @@ abstract final class AppIcons {
   static const subagents = DshGlyphs.oaStarOfLife;
   static const workflow = DshGlyphs.oaStarOfLife;
   static const todo = DshGlyphs.oaStarOfLife;
-  static const goal = DshGlyphs.oaStarOfLife;
-  static const plan = DshGlyphs.oaStarOfLife;
+  static const goal = DshGlyphs.oaHeart;
+  static const plan = DshGlyphs.oaNotebook;
   static const planMode = DshGlyphs.oaStarOfLife;
   static const jobs = DshGlyphs.oaStarOfLife;
   static const automation = DshGlyphs.oaStarOfLife;

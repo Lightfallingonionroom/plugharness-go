@@ -265,5 +265,8 @@
  "oaLaptop": 57607,
  "oaPaw": 57608,
  "oaFlask": 57609,
- "oaGraduationCap": 57610
+ "oaGraduationCap": 57610,
+ "oaBalance": 57611,
+ "oaStopFill": 57612,
+ "oaNotebook": 57613
 }

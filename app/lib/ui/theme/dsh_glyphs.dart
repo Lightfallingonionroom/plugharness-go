@@ -14,6 +14,7 @@ abstract final class DshGlyphs {
 
   static const oaArrowLeft = IconData(0xe103, fontFamily: family);
   static const oaArrowRight = IconData(0xe104, fontFamily: family);
+  static const oaBalance = IconData(0xe10b, fontFamily: family);
   static const oaBarChart = IconData(0xe0fa, fontFamily: family);
   static const oaBook = IconData(0xe0f9, fontFamily: family);
   static const oaBraces = IconData(0xe105, fontFamily: family);
@@ -30,6 +31,7 @@ abstract final class DshGlyphs {
   static const oaMicrophone = IconData(0xe0ef, fontFamily: family);
   static const oaMicrophoneFill = IconData(0xe0f0, fontFamily: family);
   static const oaMusic = IconData(0xe101, fontFamily: family);
+  static const oaNotebook = IconData(0xe10d, fontFamily: family);
   static const oaOpenai = IconData(0xe0ff, fontFamily: family);
   static const oaPalette = IconData(0xe0fc, fontFamily: family);
   static const oaPaw = IconData(0xe108, fontFamily: family);
@@ -43,6 +45,7 @@ abstract final class DshGlyphs {
   static const oaShare = IconData(0xe0f4, fontFamily: family);
   static const oaStarOfLife = IconData(0xe0fe, fontFamily: family);
   static const oaStop = IconData(0xe0f2, fontFamily: family);
+  static const oaStopFill = IconData(0xe10c, fontFamily: family);
   static const oaSuitcase = IconData(0xe100, fontFamily: family);
   static const oaTerminal = IconData(0xe0f8, fontFamily: family);
   static const oaVoiceButton = IconData(0xe0f1, fontFamily: family);
@@ -52,6 +55,7 @@ abstract final class DshGlyphs {
   static const all = <String, IconData>{
     'oaArrowLeft': oaArrowLeft,
     'oaArrowRight': oaArrowRight,
+    'oaBalance': oaBalance,
     'oaBarChart': oaBarChart,
     'oaBook': oaBook,
     'oaBraces': oaBraces,
@@ -68,6 +72,7 @@ abstract final class DshGlyphs {
     'oaMicrophone': oaMicrophone,
     'oaMicrophoneFill': oaMicrophoneFill,
     'oaMusic': oaMusic,
+    'oaNotebook': oaNotebook,
     'oaOpenai': oaOpenai,
     'oaPalette': oaPalette,
     'oaPaw': oaPaw,
@@ -81,6 +86,7 @@ abstract final class DshGlyphs {
     'oaShare': oaShare,
     'oaStarOfLife': oaStarOfLife,
     'oaStop': oaStop,
+    'oaStopFill': oaStopFill,
     'oaSuitcase': oaSuitcase,
     'oaTerminal': oaTerminal,
     'oaVoiceButton': oaVoiceButton,
