@@ -35,6 +35,7 @@ abstract final class DshGlyphs {
   static const oaOpenai = IconData(0xe0ff, fontFamily: family);
   static const oaPalette = IconData(0xe0fc, fontFamily: family);
   static const oaPaw = IconData(0xe108, fontFamily: family);
+  static const oaPenTip = IconData(0xe10e, fontFamily: family);
   static const oaPencil = IconData(0xe0ed, fontFamily: family);
   static const oaPencilBrush = IconData(0xe0ee, fontFamily: family);
   static const oaPersonalization = IconData(0xe0fd, fontFamily: family);
@@ -76,6 +77,7 @@ abstract final class DshGlyphs {
     'oaOpenai': oaOpenai,
     'oaPalette': oaPalette,
     'oaPaw': oaPaw,
+    'oaPenTip': oaPenTip,
     'oaPencil': oaPencil,
     'oaPencilBrush': oaPencilBrush,
     'oaPersonalization': oaPersonalization,

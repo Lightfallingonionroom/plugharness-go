@@ -99,15 +99,15 @@ abstract final class AppIcons {
   static const preview = DshGlyphs.oaPhoto;
 
   /// 操作完成的回执:已复制、已保存。
-  static const done = DshGlyphs.oaPencil;
+  static const done = DshGlyphs.oaHeart;
 
   // ── 通用操作 ────────────────────────────────────────────────
-  static const add = DshGlyphs.oaPencil;
+  static const add = DshGlyphs.oaPenTip;
 
   /// 输入框尾部的「添加这一项」。
-  static const addEntry = DshGlyphs.oaPencil;
-  static const increment = DshGlyphs.oaPencil;
-  static const decrement = DshGlyphs.oaPencil;
+  static const addEntry = DshGlyphs.oaNotebook;
+  static const increment = DshGlyphs.oaBarChart;
+  static const decrement = DshGlyphs.oaBalance;
   static const remove = DshGlyphs.oaArrowRight;
   static const rename = DshGlyphs.oaStarOfLife;
   static const delete = DshGlyphs.oaStarOfLife;
@@ -193,8 +193,8 @@ abstract final class AppIcons {
   static const notificationsOff = DshGlyphs.oaStarOfLife;
 
   // ── 状态 ────────────────────────────────────────────────────
-  static const success = DshGlyphs.oaPencil;
-  static const completed = DshGlyphs.oaPencil;
+  static const success = DshGlyphs.oaHeart;
+  static const completed = DshGlyphs.oaHeart;
   static const error = DshGlyphs.oaStarOfLife;
   static const warning = DshGlyphs.oaStarOfLife;
   static const info = DshGlyphs.oaBrain;
