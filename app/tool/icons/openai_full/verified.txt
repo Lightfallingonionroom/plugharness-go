@@ -1,0 +1,96 @@
+=== VERIFIED (exists) ===
+ OK   sidebar_menu
+ OK   chevron_left_lg
+ OK   chevron_right_lg
+ OK   xmark_lg
+ OK   ellipsis_horizontal
+ OK   ellipsis_vertical
+ OK   chevron_down_md
+ OK   chevron_up_md
+ OK   arrow_down_lg
+ OK   plus_lg
+ OK   arrow_up_lg_button
+ OK   arrow_up_lg
+ OK   microphone
+ OK   stop_fill
+ OK   camera
+ OK   photo
+ OK   photo_on_tilted_square
+ OK   paperclip
+ OK   clock
+ OK   share_android
+ OK   thumb_up
+ OK   thumb_down
+ OK   speaker_sound_wave_2
+ OK   arrow_rotate_clockwise
+ OK   arrow_branch
+ OK   pencil
+ OK   pin
+ OK   pin_fill
+ OK   trash
+ OK   archive
+ OK   magnifying_glass_md
+ OK   square_and_pencil
+ OK   plugin
+ OK   globe
+ OK   laptop_connector
+ OK   laptop
+ OK   terminal
+ OK   brain
+ OK   sparkle
+ OK   bookmark
+ OK   folder
+ OK   folder_full
+ OK   clock_arrow_rotate_counterclockwise
+ OK   gear
+ OK   circle_person
+ OK   paint_palette
+ OK   personalization
+ OK   android
+ OK   checkmark_lg
+ OK   circle_checkmark
+ OK   bell
+ OK   lock
+ OK   key
+ OK   shield_checkmark
+ OK   star
+ OK   heart
+ OK   calendar_day
+ OK   code
+ OK   braces
+ OK   analytics
+ OK   bar_chart
+ OK   wrench
+ OK   book_open
+ OK   briefcase
+
+=== MISSING (must downgrade to B layer) ===
+ MISS stop
+ MISS exclamationmark_circle
+ MISS info_circle
+
+total 67, ok 64, miss 3
+
+=== CLOSEST ALTERNATIVES ===
+ stop -> ['circle_stop_fill', 'stop_fill', 'stop_sm_fill', 'stopwatch']
+ exclamationmark_circle -> ['circle_exclamationmark', 'triangle_exclamationmark', 'triangle_exclamationmark_fill']
+ info_circle -> ['circle_info', 'info']
+
+=== EXPLICIT SEARCHES ===
+ xmark: ['circle_xmark', 'circle_xmark_fill', 'folder_badge_xmark', 'globe_badge_xmark', 'notebook_badge_xmark', 'person_badge_xmark', 'xmark_lg', 'xmark_md']
+ x_mark: []
+ close: ['book_closed_quotemark']
+ info: ['circle_info', 'info']
+ exclam: ['circle_exclamationmark', 'triangle_exclamationmark', 'triangle_exclamationmark_fill']
+ warning: []
+ stop: ['circle_stop_fill', 'stop_fill', 'stop_sm_fill', 'stopwatch']
+ copy: []
+ duplicate: []
+ square_and: ['square_and_arrow_up_right', 'square_and_pencil']
+ book_open: ['book_open']
+ briefcase: ['briefcase']
+ analytics: ['analytics']
+ bar_chart: ['bar_chart']
+ wrench: ['wrench']
+ chevron: ['chevron_down_md', 'chevron_down_sm', 'chevron_left_lg', 'chevron_left_md', 'chevron_left_sm', 'chevron_right_lg', 'chevron_right_md', 'chevron_right_sm', 'chevron_up_chevron_down_sm', 'chevron_up_md', 'chevron_up_right_chevron_down_left_sm', 'chevron_up_sm']
+ thumbs: []

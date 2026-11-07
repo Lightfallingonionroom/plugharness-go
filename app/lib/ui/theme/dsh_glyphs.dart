@@ -12,86 +12,464 @@ import 'package:flutter/widgets.dart';
 abstract final class DshGlyphs {
   static const family = 'DshIcons';
 
-  static const oaArrowLeft = IconData(0xe103, fontFamily: family);
-  static const oaArrowRight = IconData(0xe104, fontFamily: family);
-  static const oaBalance = IconData(0xe10b, fontFamily: family);
-  static const oaBarChart = IconData(0xe0fa, fontFamily: family);
-  static const oaBook = IconData(0xe0f9, fontFamily: family);
-  static const oaBraces = IconData(0xe105, fontFamily: family);
-  static const oaBrain = IconData(0xe0e8, fontFamily: family);
-  static const oaCamera = IconData(0xe0e9, fontFamily: family);
-  static const oaChatBubble = IconData(0xe0f3, fontFamily: family);
-  static const oaCodex = IconData(0xe0f7, fontFamily: family);
-  static const oaFlask = IconData(0xe109, fontFamily: family);
-  static const oaFolder = IconData(0xe0ec, fontFamily: family);
-  static const oaGlobe = IconData(0xe0f6, fontFamily: family);
-  static const oaGraduationCap = IconData(0xe10a, fontFamily: family);
-  static const oaHeart = IconData(0xe106, fontFamily: family);
-  static const oaLaptop = IconData(0xe107, fontFamily: family);
-  static const oaMicrophone = IconData(0xe0ef, fontFamily: family);
-  static const oaMicrophoneFill = IconData(0xe0f0, fontFamily: family);
-  static const oaMusic = IconData(0xe101, fontFamily: family);
-  static const oaNotebook = IconData(0xe10d, fontFamily: family);
-  static const oaOpenai = IconData(0xe0ff, fontFamily: family);
-  static const oaPalette = IconData(0xe0fc, fontFamily: family);
-  static const oaPaw = IconData(0xe108, fontFamily: family);
-  static const oaPenTip = IconData(0xe10e, fontFamily: family);
-  static const oaPencil = IconData(0xe0ed, fontFamily: family);
-  static const oaPencilBrush = IconData(0xe0ee, fontFamily: family);
-  static const oaPersonalization = IconData(0xe0fd, fontFamily: family);
-  static const oaPhoto = IconData(0xe0ea, fontFamily: family);
-  static const oaPhotoOnSquare = IconData(0xe0eb, fontFamily: family);
-  static const oaPlane = IconData(0xe102, fontFamily: family);
-  static const oaSend = IconData(0xe0f5, fontFamily: family);
-  static const oaShare = IconData(0xe0f4, fontFamily: family);
-  static const oaStarOfLife = IconData(0xe0fe, fontFamily: family);
-  static const oaStop = IconData(0xe0f2, fontFamily: family);
-  static const oaStopFill = IconData(0xe10c, fontFamily: family);
-  static const oaSuitcase = IconData(0xe100, fontFamily: family);
-  static const oaTerminal = IconData(0xe0f8, fontFamily: family);
-  static const oaVoiceButton = IconData(0xe0f1, fontFamily: family);
-  static const oaWrench = IconData(0xe0fb, fontFamily: family);
+  static const alarm = IconData(0xe0a8, fontFamily: family);
+  static const archive = IconData(0xe043, fontFamily: family);
+  static const arrowBendUpLeft = IconData(0xe02b, fontFamily: family, matchTextDirection: true);
+  static const arrowCircleUp = IconData(0xe07d, fontFamily: family);
+  static const arrowCounterClockwise = IconData(0xe039, fontFamily: family);
+  static const arrowElbowDownLeft = IconData(0xe013, fontFamily: family);
+  static const arrowElbowDownRight = IconData(0xe017, fontFamily: family);
+  static const arrowsClockwise = IconData(0xe076, fontFamily: family);
+  static const arrowsInLineVertical = IconData(0xe052, fontFamily: family);
+  static const arrowsLeftRight = IconData(0xe011, fontFamily: family);
+  static const article = IconData(0xe09a, fontFamily: family);
+  static const at = IconData(0xe0ac, fontFamily: family);
+  static const batteryPlus = IconData(0xe0c2, fontFamily: family);
+  static const bell = IconData(0xe05d, fontFamily: family);
+  static const bookOpen = IconData(0xe0a2, fontFamily: family);
+  static const boxArrowUp = IconData(0xe044, fontFamily: family);
+  static const briefcase = IconData(0xe0cd, fontFamily: family);
+  static const broadcast = IconData(0xe04f, fontFamily: family);
+  static const broom = IconData(0xe037, fontFamily: family);
+  static const browser = IconData(0xe00d, fontFamily: family);
+  static const calendar = IconData(0xe0d1, fontFamily: family);
+  static const calendarDot = IconData(0xe0cf, fontFamily: family);
+  static const calendarDots = IconData(0xe0d0, fontFamily: family);
+  static const cards = IconData(0xe0d5, fontFamily: family);
+  static const caretDown = IconData(0xe007, fontFamily: family);
+  static const caretLeft = IconData(0xe012, fontFamily: family);
+  static const caretRight = IconData(0xe006, fontFamily: family, matchTextDirection: true);
+  static const caretUp = IconData(0xe008, fontFamily: family);
+  static const cgAlarmClockCheckmark = IconData(0xe155, fontFamily: family);
+  static const cgAnalytics = IconData(0xe154, fontFamily: family);
+  static const cgAndroid = IconData(0xe142, fontFamily: family);
+  static const cgArchive = IconData(0xe130, fontFamily: family);
+  static const cgArrowBranch = IconData(0xe123, fontFamily: family);
+  static const cgArrowDownLg = IconData(0xe118, fontFamily: family);
+  static const cgArrowRotateClockwise = IconData(0xe124, fontFamily: family);
+  static const cgArrowUpLgButton = IconData(0xe119, fontFamily: family);
+  static const cgBarChart = IconData(0xe129, fontFamily: family);
+  static const cgBell = IconData(0xe13d, fontFamily: family);
+  static const cgBellSlash = IconData(0xe13e, fontFamily: family);
+  static const cgBookOpen = IconData(0xe157, fontFamily: family);
+  static const cgBookmark = IconData(0xe139, fontFamily: family);
+  static const cgBookmarkFill = IconData(0xe13a, fontFamily: family);
+  static const cgBraces = IconData(0xe122, fontFamily: family);
+  static const cgBrain = IconData(0xe14c, fontFamily: family);
+  static const cgBriefcase = IconData(0xe158, fontFamily: family);
+  static const cgCalendarDay = IconData(0xe14e, fontFamily: family);
+  static const cgCamera = IconData(0xe11d, fontFamily: family);
+  static const cgCheckmarkLg = IconData(0xe126, fontFamily: family);
+  static const cgChevronDownMd = IconData(0xe115, fontFamily: family);
+  static const cgChevronLeftLg = IconData(0xe10f, fontFamily: family);
+  static const cgChevronRightLg = IconData(0xe110, fontFamily: family);
+  static const cgChevronUpMd = IconData(0xe116, fontFamily: family);
+  static const cgCircleCheckmark = IconData(0xe135, fontFamily: family);
+  static const cgCircleExclamationmark = IconData(0xe13f, fontFamily: family);
+  static const cgCircleInfo = IconData(0xe141, fontFamily: family);
+  static const cgCirclePerson = IconData(0xe153, fontFamily: family);
+  static const cgClock = IconData(0xe11c, fontFamily: family);
+  static const cgClockArrowRotateCounterclockwise = IconData(0xe14f, fontFamily: family);
+  static const cgCode = IconData(0xe14a, fontFamily: family);
+  static const cgEllipsisHorizontal = IconData(0xe113, fontFamily: family);
+  static const cgEllipsisVertical = IconData(0xe114, fontFamily: family);
+  static const cgFolder = IconData(0xe134, fontFamily: family);
+  static const cgFolderBadgeArrowDown = IconData(0xe12f, fontFamily: family);
+  static const cgFolderBadgePlus = IconData(0xe12e, fontFamily: family);
+  static const cgFolderFull = IconData(0xe149, fontFamily: family);
+  static const cgGear = IconData(0xe12c, fontFamily: family);
+  static const cgGlobe = IconData(0xe117, fontFamily: family);
+  static const cgHeart = IconData(0xe137, fontFamily: family);
+  static const cgKey = IconData(0xe148, fontFamily: family);
+  static const cgLaptopConnector = IconData(0xe143, fontFamily: family);
+  static const cgLock = IconData(0xe144, fontFamily: family);
+  static const cgLockFill = IconData(0xe145, fontFamily: family);
+  static const cgMagnifyingGlassMd = IconData(0xe12b, fontFamily: family);
+  static const cgMicrophone = IconData(0xe11b, fontFamily: family);
+  static const cgPaintPalette = IconData(0xe151, fontFamily: family);
+  static const cgPaperclip = IconData(0xe11f, fontFamily: family);
+  static const cgPasskey = IconData(0xe147, fontFamily: family);
+  static const cgPencil = IconData(0xe125, fontFamily: family);
+  static const cgPhoto = IconData(0xe11e, fontFamily: family);
+  static const cgPhotoOnTiltedSquare = IconData(0xe120, fontFamily: family);
+  static const cgPin = IconData(0xe131, fontFamily: family);
+  static const cgPinFill = IconData(0xe132, fontFamily: family);
+  static const cgPlugin = IconData(0xe14b, fontFamily: family);
+  static const cgPlusLg = IconData(0xe127, fontFamily: family);
+  static const cgPlusMd = IconData(0xe128, fontFamily: family);
+  static const cgShareAndroid = IconData(0xe121, fontFamily: family);
+  static const cgShieldCheckmark = IconData(0xe146, fontFamily: family);
+  static const cgSidebarMenu = IconData(0xe112, fontFamily: family);
+  static const cgSliders = IconData(0xe14d, fontFamily: family);
+  static const cgSquareAndPencil = IconData(0xe12d, fontFamily: family);
+  static const cgSquareCheckmark = IconData(0xe136, fontFamily: family);
+  static const cgStar = IconData(0xe150, fontFamily: family);
+  static const cgStarFill = IconData(0xe138, fontFamily: family);
+  static const cgStopFill = IconData(0xe11a, fontFamily: family);
+  static const cgTerminal = IconData(0xe133, fontFamily: family);
+  static const cgTextDashedBubble = IconData(0xe152, fontFamily: family);
+  static const cgThumbUp = IconData(0xe13b, fontFamily: family);
+  static const cgThumbUpFill = IconData(0xe13c, fontFamily: family);
+  static const cgTrash = IconData(0xe12a, fontFamily: family);
+  static const cgTriangleExclamationmark = IconData(0xe140, fontFamily: family);
+  static const cgWrench = IconData(0xe156, fontFamily: family);
+  static const cgXmarkLg = IconData(0xe111, fontFamily: family);
+  static const chartBar = IconData(0xe0bd, fontFamily: family);
+  static const chartLineUp = IconData(0xe0af, fontFamily: family);
+  static const chatCenteredDots = IconData(0xe0b3, fontFamily: family);
+  static const chatCircle = IconData(0xe0ca, fontFamily: family);
+  static const chatCircleFill = IconData(0xe0e0, fontFamily: family);
+  static const chatTeardropText = IconData(0xe0d7, fontFamily: family);
+  static const chats = IconData(0xe0c5, fontFamily: family);
+  static const checkCircle = IconData(0xe042, fontFamily: family);
+  static const checkCircleFill = IconData(0xe053, fontFamily: family);
+  static const checks = IconData(0xe050, fontFamily: family);
+  static const circle = IconData(0xe054, fontFamily: family);
+  static const circleHalf = IconData(0xe0b7, fontFamily: family);
+  static const clipboard = IconData(0xe038, fontFamily: family);
+  static const clipboardText = IconData(0xe0a7, fontFamily: family);
+  static const clockClockwise = IconData(0xe07e, fontFamily: family);
+  static const cloudSlash = IconData(0xe074, fontFamily: family);
+  static const copy = IconData(0xe01e, fontFamily: family);
+  static const crownSimple = IconData(0xe0c8, fontFamily: family);
+  static const cursorText = IconData(0xe04b, fontFamily: family);
+  static const deviceMobile = IconData(0xe07a, fontFamily: family);
+  static const dotsNine = IconData(0xe00c, fontFamily: family);
+  static const dotsSixVertical = IconData(0xe010, fontFamily: family);
+  static const downloadSimple = IconData(0xe02d, fontFamily: family);
+  static const envelopeSimple = IconData(0xe0db, fontFamily: family);
+  static const exclamationMark = IconData(0xe064, fontFamily: family);
+  static const export = IconData(0xe020, fontFamily: family);
+  static const eye = IconData(0xe02e, fontFamily: family);
+  static const eyeSlash = IconData(0xe03e, fontFamily: family);
+  static const file = IconData(0xe08f, fontFamily: family);
+  static const fileAudio = IconData(0xe095, fontFamily: family);
+  static const filePdf = IconData(0xe092, fontFamily: family);
+  static const filePlus = IconData(0xe090, fontFamily: family);
+  static const fileText = IconData(0xe04c, fontFamily: family);
+  static const fileVideo = IconData(0xe093, fontFamily: family);
+  static const fileZip = IconData(0xe097, fontFamily: family);
+  static const filmStrip = IconData(0xe094, fontFamily: family);
+  static const folder = IconData(0xe089, fontFamily: family);
+  static const folderArrowRight = IconData(0xe041, fontFamily: family);  // drawn
+  static const folderFill = IconData(0xe08a, fontFamily: family);
+  static const folderSlash = IconData(0xe071, fontFamily: family);  // drawn
+  static const folderStar = IconData(0xe08c, fontFamily: family);
+  static const folderUser = IconData(0xe08d, fontFamily: family);
+  static const folders = IconData(0xe08b, fontFamily: family);
+  static const funnelX = IconData(0xe070, fontFamily: family);
+  static const gearSix = IconData(0xe03c, fontFamily: family);
+  static const globe = IconData(0xe07c, fontFamily: family);
+  static const globeHemisphereWest = IconData(0xe0ab, fontFamily: family);
+  static const graph = IconData(0xe09c, fontFamily: family);
+  static const hammer = IconData(0xe0d3, fontFamily: family);
+  static const handPalm = IconData(0xe0c0, fontFamily: family);
+  static const handPointing = IconData(0xe0c3, fontFamily: family);
+  static const handTap = IconData(0xe0be, fontFamily: family);
+  static const headset = IconData(0xe0e3, fontFamily: family);
+  static const hourglass = IconData(0xe069, fontFamily: family);
+  static const hourglassHigh = IconData(0xe06a, fontFamily: family);
+  static const house = IconData(0xe08e, fontFamily: family);
+  static const identificationBadge = IconData(0xe0cc, fontFamily: family);
+  static const image = IconData(0xe01d, fontFamily: family);
+  static const info = IconData(0xe062, fontFamily: family);
+  static const key = IconData(0xe087, fontFamily: family);
+  static const laptop = IconData(0xe079, fontFamily: family);
+  static const lightbulb = IconData(0xe0b5, fontFamily: family);
+  static const lightning = IconData(0xe06b, fontFamily: family);
+  static const linkBreak = IconData(0xe075, fontFamily: family);
+  static const listChecks = IconData(0xe02a, fontFamily: family);
+  static const lockKey = IconData(0xe081, fontFamily: family);
+  static const lockSimple = IconData(0xe073, fontFamily: family);
+  static const lockSimpleOpen = IconData(0xe080, fontFamily: family);
+  static const magicWand = IconData(0xe0d4, fontFamily: family);
+  static const magnifyingGlassX = IconData(0xe06f, fontFamily: family);  // drawn
+  static const mapTrifold = IconData(0xe0a6, fontFamily: family);
+  static const medal = IconData(0xe0d9, fontFamily: family);
+  static const megaphone = IconData(0xe0cb, fontFamily: family);
+  static const minus = IconData(0xe032, fontFamily: family);
+  static const minusCircle = IconData(0xe033, fontFamily: family);
+  static const musicNote = IconData(0xe096, fontFamily: family);
+  static const note = IconData(0xe09f, fontFamily: family);
+  static const notePencil = IconData(0xe03f, fontFamily: family);
+  static const package = IconData(0xe09d, fontFamily: family);
+  static const palette = IconData(0xe0ce, fontFamily: family);
+  static const paperPlaneRight = IconData(0xe0e2, fontFamily: family, matchTextDirection: true);
+  static const path = IconData(0xe0b0, fontFamily: family);
+  static const pause = IconData(0xe0e6, fontFamily: family);
+  static const pauseCircle = IconData(0xe066, fontFamily: family);
+  static const pencilSimple = IconData(0xe025, fontFamily: family);
+  static const pencilSimpleLine = IconData(0xe034, fontFamily: family);
+  static const play = IconData(0xe0e5, fontFamily: family);
+  static const playCircle = IconData(0xe0da, fontFamily: family);
+  static const power = IconData(0xe048, fontFamily: family);
+  static const prohibit = IconData(0xe067, fontFamily: family);
+  static const puzzlePieceSlash = IconData(0xe072, fontFamily: family);  // drawn
+  static const quotes = IconData(0xe01f, fontFamily: family);
+  static const radioButton = IconData(0xe068, fontFamily: family);
+  static const receipt = IconData(0xe0d2, fontFamily: family);
+  static const repeat = IconData(0xe0a9, fontFamily: family);
+  static const robot = IconData(0xe0c4, fontFamily: family);
+  static const scan = IconData(0xe0bf, fontFamily: family);
+  static const shieldCheck = IconData(0xe085, fontFamily: family);
+  static const shieldPlus = IconData(0xe084, fontFamily: family);
+  static const shieldWarning = IconData(0xe082, fontFamily: family);
+  static const signOut = IconData(0xe047, fontFamily: family);
+  static const slidersHorizontal = IconData(0xe03b, fontFamily: family);
+  static const slideshow = IconData(0xe098, fontFamily: family);
+  static const smiley = IconData(0xe0d8, fontFamily: family);
+  static const sparkle = IconData(0xe09e, fontFamily: family);
+  static const square = IconData(0xe056, fontFamily: family);
+  static const squaresFour = IconData(0xe0b2, fontFamily: family);
+  static const stack = IconData(0xe0c1, fontFamily: family);
+  static const stethoscope = IconData(0xe0b1, fontFamily: family);
+  static const stopCircle = IconData(0xe019, fontFamily: family);
+  static const table = IconData(0xe099, fontFamily: family);
+  static const textAlignLeft = IconData(0xe06d, fontFamily: family, matchTextDirection: true);
+  static const textT = IconData(0xe022, fontFamily: family);
+  static const textWrap = IconData(0xe02c, fontFamily: family, matchTextDirection: true);  // drawn
+  static const timer = IconData(0xe0aa, fontFamily: family);
+  static const trash = IconData(0xe035, fontFamily: family);
+  static const tray = IconData(0xe06c, fontFamily: family);
+  static const treeStructure = IconData(0xe0a3, fontFamily: family);
+  static const userMinus = IconData(0xe0c7, fontFamily: family);
+  static const userPlus = IconData(0xe0c6, fontFamily: family);
+  static const usersFour = IconData(0xe0d6, fontFamily: family);
+  static const usersThree = IconData(0xe0c9, fontFamily: family);
+  static const usersThreeFill = IconData(0xe0e1, fontFamily: family);
+  static const warning = IconData(0xe061, fontFamily: family);
+  static const wrench = IconData(0xe0b4, fontFamily: family);
+  static const xCircleFill = IconData(0xe036, fontFamily: family);
 
   /// Every glyph by name, for the icon sheet test.
   static const all = <String, IconData>{
-    'oaArrowLeft': oaArrowLeft,
-    'oaArrowRight': oaArrowRight,
-    'oaBalance': oaBalance,
-    'oaBarChart': oaBarChart,
-    'oaBook': oaBook,
-    'oaBraces': oaBraces,
-    'oaBrain': oaBrain,
-    'oaCamera': oaCamera,
-    'oaChatBubble': oaChatBubble,
-    'oaCodex': oaCodex,
-    'oaFlask': oaFlask,
-    'oaFolder': oaFolder,
-    'oaGlobe': oaGlobe,
-    'oaGraduationCap': oaGraduationCap,
-    'oaHeart': oaHeart,
-    'oaLaptop': oaLaptop,
-    'oaMicrophone': oaMicrophone,
-    'oaMicrophoneFill': oaMicrophoneFill,
-    'oaMusic': oaMusic,
-    'oaNotebook': oaNotebook,
-    'oaOpenai': oaOpenai,
-    'oaPalette': oaPalette,
-    'oaPaw': oaPaw,
-    'oaPenTip': oaPenTip,
-    'oaPencil': oaPencil,
-    'oaPencilBrush': oaPencilBrush,
-    'oaPersonalization': oaPersonalization,
-    'oaPhoto': oaPhoto,
-    'oaPhotoOnSquare': oaPhotoOnSquare,
-    'oaPlane': oaPlane,
-    'oaSend': oaSend,
-    'oaShare': oaShare,
-    'oaStarOfLife': oaStarOfLife,
-    'oaStop': oaStop,
-    'oaStopFill': oaStopFill,
-    'oaSuitcase': oaSuitcase,
-    'oaTerminal': oaTerminal,
-    'oaVoiceButton': oaVoiceButton,
-    'oaWrench': oaWrench,
+    'alarm': alarm,
+    'archive': archive,
+    'arrowBendUpLeft': arrowBendUpLeft,
+    'arrowCircleUp': arrowCircleUp,
+    'arrowCounterClockwise': arrowCounterClockwise,
+    'arrowElbowDownLeft': arrowElbowDownLeft,
+    'arrowElbowDownRight': arrowElbowDownRight,
+    'arrowsClockwise': arrowsClockwise,
+    'arrowsInLineVertical': arrowsInLineVertical,
+    'arrowsLeftRight': arrowsLeftRight,
+    'article': article,
+    'at': at,
+    'batteryPlus': batteryPlus,
+    'bell': bell,
+    'bookOpen': bookOpen,
+    'boxArrowUp': boxArrowUp,
+    'briefcase': briefcase,
+    'broadcast': broadcast,
+    'broom': broom,
+    'browser': browser,
+    'calendar': calendar,
+    'calendarDot': calendarDot,
+    'calendarDots': calendarDots,
+    'cards': cards,
+    'caretDown': caretDown,
+    'caretLeft': caretLeft,
+    'caretRight': caretRight,
+    'caretUp': caretUp,
+    'cgAlarmClockCheckmark': cgAlarmClockCheckmark,
+    'cgAnalytics': cgAnalytics,
+    'cgAndroid': cgAndroid,
+    'cgArchive': cgArchive,
+    'cgArrowBranch': cgArrowBranch,
+    'cgArrowDownLg': cgArrowDownLg,
+    'cgArrowRotateClockwise': cgArrowRotateClockwise,
+    'cgArrowUpLgButton': cgArrowUpLgButton,
+    'cgBarChart': cgBarChart,
+    'cgBell': cgBell,
+    'cgBellSlash': cgBellSlash,
+    'cgBookOpen': cgBookOpen,
+    'cgBookmark': cgBookmark,
+    'cgBookmarkFill': cgBookmarkFill,
+    'cgBraces': cgBraces,
+    'cgBrain': cgBrain,
+    'cgBriefcase': cgBriefcase,
+    'cgCalendarDay': cgCalendarDay,
+    'cgCamera': cgCamera,
+    'cgCheckmarkLg': cgCheckmarkLg,
+    'cgChevronDownMd': cgChevronDownMd,
+    'cgChevronLeftLg': cgChevronLeftLg,
+    'cgChevronRightLg': cgChevronRightLg,
+    'cgChevronUpMd': cgChevronUpMd,
+    'cgCircleCheckmark': cgCircleCheckmark,
+    'cgCircleExclamationmark': cgCircleExclamationmark,
+    'cgCircleInfo': cgCircleInfo,
+    'cgCirclePerson': cgCirclePerson,
+    'cgClock': cgClock,
+    'cgClockArrowRotateCounterclockwise': cgClockArrowRotateCounterclockwise,
+    'cgCode': cgCode,
+    'cgEllipsisHorizontal': cgEllipsisHorizontal,
+    'cgEllipsisVertical': cgEllipsisVertical,
+    'cgFolder': cgFolder,
+    'cgFolderBadgeArrowDown': cgFolderBadgeArrowDown,
+    'cgFolderBadgePlus': cgFolderBadgePlus,
+    'cgFolderFull': cgFolderFull,
+    'cgGear': cgGear,
+    'cgGlobe': cgGlobe,
+    'cgHeart': cgHeart,
+    'cgKey': cgKey,
+    'cgLaptopConnector': cgLaptopConnector,
+    'cgLock': cgLock,
+    'cgLockFill': cgLockFill,
+    'cgMagnifyingGlassMd': cgMagnifyingGlassMd,
+    'cgMicrophone': cgMicrophone,
+    'cgPaintPalette': cgPaintPalette,
+    'cgPaperclip': cgPaperclip,
+    'cgPasskey': cgPasskey,
+    'cgPencil': cgPencil,
+    'cgPhoto': cgPhoto,
+    'cgPhotoOnTiltedSquare': cgPhotoOnTiltedSquare,
+    'cgPin': cgPin,
+    'cgPinFill': cgPinFill,
+    'cgPlugin': cgPlugin,
+    'cgPlusLg': cgPlusLg,
+    'cgPlusMd': cgPlusMd,
+    'cgShareAndroid': cgShareAndroid,
+    'cgShieldCheckmark': cgShieldCheckmark,
+    'cgSidebarMenu': cgSidebarMenu,
+    'cgSliders': cgSliders,
+    'cgSquareAndPencil': cgSquareAndPencil,
+    'cgSquareCheckmark': cgSquareCheckmark,
+    'cgStar': cgStar,
+    'cgStarFill': cgStarFill,
+    'cgStopFill': cgStopFill,
+    'cgTerminal': cgTerminal,
+    'cgTextDashedBubble': cgTextDashedBubble,
+    'cgThumbUp': cgThumbUp,
+    'cgThumbUpFill': cgThumbUpFill,
+    'cgTrash': cgTrash,
+    'cgTriangleExclamationmark': cgTriangleExclamationmark,
+    'cgWrench': cgWrench,
+    'cgXmarkLg': cgXmarkLg,
+    'chartBar': chartBar,
+    'chartLineUp': chartLineUp,
+    'chatCenteredDots': chatCenteredDots,
+    'chatCircle': chatCircle,
+    'chatCircleFill': chatCircleFill,
+    'chatTeardropText': chatTeardropText,
+    'chats': chats,
+    'checkCircle': checkCircle,
+    'checkCircleFill': checkCircleFill,
+    'checks': checks,
+    'circle': circle,
+    'circleHalf': circleHalf,
+    'clipboard': clipboard,
+    'clipboardText': clipboardText,
+    'clockClockwise': clockClockwise,
+    'cloudSlash': cloudSlash,
+    'copy': copy,
+    'crownSimple': crownSimple,
+    'cursorText': cursorText,
+    'deviceMobile': deviceMobile,
+    'dotsNine': dotsNine,
+    'dotsSixVertical': dotsSixVertical,
+    'downloadSimple': downloadSimple,
+    'envelopeSimple': envelopeSimple,
+    'exclamationMark': exclamationMark,
+    'export': export,
+    'eye': eye,
+    'eyeSlash': eyeSlash,
+    'file': file,
+    'fileAudio': fileAudio,
+    'filePdf': filePdf,
+    'filePlus': filePlus,
+    'fileText': fileText,
+    'fileVideo': fileVideo,
+    'fileZip': fileZip,
+    'filmStrip': filmStrip,
+    'folder': folder,
+    'folderArrowRight': folderArrowRight,
+    'folderFill': folderFill,
+    'folderSlash': folderSlash,
+    'folderStar': folderStar,
+    'folderUser': folderUser,
+    'folders': folders,
+    'funnelX': funnelX,
+    'gearSix': gearSix,
+    'globe': globe,
+    'globeHemisphereWest': globeHemisphereWest,
+    'graph': graph,
+    'hammer': hammer,
+    'handPalm': handPalm,
+    'handPointing': handPointing,
+    'handTap': handTap,
+    'headset': headset,
+    'hourglass': hourglass,
+    'hourglassHigh': hourglassHigh,
+    'house': house,
+    'identificationBadge': identificationBadge,
+    'image': image,
+    'info': info,
+    'key': key,
+    'laptop': laptop,
+    'lightbulb': lightbulb,
+    'lightning': lightning,
+    'linkBreak': linkBreak,
+    'listChecks': listChecks,
+    'lockKey': lockKey,
+    'lockSimple': lockSimple,
+    'lockSimpleOpen': lockSimpleOpen,
+    'magicWand': magicWand,
+    'magnifyingGlassX': magnifyingGlassX,
+    'mapTrifold': mapTrifold,
+    'medal': medal,
+    'megaphone': megaphone,
+    'minus': minus,
+    'minusCircle': minusCircle,
+    'musicNote': musicNote,
+    'note': note,
+    'notePencil': notePencil,
+    'package': package,
+    'palette': palette,
+    'paperPlaneRight': paperPlaneRight,
+    'path': path,
+    'pause': pause,
+    'pauseCircle': pauseCircle,
+    'pencilSimple': pencilSimple,
+    'pencilSimpleLine': pencilSimpleLine,
+    'play': play,
+    'playCircle': playCircle,
+    'power': power,
+    'prohibit': prohibit,
+    'puzzlePieceSlash': puzzlePieceSlash,
+    'quotes': quotes,
+    'radioButton': radioButton,
+    'receipt': receipt,
+    'repeat': repeat,
+    'robot': robot,
+    'scan': scan,
+    'shieldCheck': shieldCheck,
+    'shieldPlus': shieldPlus,
+    'shieldWarning': shieldWarning,
+    'signOut': signOut,
+    'slidersHorizontal': slidersHorizontal,
+    'slideshow': slideshow,
+    'smiley': smiley,
+    'sparkle': sparkle,
+    'square': square,
+    'squaresFour': squaresFour,
+    'stack': stack,
+    'stethoscope': stethoscope,
+    'stopCircle': stopCircle,
+    'table': table,
+    'textAlignLeft': textAlignLeft,
+    'textT': textT,
+    'textWrap': textWrap,
+    'timer': timer,
+    'trash': trash,
+    'tray': tray,
+    'treeStructure': treeStructure,
+    'userMinus': userMinus,
+    'userPlus': userPlus,
+    'usersFour': usersFour,
+    'usersThree': usersThree,
+    'usersThreeFill': usersThreeFill,
+    'warning': warning,
+    'wrench': wrench,
+    'xCircleFill': xCircleFill,
   };
 }

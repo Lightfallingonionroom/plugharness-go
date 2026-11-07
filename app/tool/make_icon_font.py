@@ -314,6 +314,7 @@ CUSTOM = {
 # ── Sources ──────────────────────────────────────────────────────────────────────────
 
 OPENAI_VENDOR = os.path.join(ICONS, 'openai')
+OPENAI_FULL_VENDOR = os.path.join(ICONS, 'openai_full')
 
 
 def kebab(name):
@@ -340,6 +341,32 @@ def openai(name):
     return simplify(path)
 
 
+def openai_full(name):
+    """A glyph from the official ChatGPT APK's complete ds_* set (418 icons).
+
+    `cgFooBar` -> `foo_bar.svg` in `tool/icons/openai_full/`. These are the same
+    24x24 vector resources as `openai()` above, but drawn from
+    `assets/composeResources/.../drawable/ds_*_regular_24.xml` — the full
+    official set, not the 48 that happen to also exist as binary res/drawable
+    files. Scaling and the transform caveat are identical.
+    """
+    # cgPlusLg -> plus_lg ; cgArrowUpLgButton -> arrow_up_lg_button.
+    # The vendored files keep the resource's own underscores (plus_lg.svg), so
+    # camel case is split on capitals and underscores are left alone.
+    stem = kebab(name[2:])[1:].replace('-', '_')
+    svg_path = os.path.join(OPENAI_FULL_VENDOR, stem + '.svg')
+    if not os.path.exists(svg_path):
+        raise FileNotFoundError(f'no official icon for {name}: expected {svg_path}')
+    path = pathops.Path()
+    svg = open(svg_path, encoding='utf-8').read()
+    for d in re.findall(r'<path[^>]*\sd="([^"]+)"', svg):
+        p = path_from_d(d)
+        # 24 -> 256 units. Path.transform RETURNS a new path; ignoring the
+        # result leaves the 24-unit outline outside the em box (invisible).
+        p = p.transform(256 / 24, 0, 0, 256 / 24, 0, 0)
+        path.addPath(p)
+    return simplify(path)
+
 def source_of(name):
     """(weight, phosphor file stem) for a non-custom glyph name."""
     if name.endswith('Fill'):
@@ -353,7 +380,10 @@ def vendored(stem, weight):
 
 def vendor(names, package):
     """Copies missing Phosphor sources in from the package; fails on what it cannot find."""
-    stems = {source_of(n) for n in names if n not in CUSTOM and not (n.startswith('oa') and len(n) > 2 and n[2].isupper())}
+    stems = {source_of(n) for n in names
+             if n not in CUSTOM
+             and not (n.startswith('oa') and len(n) > 2 and n[2].isupper())
+             and not (n.startswith('cg') and len(n) > 2 and n[2].isupper())}
     # The drawn glyphs are built from these.
     stems |= {('regular', s) for s in ('key', 'folder', 'puzzle-piece', 'magnifying-glass', 'sidebar-simple')}
     missing = []
@@ -388,6 +418,8 @@ def glyph_names():
 def outline(name):
     if name in CUSTOM:
         return simplify(CUSTOM[name]())
+    if name.startswith('cg') and len(name) > 2 and name[2].isupper():
+        return openai_full(name)
     if name.startswith('oa') and len(name) > 2 and name[2].isupper():
         return openai(name)
     weight, stem = source_of(name)
@@ -397,9 +429,21 @@ def outline(name):
 # ── Font ─────────────────────────────────────────────────────────────────────────────
 
 def ttglyph(path, optical=OPTICAL):
-    """`path` from the 256 grid (y down) into the em (y up), scaled by `optical` about the centre."""
+    """`path` from the 256 grid (y down) into the em (y up), scaled by `optical` about the centre.
+
+    Official ChatGPT `ds_*` icons are drawn edge-to-edge in a 24dp viewport, so a
+    few of them (strokes that touch or slightly overhang the box, e.g. microphone)
+    land outside the em once scaled. Shrink those about the centre until they fit:
+    the alternative is an icon that is clipped or invisible at large sizes.
+    """
     s = EM / GRID * optical
     c = GRID / 2
+    # Measure on the 256 grid, where the path still lives.
+    x0, y0, x1, y1 = path.bounds
+    if x1 > x0 and y1 > y0:
+        over = max(abs(x0 - 0), abs(y0 - 0), abs(x1 - GRID), abs(y1 - GRID)) * s
+        if over > 0:
+            s *= (EM / 2) / (EM / 2 + over)
     pen = TTGlyphPen(None)
     # The y flip reverses every contour; reversing again keeps TrueType's clockwise outers.
     flip = TransformPen(Cu2QuPen(pen, max_err=0.5, reverse_direction=True),

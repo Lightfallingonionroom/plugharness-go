@@ -1,0 +1,72 @@
+=== plus_add (10) ===
+agent_badge_plus chat_bubble_right_plus emoji_face_badge_plus folder_badge_plus person_2_badge_plus person_badge_plus plus_lg plus_md plus_square thumb_up_badge_plus
+
+=== search (3) ===
+deep_research magnifying_glass_lg magnifying_glass_md
+
+=== settings (3) ===
+gear incognito storage_badge_gear
+
+=== new_chat (8) ===
+book_badge_pencil book_badge_pencil_fill credit_card paintbrush_on_pencil pencil pencil_text square_and_pencil text_suggested_edits
+
+=== plugin (2) ===
+plugin puzzle_piece
+
+=== avatar (19) ===
+circle_person circle_person_fill folder_person_2 person person_2 person_2_badge_plus person_2_fill person_3 person_and_wavelength person_badge_heart person_badge_lock person_badge_plus person_badge_xmark person_circle person_fill person_frame person_square_on_tilted_square personalization shield_person
+
+=== theme (5) ===
+paint_palette paintbrush_alt paintbrush_on_pencil paintbrush_stroke paintbrush_stroke_dashed
+
+=== personalization (2) ===
+personalization sliders
+
+=== attach (2) ===
+clipboard paperclip
+
+=== mic (5) ===
+microphone microphone_fill microphone_slash microphone_slash_fill page_text_and_microphone
+
+=== send (12) ===
+arrow_down_left_arrow_up_right_sm arrow_up_circle arrow_up_left_md arrow_up_lg arrow_up_lg_button arrow_up_line_horizontal arrow_up_open_base arrow_up_right_arrow_down_left_sm arrow_up_right_lg arrow_up_right_md paper_plane square_and_arrow_up_right
+
+=== copy (0) ===
+
+
+=== rating (6) ===
+thumb_down thumb_down_fill thumb_up thumb_up_badge_plus thumb_up_fill thumb_up_thumb_down
+
+=== read (3) ===
+speaker_slash_2 speaker_sound_wave_2 speaker_sound_wave_2_fill
+
+=== share (1) ===
+share_android
+
+=== more (3) ===
+chat_bubble_ellipsis ellipsis_horizontal ellipsis_vertical
+
+=== menu (5) ===
+list_bulletpoint list_checkmark_circle list_circle list_number sidebar_menu
+
+=== globe (4) ===
+desk_globe globe globe_badge_xmark web_browser_cursor
+
+=== engine (6) ===
+code codex desktop laptop laptop_connector terminal
+
+=== folder (24) ===
+archive book book_badge_heart book_badge_pencil book_badge_pencil_fill book_closed_quotemark book_open bookmark bookmark_fill bookmark_slash books facebook_logo folder folder_badge_arrow_down folder_badge_checkmark folder_badge_lock folder_badge_plus folder_badge_xmark folder_full folder_on_folder folder_person_2 notebook notebook_badge_checkmark notebook_badge_xmark
+
+=== image (5) ===
+camera photo photo_on_tilted_square photo_on_tilted_square_fill photo_sparkle
+
+=== time (13) ===
+alarm_clock_checkmark alarm_clock_checkmark_fill arrow_rotate_clockwise arrow_rotate_counterclockwise arrows_clockwise_rotate_lg bell bell_slash calendar calendar_day clock clock_arrow_rotate_counterclockwise dumbbell kettlebell
+
+=== security (19) ===
+alarm_clock_checkmark alarm_clock_checkmark_fill arrow_rotate_clockwise arrow_rotate_counterclockwise arrows_clockwise_rotate_lg clock clock_arrow_rotate_counterclockwise folder_badge_lock heart_badge_shield key keyboard keys lock lock_fill passkey person_badge_lock shield_checkmark shield_lock shield_person
+
+=== misc (80) ===
+alarm_clock_checkmark alarm_clock_checkmark_fill book_badge_heart book_closed_quotemark brain chat_bubble chat_bubble_and_wavelength chat_bubble_and_wavelength_fill chat_bubble_checkmark_dashed chat_bubble_dashed chat_bubble_ellipsis chat_bubble_fill chat_bubble_on_chat_bubble chat_bubble_right chat_bubble_right_plus chat_bubble_rounded_rectangle_text chat_bubble_text checkmark_lg checkmark_md chevron_down_md chevron_down_sm chevron_left_lg chevron_left_md chevron_left_sm chevron_right_lg chevron_right_md chevron_right_sm chevron_up_chevron_down_sm chevron_up_md chevron_up_right_chevron_down_left_sm chevron_up_sm circle_checkmark circle_checkmark_fill cloud_moon cloud_moon_light_rain cloud_moon_rain cloud_sun cloud_sun_light_rain cloud_sun_rain deep_shopping diamond_sparkle diamond_sparkle_fill folder_badge_checkmark heart heart_badge_shield hexagon_sparkles list_checkmark_circle moon moon_cloud moon_sun notebook_badge_checkmark person_badge_heart photo_sparkle pin pin_fill pin_location pin_slash shield_checkmark shopping_bag shopping_bag_badge_checkmark shopping_cart sliders sparkle sparkle_fill sparkles sparkles_3_fill square_checkmark square_checkmark_fill star star_fill star_of_life sun sun_cloud sunrise text_dashed_bubble thought_bubble trash whisk_sparkles window_pin wrench
+

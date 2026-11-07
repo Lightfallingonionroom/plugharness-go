@@ -1,0 +1,2510 @@
+[
+ {
+  "resource": "ds_across_arrow_right_regular_24",
+  "short": "across_arrow_right",
+  "paths": 3,
+  "svg": "across_arrow_right.svg"
+ },
+ {
+  "resource": "ds_agent_regular_24",
+  "short": "agent",
+  "paths": 7,
+  "svg": "agent.svg"
+ },
+ {
+  "resource": "ds_agent_badge_plus_regular_24",
+  "short": "agent_badge_plus",
+  "paths": 5,
+  "svg": "agent_badge_plus.svg"
+ },
+ {
+  "resource": "ds_agent_mode_regular_24",
+  "short": "agent_mode",
+  "paths": 5,
+  "svg": "agent_mode.svg"
+ },
+ {
+  "resource": "ds_alarm_clock_checkmark_regular_24",
+  "short": "alarm_clock_checkmark",
+  "paths": 4,
+  "svg": "alarm_clock_checkmark.svg"
+ },
+ {
+  "resource": "ds_alarm_clock_checkmark_fill_regular_24",
+  "short": "alarm_clock_checkmark_fill",
+  "paths": 3,
+  "svg": "alarm_clock_checkmark_fill.svg"
+ },
+ {
+  "resource": "ds_american_football_regular_24",
+  "short": "american_football",
+  "paths": 3,
+  "svg": "american_football.svg"
+ },
+ {
+  "resource": "ds_american_football_fill_regular_24",
+  "short": "american_football_fill",
+  "paths": 3,
+  "svg": "american_football_fill.svg"
+ },
+ {
+  "resource": "ds_analytics_regular_24",
+  "short": "analytics",
+  "paths": 1,
+  "svg": "analytics.svg"
+ },
+ {
+  "resource": "ds_android_regular_24",
+  "short": "android",
+  "paths": 1,
+  "svg": "android.svg"
+ },
+ {
+  "resource": "ds_android_logo_regular_24",
+  "short": "android_logo",
+  "paths": 1,
+  "svg": "android_logo.svg"
+ },
+ {
+  "resource": "ds_archive_regular_24",
+  "short": "archive",
+  "paths": 2,
+  "svg": "archive.svg"
+ },
+ {
+  "resource": "ds_arrow_branch_regular_24",
+  "short": "arrow_branch",
+  "paths": 2,
+  "svg": "arrow_branch.svg"
+ },
+ {
+  "resource": "ds_arrow_curvedpath_left_lg_regular_24",
+  "short": "arrow_curvedpath_left_lg",
+  "paths": 1,
+  "svg": "arrow_curvedpath_left_lg.svg"
+ },
+ {
+  "resource": "ds_arrow_curvedpath_right_lg_regular_24",
+  "short": "arrow_curvedpath_right_lg",
+  "paths": 1,
+  "svg": "arrow_curvedpath_right_lg.svg"
+ },
+ {
+  "resource": "ds_arrow_down_left_arrow_up_right_sm_regular_24",
+  "short": "arrow_down_left_arrow_up_right_sm",
+  "paths": 2,
+  "svg": "arrow_down_left_arrow_up_right_sm.svg"
+ },
+ {
+  "resource": "ds_arrow_down_lg_regular_24",
+  "short": "arrow_down_lg",
+  "paths": 1,
+  "svg": "arrow_down_lg.svg"
+ },
+ {
+  "resource": "ds_arrow_down_line_horizontal_regular_24",
+  "short": "arrow_down_line_horizontal",
+  "paths": 2,
+  "svg": "arrow_down_line_horizontal.svg"
+ },
+ {
+  "resource": "ds_arrow_left_lg_regular_24",
+  "short": "arrow_left_lg",
+  "paths": 1,
+  "svg": "arrow_left_lg.svg"
+ },
+ {
+  "resource": "ds_arrow_pointer_slash_regular_24",
+  "short": "arrow_pointer_slash",
+  "paths": 2,
+  "svg": "arrow_pointer_slash.svg"
+ },
+ {
+  "resource": "ds_arrow_right_lg_regular_24",
+  "short": "arrow_right_lg",
+  "paths": 1,
+  "svg": "arrow_right_lg.svg"
+ },
+ {
+  "resource": "ds_arrow_right_square_regular_24",
+  "short": "arrow_right_square",
+  "paths": 2,
+  "svg": "arrow_right_square.svg"
+ },
+ {
+  "resource": "ds_arrow_right_up_trending_regular_24",
+  "short": "arrow_right_up_trending",
+  "paths": 1,
+  "svg": "arrow_right_up_trending.svg"
+ },
+ {
+  "resource": "ds_arrow_rotate_clockwise_regular_24",
+  "short": "arrow_rotate_clockwise",
+  "paths": 1,
+  "svg": "arrow_rotate_clockwise.svg"
+ },
+ {
+  "resource": "ds_arrow_rotate_counterclockwise_regular_24",
+  "short": "arrow_rotate_counterclockwise",
+  "paths": 1,
+  "svg": "arrow_rotate_counterclockwise.svg"
+ },
+ {
+  "resource": "ds_arrow_up_circle_regular_24",
+  "short": "arrow_up_circle",
+  "paths": 2,
+  "svg": "arrow_up_circle.svg"
+ },
+ {
+  "resource": "ds_arrow_up_left_md_regular_24",
+  "short": "arrow_up_left_md",
+  "paths": 1,
+  "svg": "arrow_up_left_md.svg"
+ },
+ {
+  "resource": "ds_arrow_up_lg_regular_24",
+  "short": "arrow_up_lg",
+  "paths": 1,
+  "svg": "arrow_up_lg.svg"
+ },
+ {
+  "resource": "ds_arrow_up_lg_button_regular_24",
+  "short": "arrow_up_lg_button",
+  "paths": 1,
+  "svg": "arrow_up_lg_button.svg"
+ },
+ {
+  "resource": "ds_arrow_up_line_horizontal_regular_24",
+  "short": "arrow_up_line_horizontal",
+  "paths": 2,
+  "svg": "arrow_up_line_horizontal.svg"
+ },
+ {
+  "resource": "ds_arrow_up_open_base_regular_24",
+  "short": "arrow_up_open_base",
+  "paths": 2,
+  "svg": "arrow_up_open_base.svg"
+ },
+ {
+  "resource": "ds_arrow_up_right_arrow_down_left_sm_regular_24",
+  "short": "arrow_up_right_arrow_down_left_sm",
+  "paths": 2,
+  "svg": "arrow_up_right_arrow_down_left_sm.svg"
+ },
+ {
+  "resource": "ds_arrow_up_right_lg_regular_24",
+  "short": "arrow_up_right_lg",
+  "paths": 1,
+  "svg": "arrow_up_right_lg.svg"
+ },
+ {
+  "resource": "ds_arrow_up_right_md_regular_24",
+  "short": "arrow_up_right_md",
+  "paths": 1,
+  "svg": "arrow_up_right_md.svg"
+ },
+ {
+  "resource": "ds_arrow_uturn_left_regular_24",
+  "short": "arrow_uturn_left",
+  "paths": 1,
+  "svg": "arrow_uturn_left.svg"
+ },
+ {
+  "resource": "ds_arrow_uturn_right_regular_24",
+  "short": "arrow_uturn_right",
+  "paths": 1,
+  "svg": "arrow_uturn_right.svg"
+ },
+ {
+  "resource": "ds_arrows_clockwise_rotate_lg_regular_24",
+  "short": "arrows_clockwise_rotate_lg",
+  "paths": 2,
+  "svg": "arrows_clockwise_rotate_lg.svg"
+ },
+ {
+  "resource": "ds_aspect_ratio_3_4_regular_24",
+  "short": "aspect_ratio_3_4",
+  "paths": 1,
+  "svg": "aspect_ratio_3_4.svg"
+ },
+ {
+  "resource": "ds_aspect_ratio_9_16_regular_24",
+  "short": "aspect_ratio_9_16",
+  "paths": 1,
+  "svg": "aspect_ratio_9_16.svg"
+ },
+ {
+  "resource": "ds_at_sign_regular_24",
+  "short": "at_sign",
+  "paths": 1,
+  "svg": "at_sign.svg"
+ },
+ {
+  "resource": "ds_atom_regular_24",
+  "short": "atom",
+  "paths": 1,
+  "svg": "atom.svg"
+ },
+ {
+  "resource": "ds_balance_scale_regular_24",
+  "short": "balance_scale",
+  "paths": 3,
+  "svg": "balance_scale.svg"
+ },
+ {
+  "resource": "ds_banknote_regular_24",
+  "short": "banknote",
+  "paths": 4,
+  "svg": "banknote.svg"
+ },
+ {
+  "resource": "ds_bar_chart_regular_24",
+  "short": "bar_chart",
+  "paths": 1,
+  "svg": "bar_chart.svg"
+ },
+ {
+  "resource": "ds_bell_regular_24",
+  "short": "bell",
+  "paths": 1,
+  "svg": "bell.svg"
+ },
+ {
+  "resource": "ds_bell_slash_regular_24",
+  "short": "bell_slash",
+  "paths": 2,
+  "svg": "bell_slash.svg"
+ },
+ {
+  "resource": "ds_bluetooth_regular_24",
+  "short": "bluetooth",
+  "paths": 1,
+  "svg": "bluetooth.svg"
+ },
+ {
+  "resource": "ds_bolt_regular_24",
+  "short": "bolt",
+  "paths": 1,
+  "svg": "bolt.svg"
+ },
+ {
+  "resource": "ds_bolt_auto_fill_regular_24",
+  "short": "bolt_auto_fill",
+  "paths": 2,
+  "svg": "bolt_auto_fill.svg"
+ },
+ {
+  "resource": "ds_bolt_fill_regular_24",
+  "short": "bolt_fill",
+  "paths": 1,
+  "svg": "bolt_fill.svg"
+ },
+ {
+  "resource": "ds_bolt_slash_fill_regular_24",
+  "short": "bolt_slash_fill",
+  "paths": 2,
+  "svg": "bolt_slash_fill.svg"
+ },
+ {
+  "resource": "ds_book_regular_24",
+  "short": "book",
+  "paths": 1,
+  "svg": "book.svg"
+ },
+ {
+  "resource": "ds_book_badge_heart_regular_24",
+  "short": "book_badge_heart",
+  "paths": 2,
+  "svg": "book_badge_heart.svg"
+ },
+ {
+  "resource": "ds_book_badge_pencil_regular_24",
+  "short": "book_badge_pencil",
+  "paths": 2,
+  "svg": "book_badge_pencil.svg"
+ },
+ {
+  "resource": "ds_book_badge_pencil_fill_regular_24",
+  "short": "book_badge_pencil_fill",
+  "paths": 3,
+  "svg": "book_badge_pencil_fill.svg"
+ },
+ {
+  "resource": "ds_book_closed_quotemark_regular_24",
+  "short": "book_closed_quotemark",
+  "paths": 3,
+  "svg": "book_closed_quotemark.svg"
+ },
+ {
+  "resource": "ds_book_open_regular_24",
+  "short": "book_open",
+  "paths": 1,
+  "svg": "book_open.svg"
+ },
+ {
+  "resource": "ds_bookmark_regular_24",
+  "short": "bookmark",
+  "paths": 1,
+  "svg": "bookmark.svg"
+ },
+ {
+  "resource": "ds_bookmark_fill_regular_24",
+  "short": "bookmark_fill",
+  "paths": 1,
+  "svg": "bookmark_fill.svg"
+ },
+ {
+  "resource": "ds_bookmark_slash_regular_24",
+  "short": "bookmark_slash",
+  "paths": 2,
+  "svg": "bookmark_slash.svg"
+ },
+ {
+  "resource": "ds_books_regular_24",
+  "short": "books",
+  "paths": 1,
+  "svg": "books.svg"
+ },
+ {
+  "resource": "ds_braces_regular_24",
+  "short": "braces",
+  "paths": 2,
+  "svg": "braces.svg"
+ },
+ {
+  "resource": "ds_brackets_quotemark_regular_24",
+  "short": "brackets_quotemark",
+  "paths": 4,
+  "svg": "brackets_quotemark.svg"
+ },
+ {
+  "resource": "ds_brain_regular_24",
+  "short": "brain",
+  "paths": 1,
+  "svg": "brain.svg"
+ },
+ {
+  "resource": "ds_briefcase_regular_24",
+  "short": "briefcase",
+  "paths": 1,
+  "svg": "briefcase.svg"
+ },
+ {
+  "resource": "ds_broom_regular_24",
+  "short": "broom",
+  "paths": 1,
+  "svg": "broom.svg"
+ },
+ {
+  "resource": "ds_building_regular_24",
+  "short": "building",
+  "paths": 1,
+  "svg": "building.svg"
+ },
+ {
+  "resource": "ds_calculator_regular_24",
+  "short": "calculator",
+  "paths": 7,
+  "svg": "calculator.svg"
+ },
+ {
+  "resource": "ds_calendar_regular_24",
+  "short": "calendar",
+  "paths": 1,
+  "svg": "calendar.svg"
+ },
+ {
+  "resource": "ds_calendar_day_regular_24",
+  "short": "calendar_day",
+  "paths": 2,
+  "svg": "calendar_day.svg"
+ },
+ {
+  "resource": "ds_camera_regular_24",
+  "short": "camera",
+  "paths": 2,
+  "svg": "camera.svg"
+ },
+ {
+  "resource": "ds_chat_bubble_regular_24",
+  "short": "chat_bubble",
+  "paths": 1,
+  "svg": "chat_bubble.svg"
+ },
+ {
+  "resource": "ds_chat_bubble_and_wavelength_regular_24",
+  "short": "chat_bubble_and_wavelength",
+  "paths": 3,
+  "svg": "chat_bubble_and_wavelength.svg"
+ },
+ {
+  "resource": "ds_chat_bubble_and_wavelength_fill_regular_24",
+  "short": "chat_bubble_and_wavelength_fill",
+  "paths": 3,
+  "svg": "chat_bubble_and_wavelength_fill.svg"
+ },
+ {
+  "resource": "ds_chat_bubble_checkmark_dashed_regular_24",
+  "short": "chat_bubble_checkmark_dashed",
+  "paths": 4,
+  "svg": "chat_bubble_checkmark_dashed.svg"
+ },
+ {
+  "resource": "ds_chat_bubble_dashed_regular_24",
+  "short": "chat_bubble_dashed",
+  "paths": 3,
+  "svg": "chat_bubble_dashed.svg"
+ },
+ {
+  "resource": "ds_chat_bubble_ellipsis_regular_24",
+  "short": "chat_bubble_ellipsis",
+  "paths": 4,
+  "svg": "chat_bubble_ellipsis.svg"
+ },
+ {
+  "resource": "ds_chat_bubble_fill_regular_24",
+  "short": "chat_bubble_fill",
+  "paths": 1,
+  "svg": "chat_bubble_fill.svg"
+ },
+ {
+  "resource": "ds_chat_bubble_on_chat_bubble_regular_24",
+  "short": "chat_bubble_on_chat_bubble",
+  "paths": 1,
+  "svg": "chat_bubble_on_chat_bubble.svg"
+ },
+ {
+  "resource": "ds_chat_bubble_right_regular_24",
+  "short": "chat_bubble_right",
+  "paths": 1,
+  "svg": "chat_bubble_right.svg"
+ },
+ {
+  "resource": "ds_chat_bubble_right_plus_regular_24",
+  "short": "chat_bubble_right_plus",
+  "paths": 2,
+  "svg": "chat_bubble_right_plus.svg"
+ },
+ {
+  "resource": "ds_chat_bubble_rounded_rectangle_text_regular_24",
+  "short": "chat_bubble_rounded_rectangle_text",
+  "paths": 3,
+  "svg": "chat_bubble_rounded_rectangle_text.svg"
+ },
+ {
+  "resource": "ds_chat_bubble_text_regular_24",
+  "short": "chat_bubble_text",
+  "paths": 3,
+  "svg": "chat_bubble_text.svg"
+ },
+ {
+  "resource": "ds_checkmark_lg_regular_24",
+  "short": "checkmark_lg",
+  "paths": 1,
+  "svg": "checkmark_lg.svg"
+ },
+ {
+  "resource": "ds_checkmark_md_regular_24",
+  "short": "checkmark_md",
+  "paths": 1,
+  "svg": "checkmark_md.svg"
+ },
+ {
+  "resource": "ds_chess_horse_regular_24",
+  "short": "chess_horse",
+  "paths": 1,
+  "svg": "chess_horse.svg"
+ },
+ {
+  "resource": "ds_chevron_down_md_regular_24",
+  "short": "chevron_down_md",
+  "paths": 1,
+  "svg": "chevron_down_md.svg"
+ },
+ {
+  "resource": "ds_chevron_down_sm_regular_24",
+  "short": "chevron_down_sm",
+  "paths": 1,
+  "svg": "chevron_down_sm.svg"
+ },
+ {
+  "resource": "ds_chevron_left_lg_regular_24",
+  "short": "chevron_left_lg",
+  "paths": 1,
+  "svg": "chevron_left_lg.svg"
+ },
+ {
+  "resource": "ds_chevron_left_md_regular_24",
+  "short": "chevron_left_md",
+  "paths": 1,
+  "svg": "chevron_left_md.svg"
+ },
+ {
+  "resource": "ds_chevron_left_sm_regular_24",
+  "short": "chevron_left_sm",
+  "paths": 1,
+  "svg": "chevron_left_sm.svg"
+ },
+ {
+  "resource": "ds_chevron_right_lg_regular_24",
+  "short": "chevron_right_lg",
+  "paths": 1,
+  "svg": "chevron_right_lg.svg"
+ },
+ {
+  "resource": "ds_chevron_right_md_regular_24",
+  "short": "chevron_right_md",
+  "paths": 1,
+  "svg": "chevron_right_md.svg"
+ },
+ {
+  "resource": "ds_chevron_right_sm_regular_24",
+  "short": "chevron_right_sm",
+  "paths": 1,
+  "svg": "chevron_right_sm.svg"
+ },
+ {
+  "resource": "ds_chevron_up_chevron_down_sm_regular_24",
+  "short": "chevron_up_chevron_down_sm",
+  "paths": 2,
+  "svg": "chevron_up_chevron_down_sm.svg"
+ },
+ {
+  "resource": "ds_chevron_up_md_regular_24",
+  "short": "chevron_up_md",
+  "paths": 1,
+  "svg": "chevron_up_md.svg"
+ },
+ {
+  "resource": "ds_chevron_up_right_chevron_down_left_sm_regular_24",
+  "short": "chevron_up_right_chevron_down_left_sm",
+  "paths": 2,
+  "svg": "chevron_up_right_chevron_down_left_sm.svg"
+ },
+ {
+  "resource": "ds_chevron_up_sm_regular_24",
+  "short": "chevron_up_sm",
+  "paths": 1,
+  "svg": "chevron_up_sm.svg"
+ },
+ {
+  "resource": "ds_circle_regular_24",
+  "short": "circle",
+  "paths": 1,
+  "svg": "circle.svg"
+ },
+ {
+  "resource": "ds_circle_checkmark_regular_24",
+  "short": "circle_checkmark",
+  "paths": 2,
+  "svg": "circle_checkmark.svg"
+ },
+ {
+  "resource": "ds_circle_checkmark_fill_regular_24",
+  "short": "circle_checkmark_fill",
+  "paths": 1,
+  "svg": "circle_checkmark_fill.svg"
+ },
+ {
+  "resource": "ds_circle_dashed_regular_24",
+  "short": "circle_dashed",
+  "paths": 6,
+  "svg": "circle_dashed.svg"
+ },
+ {
+  "resource": "ds_circle_dollarsign_regular_24",
+  "short": "circle_dollarsign",
+  "paths": 2,
+  "svg": "circle_dollarsign.svg"
+ },
+ {
+  "resource": "ds_circle_exclamationmark_regular_24",
+  "short": "circle_exclamationmark",
+  "paths": 3,
+  "svg": "circle_exclamationmark.svg"
+ },
+ {
+  "resource": "ds_circle_fill_regular_24",
+  "short": "circle_fill",
+  "paths": 1,
+  "svg": "circle_fill.svg"
+ },
+ {
+  "resource": "ds_circle_grid_2x2_regular_24",
+  "short": "circle_grid_2x2",
+  "paths": 4,
+  "svg": "circle_grid_2x2.svg"
+ },
+ {
+  "resource": "ds_circle_grid_2x2_connect_regular_24",
+  "short": "circle_grid_2x2_connect",
+  "paths": 3,
+  "svg": "circle_grid_2x2_connect.svg"
+ },
+ {
+  "resource": "ds_circle_grid_2x2_fill_regular_24",
+  "short": "circle_grid_2x2_fill",
+  "paths": 4,
+  "svg": "circle_grid_2x2_fill.svg"
+ },
+ {
+  "resource": "ds_circle_info_regular_24",
+  "short": "circle_info",
+  "paths": 3,
+  "svg": "circle_info.svg"
+ },
+ {
+  "resource": "ds_circle_minus_regular_24",
+  "short": "circle_minus",
+  "paths": 2,
+  "svg": "circle_minus.svg"
+ },
+ {
+  "resource": "ds_circle_pause_regular_24",
+  "short": "circle_pause",
+  "paths": 3,
+  "svg": "circle_pause.svg"
+ },
+ {
+  "resource": "ds_circle_person_regular_24",
+  "short": "circle_person",
+  "paths": 2,
+  "svg": "circle_person.svg"
+ },
+ {
+  "resource": "ds_circle_person_fill_regular_24",
+  "short": "circle_person_fill",
+  "paths": 1,
+  "svg": "circle_person_fill.svg"
+ },
+ {
+  "resource": "ds_circle_play_regular_24",
+  "short": "circle_play",
+  "paths": 2,
+  "svg": "circle_play.svg"
+ },
+ {
+  "resource": "ds_circle_play_fill_regular_24",
+  "short": "circle_play_fill",
+  "paths": 1,
+  "svg": "circle_play_fill.svg"
+ },
+ {
+  "resource": "ds_circle_questionmark_regular_24",
+  "short": "circle_questionmark",
+  "paths": 3,
+  "svg": "circle_questionmark.svg"
+ },
+ {
+  "resource": "ds_circle_stop_fill_regular_24",
+  "short": "circle_stop_fill",
+  "paths": 1,
+  "svg": "circle_stop_fill.svg"
+ },
+ {
+  "resource": "ds_circle_xmark_regular_24",
+  "short": "circle_xmark",
+  "paths": 2,
+  "svg": "circle_xmark.svg"
+ },
+ {
+  "resource": "ds_circle_xmark_fill_regular_24",
+  "short": "circle_xmark_fill",
+  "paths": 1,
+  "svg": "circle_xmark_fill.svg"
+ },
+ {
+  "resource": "ds_clipboard_regular_24",
+  "short": "clipboard",
+  "paths": 1,
+  "svg": "clipboard.svg"
+ },
+ {
+  "resource": "ds_clock_regular_24",
+  "short": "clock",
+  "paths": 2,
+  "svg": "clock.svg"
+ },
+ {
+  "resource": "ds_clock_arrow_rotate_counterclockwise_regular_24",
+  "short": "clock_arrow_rotate_counterclockwise",
+  "paths": 2,
+  "svg": "clock_arrow_rotate_counterclockwise.svg"
+ },
+ {
+  "resource": "ds_cloud_regular_24",
+  "short": "cloud",
+  "paths": 1,
+  "svg": "cloud.svg"
+ },
+ {
+  "resource": "ds_cloud_bolt_regular_24",
+  "short": "cloud_bolt",
+  "paths": 2,
+  "svg": "cloud_bolt.svg"
+ },
+ {
+  "resource": "ds_cloud_moon_regular_24",
+  "short": "cloud_moon",
+  "paths": 1,
+  "svg": "cloud_moon.svg"
+ },
+ {
+  "resource": "ds_cloud_moon_light_rain_regular_24",
+  "short": "cloud_moon_light_rain",
+  "paths": 4,
+  "svg": "cloud_moon_light_rain.svg"
+ },
+ {
+  "resource": "ds_cloud_moon_rain_regular_24",
+  "short": "cloud_moon_rain",
+  "paths": 4,
+  "svg": "cloud_moon_rain.svg"
+ },
+ {
+  "resource": "ds_cloud_rain_regular_24",
+  "short": "cloud_rain",
+  "paths": 5,
+  "svg": "cloud_rain.svg"
+ },
+ {
+  "resource": "ds_cloud_rain_bolt_regular_24",
+  "short": "cloud_rain_bolt",
+  "paths": 4,
+  "svg": "cloud_rain_bolt.svg"
+ },
+ {
+  "resource": "ds_cloud_snow_regular_24",
+  "short": "cloud_snow",
+  "paths": 9,
+  "svg": "cloud_snow.svg"
+ },
+ {
+  "resource": "ds_cloud_sun_regular_24",
+  "short": "cloud_sun",
+  "paths": 1,
+  "svg": "cloud_sun.svg"
+ },
+ {
+  "resource": "ds_cloud_sun_light_rain_regular_24",
+  "short": "cloud_sun_light_rain",
+  "paths": 4,
+  "svg": "cloud_sun_light_rain.svg"
+ },
+ {
+  "resource": "ds_cloud_sun_rain_regular_24",
+  "short": "cloud_sun_rain",
+  "paths": 4,
+  "svg": "cloud_sun_rain.svg"
+ },
+ {
+  "resource": "ds_cloud_wind_regular_24",
+  "short": "cloud_wind",
+  "paths": 3,
+  "svg": "cloud_wind.svg"
+ },
+ {
+  "resource": "ds_code_regular_24",
+  "short": "code",
+  "paths": 3,
+  "svg": "code.svg"
+ },
+ {
+  "resource": "ds_codex_regular_24",
+  "short": "codex",
+  "paths": 3,
+  "svg": "codex.svg"
+ },
+ {
+  "resource": "ds_compass_regular_24",
+  "short": "compass",
+  "paths": 2,
+  "svg": "compass.svg"
+ },
+ {
+  "resource": "ds_confetti_regular_24",
+  "short": "confetti",
+  "paths": 6,
+  "svg": "confetti.svg"
+ },
+ {
+  "resource": "ds_credit_card_regular_24",
+  "short": "credit_card",
+  "paths": 2,
+  "svg": "credit_card.svg"
+ },
+ {
+  "resource": "ds_cube_regular_24",
+  "short": "cube",
+  "paths": 1,
+  "svg": "cube.svg"
+ },
+ {
+  "resource": "ds_cursor_interactive_regular_24",
+  "short": "cursor_interactive",
+  "paths": 5,
+  "svg": "cursor_interactive.svg"
+ },
+ {
+  "resource": "ds_deep_research_regular_24",
+  "short": "deep_research",
+  "paths": 1,
+  "svg": "deep_research.svg"
+ },
+ {
+  "resource": "ds_deep_shopping_regular_24",
+  "short": "deep_shopping",
+  "paths": 2,
+  "svg": "deep_shopping.svg"
+ },
+ {
+  "resource": "ds_desk_globe_regular_24",
+  "short": "desk_globe",
+  "paths": 2,
+  "svg": "desk_globe.svg"
+ },
+ {
+  "resource": "ds_desktop_regular_24",
+  "short": "desktop",
+  "paths": 1,
+  "svg": "desktop.svg"
+ },
+ {
+  "resource": "ds_diagonal_line_regular_24",
+  "short": "diagonal_line",
+  "paths": 1,
+  "svg": "diagonal_line.svg"
+ },
+ {
+  "resource": "ds_diamond_shape_regular_24",
+  "short": "diamond_shape",
+  "paths": 1,
+  "svg": "diamond_shape.svg"
+ },
+ {
+  "resource": "ds_diamond_sparkle_regular_24",
+  "short": "diamond_sparkle",
+  "paths": 2,
+  "svg": "diamond_sparkle.svg"
+ },
+ {
+  "resource": "ds_diamond_sparkle_fill_regular_24",
+  "short": "diamond_sparkle_fill",
+  "paths": 1,
+  "svg": "diamond_sparkle_fill.svg"
+ },
+ {
+  "resource": "ds_dock_regular_24",
+  "short": "dock",
+  "paths": 2,
+  "svg": "dock.svg"
+ },
+ {
+  "resource": "ds_document_regular_24",
+  "short": "document",
+  "paths": 1,
+  "svg": "document.svg"
+ },
+ {
+  "resource": "ds_document_on_document_tilted_regular_24",
+  "short": "document_on_document_tilted",
+  "paths": 1,
+  "svg": "document_on_document_tilted.svg"
+ },
+ {
+  "resource": "ds_document_pdf_regular_24",
+  "short": "document_pdf",
+  "paths": 4,
+  "svg": "document_pdf.svg"
+ },
+ {
+  "resource": "ds_document_zip_regular_24",
+  "short": "document_zip",
+  "paths": 4,
+  "svg": "document_zip.svg"
+ },
+ {
+  "resource": "ds_dumbbell_regular_24",
+  "short": "dumbbell",
+  "paths": 1,
+  "svg": "dumbbell.svg"
+ },
+ {
+  "resource": "ds_earth_regular_24",
+  "short": "earth",
+  "paths": 1,
+  "svg": "earth.svg"
+ },
+ {
+  "resource": "ds_ellipsis_horizontal_regular_24",
+  "short": "ellipsis_horizontal",
+  "paths": 3,
+  "svg": "ellipsis_horizontal.svg"
+ },
+ {
+  "resource": "ds_ellipsis_vertical_regular_24",
+  "short": "ellipsis_vertical",
+  "paths": 3,
+  "svg": "ellipsis_vertical.svg"
+ },
+ {
+  "resource": "ds_emoji_face_regular_24",
+  "short": "emoji_face",
+  "paths": 4,
+  "svg": "emoji_face.svg"
+ },
+ {
+  "resource": "ds_emoji_face_badge_plus_regular_24",
+  "short": "emoji_face_badge_plus",
+  "paths": 5,
+  "svg": "emoji_face_badge_plus.svg"
+ },
+ {
+  "resource": "ds_emoji_face_smile_mouth_regular_24",
+  "short": "emoji_face_smile_mouth",
+  "paths": 2,
+  "svg": "emoji_face_smile_mouth.svg"
+ },
+ {
+  "resource": "ds_emoji_relax_regular_24",
+  "short": "emoji_relax",
+  "paths": 4,
+  "svg": "emoji_relax.svg"
+ },
+ {
+  "resource": "ds_emoji_sleep_regular_24",
+  "short": "emoji_sleep",
+  "paths": 5,
+  "svg": "emoji_sleep.svg"
+ },
+ {
+  "resource": "ds_envelope_regular_24",
+  "short": "envelope",
+  "paths": 1,
+  "svg": "envelope.svg"
+ },
+ {
+  "resource": "ds_eraser_regular_24",
+  "short": "eraser",
+  "paths": 1,
+  "svg": "eraser.svg"
+ },
+ {
+  "resource": "ds_eraser_badge_regular_24",
+  "short": "eraser_badge",
+  "paths": 2,
+  "svg": "eraser_badge.svg"
+ },
+ {
+  "resource": "ds_eye_regular_24",
+  "short": "eye",
+  "paths": 2,
+  "svg": "eye.svg"
+ },
+ {
+  "resource": "ds_eye_slash_regular_24",
+  "short": "eye_slash",
+  "paths": 2,
+  "svg": "eye_slash.svg"
+ },
+ {
+  "resource": "ds_facebook_logo_regular_24",
+  "short": "facebook_logo",
+  "paths": 1,
+  "svg": "facebook_logo.svg"
+ },
+ {
+  "resource": "ds_film_strip_regular_24",
+  "short": "film_strip",
+  "paths": 1,
+  "svg": "film_strip.svg"
+ },
+ {
+  "resource": "ds_filter_regular_24",
+  "short": "filter",
+  "paths": 3,
+  "svg": "filter.svg"
+ },
+ {
+  "resource": "ds_finance_regular_24",
+  "short": "finance",
+  "paths": 2,
+  "svg": "finance.svg"
+ },
+ {
+  "resource": "ds_finger_tap_regular_24",
+  "short": "finger_tap",
+  "paths": 2,
+  "svg": "finger_tap.svg"
+ },
+ {
+  "resource": "ds_flag_regular_24",
+  "short": "flag",
+  "paths": 1,
+  "svg": "flag.svg"
+ },
+ {
+  "resource": "ds_flashcards_regular_24",
+  "short": "flashcards",
+  "paths": 1,
+  "svg": "flashcards.svg"
+ },
+ {
+  "resource": "ds_flask_regular_24",
+  "short": "flask",
+  "paths": 1,
+  "svg": "flask.svg"
+ },
+ {
+  "resource": "ds_flask_fill_regular_24",
+  "short": "flask_fill",
+  "paths": 1,
+  "svg": "flask_fill.svg"
+ },
+ {
+  "resource": "ds_folder_regular_24",
+  "short": "folder",
+  "paths": 1,
+  "svg": "folder.svg"
+ },
+ {
+  "resource": "ds_folder_badge_arrow_down_regular_24",
+  "short": "folder_badge_arrow_down",
+  "paths": 2,
+  "svg": "folder_badge_arrow_down.svg"
+ },
+ {
+  "resource": "ds_folder_badge_checkmark_regular_24",
+  "short": "folder_badge_checkmark",
+  "paths": 2,
+  "svg": "folder_badge_checkmark.svg"
+ },
+ {
+  "resource": "ds_folder_badge_lock_regular_24",
+  "short": "folder_badge_lock",
+  "paths": 2,
+  "svg": "folder_badge_lock.svg"
+ },
+ {
+  "resource": "ds_folder_badge_plus_regular_24",
+  "short": "folder_badge_plus",
+  "paths": 2,
+  "svg": "folder_badge_plus.svg"
+ },
+ {
+  "resource": "ds_folder_badge_xmark_regular_24",
+  "short": "folder_badge_xmark",
+  "paths": 2,
+  "svg": "folder_badge_xmark.svg"
+ },
+ {
+  "resource": "ds_folder_full_regular_24",
+  "short": "folder_full",
+  "paths": 1,
+  "svg": "folder_full.svg"
+ },
+ {
+  "resource": "ds_folder_on_folder_regular_24",
+  "short": "folder_on_folder",
+  "paths": 1,
+  "svg": "folder_on_folder.svg"
+ },
+ {
+  "resource": "ds_folder_person_2_regular_24",
+  "short": "folder_person_2",
+  "paths": 5,
+  "svg": "folder_person_2.svg"
+ },
+ {
+  "resource": "ds_follow_up_regular_24",
+  "short": "follow_up",
+  "paths": 3,
+  "svg": "follow_up.svg"
+ },
+ {
+  "resource": "ds_four_dice_face_on_tilted_square_regular_24",
+  "short": "four_dice_face_on_tilted_square",
+  "paths": 5,
+  "svg": "four_dice_face_on_tilted_square.svg"
+ },
+ {
+  "resource": "ds_funnel_regular_24",
+  "short": "funnel",
+  "paths": 1,
+  "svg": "funnel.svg"
+ },
+ {
+  "resource": "ds_gauge_regular_24",
+  "short": "gauge",
+  "paths": 3,
+  "svg": "gauge.svg"
+ },
+ {
+  "resource": "ds_gear_regular_24",
+  "short": "gear",
+  "paths": 2,
+  "svg": "gear.svg"
+ },
+ {
+  "resource": "ds_gift_regular_24",
+  "short": "gift",
+  "paths": 1,
+  "svg": "gift.svg"
+ },
+ {
+  "resource": "ds_github_logo_regular_24",
+  "short": "github_logo",
+  "paths": 1,
+  "svg": "github_logo.svg"
+ },
+ {
+  "resource": "ds_glasses_regular_24",
+  "short": "glasses",
+  "paths": 1,
+  "svg": "glasses.svg"
+ },
+ {
+  "resource": "ds_globe_regular_24",
+  "short": "globe",
+  "paths": 1,
+  "svg": "globe.svg"
+ },
+ {
+  "resource": "ds_globe_badge_xmark_regular_24",
+  "short": "globe_badge_xmark",
+  "paths": 2,
+  "svg": "globe_badge_xmark.svg"
+ },
+ {
+  "resource": "ds_graduation_cap_regular_24",
+  "short": "graduation_cap",
+  "paths": 1,
+  "svg": "graduation_cap.svg"
+ },
+ {
+  "resource": "ds_hammer_regular_24",
+  "short": "hammer",
+  "paths": 1,
+  "svg": "hammer.svg"
+ },
+ {
+  "resource": "ds_hand_palm_regular_24",
+  "short": "hand_palm",
+  "paths": 1,
+  "svg": "hand_palm.svg"
+ },
+ {
+  "resource": "ds_hand_peace_sign_regular_24",
+  "short": "hand_peace_sign",
+  "paths": 1,
+  "svg": "hand_peace_sign.svg"
+ },
+ {
+  "resource": "ds_haptics_regular_24",
+  "short": "haptics",
+  "paths": 4,
+  "svg": "haptics.svg"
+ },
+ {
+  "resource": "ds_hard_drive_regular_24",
+  "short": "hard_drive",
+  "paths": 2,
+  "svg": "hard_drive.svg"
+ },
+ {
+  "resource": "ds_headphones_regular_24",
+  "short": "headphones",
+  "paths": 1,
+  "svg": "headphones.svg"
+ },
+ {
+  "resource": "ds_health_regular_24",
+  "short": "health",
+  "paths": 2,
+  "svg": "health.svg"
+ },
+ {
+  "resource": "ds_heart_regular_24",
+  "short": "heart",
+  "paths": 1,
+  "svg": "heart.svg"
+ },
+ {
+  "resource": "ds_heart_badge_shield_regular_24",
+  "short": "heart_badge_shield",
+  "paths": 2,
+  "svg": "heart_badge_shield.svg"
+ },
+ {
+  "resource": "ds_help_regular_24",
+  "short": "help",
+  "paths": 1,
+  "svg": "help.svg"
+ },
+ {
+  "resource": "ds_hexagon_sparkles_regular_24",
+  "short": "hexagon_sparkles",
+  "paths": 3,
+  "svg": "hexagon_sparkles.svg"
+ },
+ {
+  "resource": "ds_home_regular_24",
+  "short": "home",
+  "paths": 1,
+  "svg": "home.svg"
+ },
+ {
+  "resource": "ds_home_fill_regular_24",
+  "short": "home_fill",
+  "paths": 1,
+  "svg": "home_fill.svg"
+ },
+ {
+  "resource": "ds_incognito_regular_24",
+  "short": "incognito",
+  "paths": 2,
+  "svg": "incognito.svg"
+ },
+ {
+  "resource": "ds_info_regular_24",
+  "short": "info",
+  "paths": 2,
+  "svg": "info.svg"
+ },
+ {
+  "resource": "ds_instagram_logo_regular_24",
+  "short": "instagram_logo",
+  "paths": 3,
+  "svg": "instagram_logo.svg"
+ },
+ {
+  "resource": "ds_kettlebell_regular_24",
+  "short": "kettlebell",
+  "paths": 1,
+  "svg": "kettlebell.svg"
+ },
+ {
+  "resource": "ds_key_regular_24",
+  "short": "key",
+  "paths": 2,
+  "svg": "key.svg"
+ },
+ {
+  "resource": "ds_keyboard_regular_24",
+  "short": "keyboard",
+  "paths": 9,
+  "svg": "keyboard.svg"
+ },
+ {
+  "resource": "ds_keys_regular_24",
+  "short": "keys",
+  "paths": 2,
+  "svg": "keys.svg"
+ },
+ {
+  "resource": "ds_ladybug_regular_24",
+  "short": "ladybug",
+  "paths": 3,
+  "svg": "ladybug.svg"
+ },
+ {
+  "resource": "ds_laptop_regular_24",
+  "short": "laptop",
+  "paths": 1,
+  "svg": "laptop.svg"
+ },
+ {
+  "resource": "ds_laptop_connector_regular_24",
+  "short": "laptop_connector",
+  "paths": 7,
+  "svg": "laptop_connector.svg"
+ },
+ {
+  "resource": "ds_lightbulb_regular_24",
+  "short": "lightbulb",
+  "paths": 1,
+  "svg": "lightbulb.svg"
+ },
+ {
+  "resource": "ds_lightbulb_fill_regular_24",
+  "short": "lightbulb_fill",
+  "paths": 2,
+  "svg": "lightbulb_fill.svg"
+ },
+ {
+  "resource": "ds_lightbulb_rays_regular_24",
+  "short": "lightbulb_rays",
+  "paths": 6,
+  "svg": "lightbulb_rays.svg"
+ },
+ {
+  "resource": "ds_lightbulb_rays_fill_regular_24",
+  "short": "lightbulb_rays_fill",
+  "paths": 7,
+  "svg": "lightbulb_rays_fill.svg"
+ },
+ {
+  "resource": "ds_lightbulb_slash_regular_24",
+  "short": "lightbulb_slash",
+  "paths": 2,
+  "svg": "lightbulb_slash.svg"
+ },
+ {
+  "resource": "ds_link_regular_24",
+  "short": "link",
+  "paths": 3,
+  "svg": "link.svg"
+ },
+ {
+  "resource": "ds_list_bulletpoint_regular_24",
+  "short": "list_bulletpoint",
+  "paths": 6,
+  "svg": "list_bulletpoint.svg"
+ },
+ {
+  "resource": "ds_list_checkmark_circle_regular_24",
+  "short": "list_checkmark_circle",
+  "paths": 4,
+  "svg": "list_checkmark_circle.svg"
+ },
+ {
+  "resource": "ds_list_circle_regular_24",
+  "short": "list_circle",
+  "paths": 4,
+  "svg": "list_circle.svg"
+ },
+ {
+  "resource": "ds_list_number_regular_24",
+  "short": "list_number",
+  "paths": 4,
+  "svg": "list_number.svg"
+ },
+ {
+  "resource": "ds_location_arrow_fill_regular_24",
+  "short": "location_arrow_fill",
+  "paths": 1,
+  "svg": "location_arrow_fill.svg"
+ },
+ {
+  "resource": "ds_lock_regular_24",
+  "short": "lock",
+  "paths": 2,
+  "svg": "lock.svg"
+ },
+ {
+  "resource": "ds_lock_fill_regular_24",
+  "short": "lock_fill",
+  "paths": 1,
+  "svg": "lock_fill.svg"
+ },
+ {
+  "resource": "ds_lotus_regular_24",
+  "short": "lotus",
+  "paths": 1,
+  "svg": "lotus.svg"
+ },
+ {
+  "resource": "ds_mac_mini_regular_24",
+  "short": "mac_mini",
+  "paths": 4,
+  "svg": "mac_mini.svg"
+ },
+ {
+  "resource": "ds_magnifying_glass_lg_regular_24",
+  "short": "magnifying_glass_lg",
+  "paths": 1,
+  "svg": "magnifying_glass_lg.svg"
+ },
+ {
+  "resource": "ds_magnifying_glass_md_regular_24",
+  "short": "magnifying_glass_md",
+  "paths": 1,
+  "svg": "magnifying_glass_md.svg"
+ },
+ {
+  "resource": "ds_map_regular_24",
+  "short": "map",
+  "paths": 1,
+  "svg": "map.svg"
+ },
+ {
+  "resource": "ds_map_point_of_interest_regular_24",
+  "short": "map_point_of_interest",
+  "paths": 2,
+  "svg": "map_point_of_interest.svg"
+ },
+ {
+  "resource": "ds_medal_regular_24",
+  "short": "medal",
+  "paths": 1,
+  "svg": "medal.svg"
+ },
+ {
+  "resource": "ds_megaphone_regular_24",
+  "short": "megaphone",
+  "paths": 1,
+  "svg": "megaphone.svg"
+ },
+ {
+  "resource": "ds_microphone_regular_24",
+  "short": "microphone",
+  "paths": 2,
+  "svg": "microphone.svg"
+ },
+ {
+  "resource": "ds_microphone_fill_regular_24",
+  "short": "microphone_fill",
+  "paths": 2,
+  "svg": "microphone_fill.svg"
+ },
+ {
+  "resource": "ds_microphone_slash_regular_24",
+  "short": "microphone_slash",
+  "paths": 3,
+  "svg": "microphone_slash.svg"
+ },
+ {
+  "resource": "ds_microphone_slash_fill_regular_24",
+  "short": "microphone_slash_fill",
+  "paths": 3,
+  "svg": "microphone_slash_fill.svg"
+ },
+ {
+  "resource": "ds_minus_md_regular_24",
+  "short": "minus_md",
+  "paths": 1,
+  "svg": "minus_md.svg"
+ },
+ {
+  "resource": "ds_moon_regular_24",
+  "short": "moon",
+  "paths": 1,
+  "svg": "moon.svg"
+ },
+ {
+  "resource": "ds_moon_cloud_regular_24",
+  "short": "moon_cloud",
+  "paths": 1,
+  "svg": "moon_cloud.svg"
+ },
+ {
+  "resource": "ds_moon_sun_regular_24",
+  "short": "moon_sun",
+  "paths": 5,
+  "svg": "moon_sun.svg"
+ },
+ {
+  "resource": "ds_movie_roll_regular_24",
+  "short": "movie_roll",
+  "paths": 5,
+  "svg": "movie_roll.svg"
+ },
+ {
+  "resource": "ds_ms_excel_regular_24",
+  "short": "ms_excel",
+  "paths": 1,
+  "svg": "ms_excel.svg"
+ },
+ {
+  "resource": "ds_ms_powerpoint_regular_24",
+  "short": "ms_powerpoint",
+  "paths": 2,
+  "svg": "ms_powerpoint.svg"
+ },
+ {
+  "resource": "ds_ms_word_regular_24",
+  "short": "ms_word",
+  "paths": 1,
+  "svg": "ms_word.svg"
+ },
+ {
+  "resource": "ds_music_note_regular_24",
+  "short": "music_note",
+  "paths": 1,
+  "svg": "music_note.svg"
+ },
+ {
+  "resource": "ds_newspaper_regular_24",
+  "short": "newspaper",
+  "paths": 5,
+  "svg": "newspaper.svg"
+ },
+ {
+  "resource": "ds_notebook_regular_24",
+  "short": "notebook",
+  "paths": 3,
+  "svg": "notebook.svg"
+ },
+ {
+  "resource": "ds_notebook_badge_checkmark_regular_24",
+  "short": "notebook_badge_checkmark",
+  "paths": 4,
+  "svg": "notebook_badge_checkmark.svg"
+ },
+ {
+  "resource": "ds_notebook_badge_xmark_regular_24",
+  "short": "notebook_badge_xmark",
+  "paths": 4,
+  "svg": "notebook_badge_xmark.svg"
+ },
+ {
+  "resource": "ds_open_base_arrow_forward_regular_24",
+  "short": "open_base_arrow_forward",
+  "paths": 2,
+  "svg": "open_base_arrow_forward.svg"
+ },
+ {
+  "resource": "ds_page_text_regular_24",
+  "short": "page_text",
+  "paths": 3,
+  "svg": "page_text.svg"
+ },
+ {
+  "resource": "ds_page_text_and_microphone_regular_24",
+  "short": "page_text_and_microphone",
+  "paths": 5,
+  "svg": "page_text_and_microphone.svg"
+ },
+ {
+  "resource": "ds_paint_palette_regular_24",
+  "short": "paint_palette",
+  "paths": 6,
+  "svg": "paint_palette.svg"
+ },
+ {
+  "resource": "ds_paintbrush_alt_regular_24",
+  "short": "paintbrush_alt",
+  "paths": 1,
+  "svg": "paintbrush_alt.svg"
+ },
+ {
+  "resource": "ds_paintbrush_on_pencil_regular_24",
+  "short": "paintbrush_on_pencil",
+  "paths": 1,
+  "svg": "paintbrush_on_pencil.svg"
+ },
+ {
+  "resource": "ds_paintbrush_stroke_regular_24",
+  "short": "paintbrush_stroke",
+  "paths": 1,
+  "svg": "paintbrush_stroke.svg"
+ },
+ {
+  "resource": "ds_paintbrush_stroke_dashed_regular_24",
+  "short": "paintbrush_stroke_dashed",
+  "paths": 8,
+  "svg": "paintbrush_stroke_dashed.svg"
+ },
+ {
+  "resource": "ds_paper_plane_regular_24",
+  "short": "paper_plane",
+  "paths": 1,
+  "svg": "paper_plane.svg"
+ },
+ {
+  "resource": "ds_paperclip_regular_24",
+  "short": "paperclip",
+  "paths": 1,
+  "svg": "paperclip.svg"
+ },
+ {
+  "resource": "ds_parent_control_regular_24",
+  "short": "parent_control",
+  "paths": 3,
+  "svg": "parent_control.svg"
+ },
+ {
+  "resource": "ds_passkey_regular_24",
+  "short": "passkey",
+  "paths": 4,
+  "svg": "passkey.svg"
+ },
+ {
+  "resource": "ds_pause_sm_fill_regular_24",
+  "short": "pause_sm_fill",
+  "paths": 2,
+  "svg": "pause_sm_fill.svg"
+ },
+ {
+  "resource": "ds_paw_regular_24",
+  "short": "paw",
+  "paths": 5,
+  "svg": "paw.svg"
+ },
+ {
+  "resource": "ds_pen_tip_regular_24",
+  "short": "pen_tip",
+  "paths": 1,
+  "svg": "pen_tip.svg"
+ },
+ {
+  "resource": "ds_pencil_regular_24",
+  "short": "pencil",
+  "paths": 1,
+  "svg": "pencil.svg"
+ },
+ {
+  "resource": "ds_pencil_text_regular_24",
+  "short": "pencil_text",
+  "paths": 3,
+  "svg": "pencil_text.svg"
+ },
+ {
+  "resource": "ds_person_regular_24",
+  "short": "person",
+  "paths": 2,
+  "svg": "person.svg"
+ },
+ {
+  "resource": "ds_person_2_regular_24",
+  "short": "person_2",
+  "paths": 4,
+  "svg": "person_2.svg"
+ },
+ {
+  "resource": "ds_person_2_badge_plus_regular_24",
+  "short": "person_2_badge_plus",
+  "paths": 5,
+  "svg": "person_2_badge_plus.svg"
+ },
+ {
+  "resource": "ds_person_2_fill_regular_24",
+  "short": "person_2_fill",
+  "paths": 4,
+  "svg": "person_2_fill.svg"
+ },
+ {
+  "resource": "ds_person_3_regular_24",
+  "short": "person_3",
+  "paths": 6,
+  "svg": "person_3.svg"
+ },
+ {
+  "resource": "ds_person_and_wavelength_regular_24",
+  "short": "person_and_wavelength",
+  "paths": 6,
+  "svg": "person_and_wavelength.svg"
+ },
+ {
+  "resource": "ds_person_badge_heart_regular_24",
+  "short": "person_badge_heart",
+  "paths": 3,
+  "svg": "person_badge_heart.svg"
+ },
+ {
+  "resource": "ds_person_badge_lock_regular_24",
+  "short": "person_badge_lock",
+  "paths": 3,
+  "svg": "person_badge_lock.svg"
+ },
+ {
+  "resource": "ds_person_badge_plus_regular_24",
+  "short": "person_badge_plus",
+  "paths": 3,
+  "svg": "person_badge_plus.svg"
+ },
+ {
+  "resource": "ds_person_badge_xmark_regular_24",
+  "short": "person_badge_xmark",
+  "paths": 3,
+  "svg": "person_badge_xmark.svg"
+ },
+ {
+  "resource": "ds_person_circle_regular_24",
+  "short": "person_circle",
+  "paths": 2,
+  "svg": "person_circle.svg"
+ },
+ {
+  "resource": "ds_person_fill_regular_24",
+  "short": "person_fill",
+  "paths": 2,
+  "svg": "person_fill.svg"
+ },
+ {
+  "resource": "ds_person_frame_regular_24",
+  "short": "person_frame",
+  "paths": 4,
+  "svg": "person_frame.svg"
+ },
+ {
+  "resource": "ds_person_square_on_tilted_square_regular_24",
+  "short": "person_square_on_tilted_square",
+  "paths": 2,
+  "svg": "person_square_on_tilted_square.svg"
+ },
+ {
+  "resource": "ds_personalization_regular_24",
+  "short": "personalization",
+  "paths": 3,
+  "svg": "personalization.svg"
+ },
+ {
+  "resource": "ds_phone_regular_24",
+  "short": "phone",
+  "paths": 1,
+  "svg": "phone.svg"
+ },
+ {
+  "resource": "ds_photo_regular_24",
+  "short": "photo",
+  "paths": 2,
+  "svg": "photo.svg"
+ },
+ {
+  "resource": "ds_photo_on_tilted_square_regular_24",
+  "short": "photo_on_tilted_square",
+  "paths": 4,
+  "svg": "photo_on_tilted_square.svg"
+ },
+ {
+  "resource": "ds_photo_on_tilted_square_fill_regular_24",
+  "short": "photo_on_tilted_square_fill",
+  "paths": 2,
+  "svg": "photo_on_tilted_square_fill.svg"
+ },
+ {
+  "resource": "ds_photo_sparkle_regular_24",
+  "short": "photo_sparkle",
+  "paths": 2,
+  "svg": "photo_sparkle.svg"
+ },
+ {
+  "resource": "ds_pin_regular_24",
+  "short": "pin",
+  "paths": 1,
+  "svg": "pin.svg"
+ },
+ {
+  "resource": "ds_pin_fill_regular_24",
+  "short": "pin_fill",
+  "paths": 1,
+  "svg": "pin_fill.svg"
+ },
+ {
+  "resource": "ds_pin_location_regular_24",
+  "short": "pin_location",
+  "paths": 2,
+  "svg": "pin_location.svg"
+ },
+ {
+  "resource": "ds_pin_slash_regular_24",
+  "short": "pin_slash",
+  "paths": 2,
+  "svg": "pin_slash.svg"
+ },
+ {
+  "resource": "ds_plane_up_right_regular_24",
+  "short": "plane_up_right",
+  "paths": 1,
+  "svg": "plane_up_right.svg"
+ },
+ {
+  "resource": "ds_plant_regular_24",
+  "short": "plant",
+  "paths": 1,
+  "svg": "plant.svg"
+ },
+ {
+  "resource": "ds_play_regular_24",
+  "short": "play",
+  "paths": 1,
+  "svg": "play.svg"
+ },
+ {
+  "resource": "ds_play_fill_regular_24",
+  "short": "play_fill",
+  "paths": 1,
+  "svg": "play_fill.svg"
+ },
+ {
+  "resource": "ds_play_sm_fill_regular_24",
+  "short": "play_sm_fill",
+  "paths": 1,
+  "svg": "play_sm_fill.svg"
+ },
+ {
+  "resource": "ds_playground_regular_24",
+  "short": "playground",
+  "paths": 1,
+  "svg": "playground.svg"
+ },
+ {
+  "resource": "ds_plugin_regular_24",
+  "short": "plugin",
+  "paths": 1,
+  "svg": "plugin.svg"
+ },
+ {
+  "resource": "ds_plus_lg_regular_24",
+  "short": "plus_lg",
+  "paths": 1,
+  "svg": "plus_lg.svg"
+ },
+ {
+  "resource": "ds_plus_md_regular_24",
+  "short": "plus_md",
+  "paths": 1,
+  "svg": "plus_md.svg"
+ },
+ {
+  "resource": "ds_plus_square_regular_24",
+  "short": "plus_square",
+  "paths": 2,
+  "svg": "plus_square.svg"
+ },
+ {
+  "resource": "ds_popcorn_regular_24",
+  "short": "popcorn",
+  "paths": 1,
+  "svg": "popcorn.svg"
+ },
+ {
+  "resource": "ds_printer_regular_24",
+  "short": "printer",
+  "paths": 2,
+  "svg": "printer.svg"
+ },
+ {
+  "resource": "ds_puzzle_piece_regular_24",
+  "short": "puzzle_piece",
+  "paths": 1,
+  "svg": "puzzle_piece.svg"
+ },
+ {
+  "resource": "ds_quotemark_regular_24",
+  "short": "quotemark",
+  "paths": 2,
+  "svg": "quotemark.svg"
+ },
+ {
+  "resource": "ds_rectangle_landscape_regular_24",
+  "short": "rectangle_landscape",
+  "paths": 1,
+  "svg": "rectangle_landscape.svg"
+ },
+ {
+  "resource": "ds_remix_circle_regular_24",
+  "short": "remix_circle",
+  "paths": 1,
+  "svg": "remix_circle.svg"
+ },
+ {
+  "resource": "ds_resize_window_regular_24",
+  "short": "resize_window",
+  "paths": 3,
+  "svg": "resize_window.svg"
+ },
+ {
+  "resource": "ds_robot_head_happy_regular_24",
+  "short": "robot_head_happy",
+  "paths": 4,
+  "svg": "robot_head_happy.svg"
+ },
+ {
+  "resource": "ds_screen_wave_regular_24",
+  "short": "screen_wave",
+  "paths": 3,
+  "svg": "screen_wave.svg"
+ },
+ {
+  "resource": "ds_scribble_regular_24",
+  "short": "scribble",
+  "paths": 1,
+  "svg": "scribble.svg"
+ },
+ {
+  "resource": "ds_share_android_regular_24",
+  "short": "share_android",
+  "paths": 1,
+  "svg": "share_android.svg"
+ },
+ {
+  "resource": "ds_shield_checkmark_regular_24",
+  "short": "shield_checkmark",
+  "paths": 2,
+  "svg": "shield_checkmark.svg"
+ },
+ {
+  "resource": "ds_shield_lock_regular_24",
+  "short": "shield_lock",
+  "paths": 2,
+  "svg": "shield_lock.svg"
+ },
+ {
+  "resource": "ds_shield_person_regular_24",
+  "short": "shield_person",
+  "paths": 2,
+  "svg": "shield_person.svg"
+ },
+ {
+  "resource": "ds_shopping_bag_regular_24",
+  "short": "shopping_bag",
+  "paths": 1,
+  "svg": "shopping_bag.svg"
+ },
+ {
+  "resource": "ds_shopping_bag_badge_checkmark_regular_24",
+  "short": "shopping_bag_badge_checkmark",
+  "paths": 2,
+  "svg": "shopping_bag_badge_checkmark.svg"
+ },
+ {
+  "resource": "ds_shopping_cart_regular_24",
+  "short": "shopping_cart",
+  "paths": 3,
+  "svg": "shopping_cart.svg"
+ },
+ {
+  "resource": "ds_sidebar_menu_regular_24",
+  "short": "sidebar_menu",
+  "paths": 2,
+  "svg": "sidebar_menu.svg"
+ },
+ {
+  "resource": "ds_sites_regular_24",
+  "short": "sites",
+  "paths": 3,
+  "svg": "sites.svg"
+ },
+ {
+  "resource": "ds_skills_regular_24",
+  "short": "skills",
+  "paths": 1,
+  "svg": "skills.svg"
+ },
+ {
+  "resource": "ds_sliders_regular_24",
+  "short": "sliders",
+  "paths": 2,
+  "svg": "sliders.svg"
+ },
+ {
+  "resource": "ds_slides_regular_24",
+  "short": "slides",
+  "paths": 2,
+  "svg": "slides.svg"
+ },
+ {
+  "resource": "ds_smartphone_regular_24",
+  "short": "smartphone",
+  "paths": 2,
+  "svg": "smartphone.svg"
+ },
+ {
+  "resource": "ds_snowflake_regular_24",
+  "short": "snowflake",
+  "paths": 1,
+  "svg": "snowflake.svg"
+ },
+ {
+  "resource": "ds_soccerball_regular_24",
+  "short": "soccerball",
+  "paths": 1,
+  "svg": "soccerball.svg"
+ },
+ {
+  "resource": "ds_sparkle_regular_24",
+  "short": "sparkle",
+  "paths": 1,
+  "svg": "sparkle.svg"
+ },
+ {
+  "resource": "ds_sparkle_fill_regular_24",
+  "short": "sparkle_fill",
+  "paths": 1,
+  "svg": "sparkle_fill.svg"
+ },
+ {
+  "resource": "ds_sparkles_regular_24",
+  "short": "sparkles",
+  "paths": 2,
+  "svg": "sparkles.svg"
+ },
+ {
+  "resource": "ds_sparkles_3_fill_regular_24",
+  "short": "sparkles_3_fill",
+  "paths": 3,
+  "svg": "sparkles_3_fill.svg"
+ },
+ {
+  "resource": "ds_speaker_slash_2_regular_24",
+  "short": "speaker_slash_2",
+  "paths": 2,
+  "svg": "speaker_slash_2.svg"
+ },
+ {
+  "resource": "ds_speaker_sound_wave_2_regular_24",
+  "short": "speaker_sound_wave_2",
+  "paths": 3,
+  "svg": "speaker_sound_wave_2.svg"
+ },
+ {
+  "resource": "ds_speaker_sound_wave_2_fill_regular_24",
+  "short": "speaker_sound_wave_2_fill",
+  "paths": 3,
+  "svg": "speaker_sound_wave_2_fill.svg"
+ },
+ {
+  "resource": "ds_spreadsheet_regular_24",
+  "short": "spreadsheet",
+  "paths": 1,
+  "svg": "spreadsheet.svg"
+ },
+ {
+  "resource": "ds_square_regular_24",
+  "short": "square",
+  "paths": 1,
+  "svg": "square.svg"
+ },
+ {
+  "resource": "ds_square_and_arrow_up_right_regular_24",
+  "short": "square_and_arrow_up_right",
+  "paths": 2,
+  "svg": "square_and_arrow_up_right.svg"
+ },
+ {
+  "resource": "ds_square_and_pencil_regular_24",
+  "short": "square_and_pencil",
+  "paths": 2,
+  "svg": "square_and_pencil.svg"
+ },
+ {
+  "resource": "ds_square_bolt_regular_24",
+  "short": "square_bolt",
+  "paths": 2,
+  "svg": "square_bolt.svg"
+ },
+ {
+  "resource": "ds_square_checkmark_regular_24",
+  "short": "square_checkmark",
+  "paths": 2,
+  "svg": "square_checkmark.svg"
+ },
+ {
+  "resource": "ds_square_checkmark_fill_regular_24",
+  "short": "square_checkmark_fill",
+  "paths": 1,
+  "svg": "square_checkmark_fill.svg"
+ },
+ {
+  "resource": "ds_square_diamond_grid_2x2_regular_24",
+  "short": "square_diamond_grid_2x2",
+  "paths": 4,
+  "svg": "square_diamond_grid_2x2.svg"
+ },
+ {
+  "resource": "ds_square_diamond_shape_circle_grid_2x2_regular_24",
+  "short": "square_diamond_shape_circle_grid_2x2",
+  "paths": 4,
+  "svg": "square_diamond_shape_circle_grid_2x2.svg"
+ },
+ {
+  "resource": "ds_square_diamond_shape_grid_2x2_regular_24",
+  "short": "square_diamond_shape_grid_2x2",
+  "paths": 4,
+  "svg": "square_diamond_shape_grid_2x2.svg"
+ },
+ {
+  "resource": "ds_square_diamond_shape_grid_2x2_fill_regular_24",
+  "short": "square_diamond_shape_grid_2x2_fill",
+  "paths": 4,
+  "svg": "square_diamond_shape_grid_2x2_fill.svg"
+ },
+ {
+  "resource": "ds_square_grid_2x2_regular_24",
+  "short": "square_grid_2x2",
+  "paths": 1,
+  "svg": "square_grid_2x2.svg"
+ },
+ {
+  "resource": "ds_square_grid_2x2_fill_regular_24",
+  "short": "square_grid_2x2_fill",
+  "paths": 4,
+  "svg": "square_grid_2x2_fill.svg"
+ },
+ {
+  "resource": "ds_square_on_square_regular_24",
+  "short": "square_on_square",
+  "paths": 1,
+  "svg": "square_on_square.svg"
+ },
+ {
+  "resource": "ds_stack_regular_24",
+  "short": "stack",
+  "paths": 3,
+  "svg": "stack.svg"
+ },
+ {
+  "resource": "ds_star_regular_24",
+  "short": "star",
+  "paths": 1,
+  "svg": "star.svg"
+ },
+ {
+  "resource": "ds_star_fill_regular_24",
+  "short": "star_fill",
+  "paths": 1,
+  "svg": "star_fill.svg"
+ },
+ {
+  "resource": "ds_star_of_life_regular_24",
+  "short": "star_of_life",
+  "paths": 1,
+  "svg": "star_of_life.svg"
+ },
+ {
+  "resource": "ds_stethoscope_regular_24",
+  "short": "stethoscope",
+  "paths": 1,
+  "svg": "stethoscope.svg"
+ },
+ {
+  "resource": "ds_sticky_notes_regular_24",
+  "short": "sticky_notes",
+  "paths": 1,
+  "svg": "sticky_notes.svg"
+ },
+ {
+  "resource": "ds_stop_fill_regular_24",
+  "short": "stop_fill",
+  "paths": 1,
+  "svg": "stop_fill.svg"
+ },
+ {
+  "resource": "ds_stop_sm_fill_regular_24",
+  "short": "stop_sm_fill",
+  "paths": 1,
+  "svg": "stop_sm_fill.svg"
+ },
+ {
+  "resource": "ds_stopwatch_regular_24",
+  "short": "stopwatch",
+  "paths": 3,
+  "svg": "stopwatch.svg"
+ },
+ {
+  "resource": "ds_storage_badge_gear_regular_24",
+  "short": "storage_badge_gear",
+  "paths": 2,
+  "svg": "storage_badge_gear.svg"
+ },
+ {
+  "resource": "ds_store_regular_24",
+  "short": "store",
+  "paths": 1,
+  "svg": "store.svg"
+ },
+ {
+  "resource": "ds_suitcase_regular_24",
+  "short": "suitcase",
+  "paths": 1,
+  "svg": "suitcase.svg"
+ },
+ {
+  "resource": "ds_suitcase_fill_regular_24",
+  "short": "suitcase_fill",
+  "paths": 1,
+  "svg": "suitcase_fill.svg"
+ },
+ {
+  "resource": "ds_summary_regular_24",
+  "short": "summary",
+  "paths": 3,
+  "svg": "summary.svg"
+ },
+ {
+  "resource": "ds_sun_regular_24",
+  "short": "sun",
+  "paths": 9,
+  "svg": "sun.svg"
+ },
+ {
+  "resource": "ds_sun_cloud_regular_24",
+  "short": "sun_cloud",
+  "paths": 6,
+  "svg": "sun_cloud.svg"
+ },
+ {
+  "resource": "ds_sunrise_regular_24",
+  "short": "sunrise",
+  "paths": 8,
+  "svg": "sunrise.svg"
+ },
+ {
+  "resource": "ds_tag_regular_24",
+  "short": "tag",
+  "paths": 2,
+  "svg": "tag.svg"
+ },
+ {
+  "resource": "ds_target_regular_24",
+  "short": "target",
+  "paths": 3,
+  "svg": "target.svg"
+ },
+ {
+  "resource": "ds_tasks_regular_24",
+  "short": "tasks",
+  "paths": 4,
+  "svg": "tasks.svg"
+ },
+ {
+  "resource": "ds_telescope_regular_24",
+  "short": "telescope",
+  "paths": 1,
+  "svg": "telescope.svg"
+ },
+ {
+  "resource": "ds_terminal_regular_24",
+  "short": "terminal",
+  "paths": 3,
+  "svg": "terminal.svg"
+ },
+ {
+  "resource": "ds_terms_regular_24",
+  "short": "terms",
+  "paths": 4,
+  "svg": "terms.svg"
+ },
+ {
+  "resource": "ds_text_bold_sm_regular_24",
+  "short": "text_bold_sm",
+  "paths": 1,
+  "svg": "text_bold_sm.svg"
+ },
+ {
+  "resource": "ds_text_compare_regular_24",
+  "short": "text_compare",
+  "paths": 4,
+  "svg": "text_compare.svg"
+ },
+ {
+  "resource": "ds_text_dashed_bubble_regular_24",
+  "short": "text_dashed_bubble",
+  "paths": 5,
+  "svg": "text_dashed_bubble.svg"
+ },
+ {
+  "resource": "ds_text_format_regular_24",
+  "short": "text_format",
+  "paths": 1,
+  "svg": "text_format.svg"
+ },
+ {
+  "resource": "ds_text_italic_sm_regular_24",
+  "short": "text_italic_sm",
+  "paths": 1,
+  "svg": "text_italic_sm.svg"
+ },
+ {
+  "resource": "ds_text_page_regular_24",
+  "short": "text_page",
+  "paths": 3,
+  "svg": "text_page.svg"
+ },
+ {
+  "resource": "ds_text_style_sm_regular_24",
+  "short": "text_style_sm",
+  "paths": 2,
+  "svg": "text_style_sm.svg"
+ },
+ {
+  "resource": "ds_text_suggested_edits_regular_24",
+  "short": "text_suggested_edits",
+  "paths": 3,
+  "svg": "text_suggested_edits.svg"
+ },
+ {
+  "resource": "ds_thought_bubble_regular_24",
+  "short": "thought_bubble",
+  "paths": 2,
+  "svg": "thought_bubble.svg"
+ },
+ {
+  "resource": "ds_thumb_down_regular_24",
+  "short": "thumb_down",
+  "paths": 1,
+  "svg": "thumb_down.svg"
+ },
+ {
+  "resource": "ds_thumb_down_fill_regular_24",
+  "short": "thumb_down_fill",
+  "paths": 2,
+  "svg": "thumb_down_fill.svg"
+ },
+ {
+  "resource": "ds_thumb_up_regular_24",
+  "short": "thumb_up",
+  "paths": 1,
+  "svg": "thumb_up.svg"
+ },
+ {
+  "resource": "ds_thumb_up_badge_plus_regular_24",
+  "short": "thumb_up_badge_plus",
+  "paths": 2,
+  "svg": "thumb_up_badge_plus.svg"
+ },
+ {
+  "resource": "ds_thumb_up_fill_regular_24",
+  "short": "thumb_up_fill",
+  "paths": 2,
+  "svg": "thumb_up_fill.svg"
+ },
+ {
+  "resource": "ds_thumb_up_thumb_down_regular_24",
+  "short": "thumb_up_thumb_down",
+  "paths": 2,
+  "svg": "thumb_up_thumb_down.svg"
+ },
+ {
+  "resource": "ds_tiktok_logo_regular_24",
+  "short": "tiktok_logo",
+  "paths": 1,
+  "svg": "tiktok_logo.svg"
+ },
+ {
+  "resource": "ds_toolbox_regular_24",
+  "short": "toolbox",
+  "paths": 2,
+  "svg": "toolbox.svg"
+ },
+ {
+  "resource": "ds_tornado_regular_24",
+  "short": "tornado",
+  "paths": 4,
+  "svg": "tornado.svg"
+ },
+ {
+  "resource": "ds_translate_regular_24",
+  "short": "translate",
+  "paths": 2,
+  "svg": "translate.svg"
+ },
+ {
+  "resource": "ds_trash_regular_24",
+  "short": "trash",
+  "paths": 3,
+  "svg": "trash.svg"
+ },
+ {
+  "resource": "ds_triangle_regular_24",
+  "short": "triangle",
+  "paths": 1,
+  "svg": "triangle.svg"
+ },
+ {
+  "resource": "ds_triangle_exclamationmark_regular_24",
+  "short": "triangle_exclamationmark",
+  "paths": 3,
+  "svg": "triangle_exclamationmark.svg"
+ },
+ {
+  "resource": "ds_triangle_exclamationmark_fill_regular_24",
+  "short": "triangle_exclamationmark_fill",
+  "paths": 1,
+  "svg": "triangle_exclamationmark_fill.svg"
+ },
+ {
+  "resource": "ds_triangle_square_circle_regular_24",
+  "short": "triangle_square_circle",
+  "paths": 3,
+  "svg": "triangle_square_circle.svg"
+ },
+ {
+  "resource": "ds_truck_regular_24",
+  "short": "truck",
+  "paths": 1,
+  "svg": "truck.svg"
+ },
+ {
+  "resource": "ds_video_regular_24",
+  "short": "video",
+  "paths": 1,
+  "svg": "video.svg"
+ },
+ {
+  "resource": "ds_video_badge_wavelength_regular_24",
+  "short": "video_badge_wavelength",
+  "paths": 4,
+  "svg": "video_badge_wavelength.svg"
+ },
+ {
+  "resource": "ds_video_fill_regular_24",
+  "short": "video_fill",
+  "paths": 2,
+  "svg": "video_fill.svg"
+ },
+ {
+  "resource": "ds_voice_regular_24",
+  "short": "voice",
+  "paths": 4,
+  "svg": "voice.svg"
+ },
+ {
+  "resource": "ds_voice_button_regular_24",
+  "short": "voice_button",
+  "paths": 4,
+  "svg": "voice_button.svg"
+ },
+ {
+  "resource": "ds_wavelength_regular_24",
+  "short": "wavelength",
+  "paths": 5,
+  "svg": "wavelength.svg"
+ },
+ {
+  "resource": "ds_web_browser_cursor_regular_24",
+  "short": "web_browser_cursor",
+  "paths": 4,
+  "svg": "web_browser_cursor.svg"
+ },
+ {
+  "resource": "ds_whisk_sparkles_regular_24",
+  "short": "whisk_sparkles",
+  "paths": 5,
+  "svg": "whisk_sparkles.svg"
+ },
+ {
+  "resource": "ds_wind_regular_24",
+  "short": "wind",
+  "paths": 3,
+  "svg": "wind.svg"
+ },
+ {
+  "resource": "ds_window_pin_regular_24",
+  "short": "window_pin",
+  "paths": 2,
+  "svg": "window_pin.svg"
+ },
+ {
+  "resource": "ds_wrench_regular_24",
+  "short": "wrench",
+  "paths": 1,
+  "svg": "wrench.svg"
+ },
+ {
+  "resource": "ds_x_logo_regular_24",
+  "short": "x_logo",
+  "paths": 1,
+  "svg": "x_logo.svg"
+ },
+ {
+  "resource": "ds_xmark_lg_regular_24",
+  "short": "xmark_lg",
+  "paths": 1,
+  "svg": "xmark_lg.svg"
+ },
+ {
+  "resource": "ds_xmark_md_regular_24",
+  "short": "xmark_md",
+  "paths": 1,
+  "svg": "xmark_md.svg"
+ },
+ {
+  "resource": "ds_youtube_logo_regular_24",
+  "short": "youtube_logo",
+  "paths": 1,
+  "svg": "youtube_logo.svg"
+ }
+]
