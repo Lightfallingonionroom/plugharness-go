@@ -131,6 +131,39 @@ class _ReplyActionRowState extends State<ReplyActionRow> {
     final good = AppLocale.isEnglish ? 'Good response' : '好评';
     final bad = AppLocale.isEnglish ? 'Bad response' : '差评';
     final aloud = AppLocale.isEnglish ? 'Read aloud' : '朗读';
+    // A turn footnote needs the room: no rating keys in that row.
+    final ratings = <Widget>[
+      IconButton(
+        key: const ValueKey('reply-good'),
+        tooltip: good,
+        onPressed: () {
+          HapticFeedback.selectionClick();
+          setState(() => _rating = _rating == true ? null : true);
+        },
+        style: style.copyWith(foregroundColor: WidgetStatePropertyAll(_rating == true ? colors.primary : muted)),
+        icon: Icon(_rating == true ? Icons.thumb_up : Icons.thumb_up_outlined, size: 18),
+      ),
+      IconButton(
+        key: const ValueKey('reply-bad'),
+        tooltip: bad,
+        onPressed: () {
+          HapticFeedback.selectionClick();
+          setState(() => _rating = _rating == false ? null : false);
+        },
+        style: style.copyWith(foregroundColor: WidgetStatePropertyAll(_rating == false ? colors.primary : muted)),
+        icon: Icon(_rating == false ? Icons.thumb_down : Icons.thumb_down_outlined, size: 18),
+      ),
+      IconButton(
+        key: const ValueKey('reply-read-aloud'),
+        tooltip: aloud,
+        onPressed: () {
+          HapticFeedback.lightImpact();
+          ScaffoldMessenger.maybeOf(context)?.showBriefNotice(aloud);
+        },
+        style: style,
+        icon: const Icon(Icons.volume_up_outlined, size: 19),
+      ),
+    ];
     final icons = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -155,39 +188,7 @@ class _ReplyActionRowState extends State<ReplyActionRow> {
             style: style,
             icon: const Icon(AppIcons.share),
           ),
-        // ChatGPT's rating pair, then read-aloud. Local-only: no backend
-        // feedback endpoint exists in this fork, so a tap records the
-        // choice in this row and gives haptic feedback.
-        IconButton(
-          key: const ValueKey('reply-good'),
-          tooltip: good,
-          onPressed: () {
-            HapticFeedback.selectionClick();
-            setState(() => _rating = _rating == true ? null : true);
-          },
-          style: style.copyWith(foregroundColor: WidgetStatePropertyAll(_rating == true ? colors.primary : muted)),
-          icon: Icon(_rating == true ? Icons.thumb_up : Icons.thumb_up_outlined, size: 18),
-        ),
-        IconButton(
-          key: const ValueKey('reply-bad'),
-          tooltip: bad,
-          onPressed: () {
-            HapticFeedback.selectionClick();
-            setState(() => _rating = _rating == false ? null : false);
-          },
-          style: style.copyWith(foregroundColor: WidgetStatePropertyAll(_rating == false ? colors.primary : muted)),
-          icon: Icon(_rating == false ? Icons.thumb_down : Icons.thumb_down_outlined, size: 18),
-        ),
-        IconButton(
-          key: const ValueKey('reply-read-aloud'),
-          tooltip: aloud,
-          onPressed: () {
-            HapticFeedback.lightImpact();
-            ScaffoldMessenger.maybeOf(context)?.showBriefNotice(aloud);
-          },
-          style: style,
-          icon: const Icon(Icons.volume_up_outlined, size: 19),
-        ),
+        if (widget.trailing == null) ...ratings,
         if (onBranch != null) busyKey(MessageAction.branch, onBranch, widget.branching),
         if (onRegenerate != null) busyKey(MessageAction.regenerate, onRegenerate, widget.regenerating),
         if (onMore != null)

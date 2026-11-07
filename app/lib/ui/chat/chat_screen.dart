@@ -1397,13 +1397,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
           );
     final pendingModel = ref.watch(pendingModelProvider);
     final modelCatalog = ref.watch(currentModelCatalogProvider);
-    // ChatGPT's centre line is the model, not the page title. Keep the sheet
-    // free of a duplicate: the sheet finds models by text, so the header's
-    // label carries its own key and the sheet's cards keep theirs.
-    final centerModel = modelShortName(
-      sessionId == null ? pendingModel : chat?.model,
-      modelCatalog,
-    );
+    // ChatGPT's centre line is the model, not the page title. Fall back to the
+    // catalog's default selection before modelShortName's "选择模型" placeholder:
+    // that string is also the model sheet's title and would make find.text
+    // ambiguous. The sheet finds models by text, so the header label carries
+    // its own key.
+    final centerSelection =
+        (sessionId == null ? pendingModel : chat?.model) ?? modelCatalog?.defaultSelection;
+    final centerModel = modelShortName(centerSelection, modelCatalog);
     final newFolder = sessionId == null
         ? ref.watch(drawerViewProvider).byId(ref.watch(pendingSessionFolderProvider))
         : null;
