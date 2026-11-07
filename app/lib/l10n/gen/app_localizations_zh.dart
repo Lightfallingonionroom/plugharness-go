@@ -3283,6 +3283,18 @@ class L10nZh extends L10n {
   String get diagnosticsForAiFailed => '写不进去：本机运行时还没装好';
 
   @override
+  String get chatGoodResponse => '好评';
+
+  @override
+  String get chatBadResponse => '差评';
+
+  @override
+  String get chatReadAloud => '朗读';
+
+  @override
+  String get chatReadAloudUnavailable => '朗读暂未接入';
+
+  @override
   String get chatBackgroundTaskNotice => '后台任务通知';
 
   @override

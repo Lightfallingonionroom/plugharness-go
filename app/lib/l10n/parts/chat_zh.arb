@@ -1,4 +1,8 @@
 {
+  "chatGoodResponse": "好评",
+  "chatBadResponse": "差评",
+  "chatReadAloud": "朗读",
+  "chatReadAloudUnavailable": "朗读暂未接入",
   "chatBackgroundTaskNotice": "后台任务通知",
   "chatBackgroundTaskMessage": "后台任务消息",
   "chatDeclineQuestion": "不回答",

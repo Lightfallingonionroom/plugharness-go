@@ -1,4 +1,8 @@
 {
+  "chatGoodResponse": "Good response",
+  "chatBadResponse": "Bad response",
+  "chatReadAloud": "Read aloud",
+  "chatReadAloudUnavailable": "Read aloud is not wired up yet",
   "chatBackgroundTaskNotice": "Background task notice",
   "chatBackgroundTaskMessage": "Background task message",
   "chatDeclineQuestion": "Skip",

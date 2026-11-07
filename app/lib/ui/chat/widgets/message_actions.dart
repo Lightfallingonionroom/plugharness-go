@@ -69,6 +69,7 @@ class ReplyActionRow extends StatefulWidget {
 
 class _ReplyActionRowState extends State<ReplyActionRow> {
   bool _copied = false;
+  bool? _rating;
 
   void _copy() {
     copyMessage(context, widget.text, toast: false);
@@ -150,6 +151,39 @@ class _ReplyActionRowState extends State<ReplyActionRow> {
             style: style,
             icon: const Icon(AppIcons.share),
           ),
+        // ChatGPT's rating pair, then read-aloud. Local-only: no backend
+        // feedback endpoint exists in this fork, so a tap records the
+        // choice in this row and gives haptic feedback.
+        IconButton(
+          key: const ValueKey('reply-good'),
+          tooltip: l10n.chatGoodResponse,
+          onPressed: () {
+            HapticFeedback.selectionClick();
+            setState(() => _rating = _rating == true ? null : true);
+          },
+          style: style.copyWith(foregroundColor: WidgetStatePropertyAll(_rating == true ? colors.primary : muted)),
+          icon: Icon(_rating == true ? Icons.thumb_up : Icons.thumb_up_outlined, size: 18),
+        ),
+        IconButton(
+          key: const ValueKey('reply-bad'),
+          tooltip: l10n.chatBadResponse,
+          onPressed: () {
+            HapticFeedback.selectionClick();
+            setState(() => _rating = _rating == false ? null : false);
+          },
+          style: style.copyWith(foregroundColor: WidgetStatePropertyAll(_rating == false ? colors.primary : muted)),
+          icon: Icon(_rating == false ? Icons.thumb_down : Icons.thumb_down_outlined, size: 18),
+        ),
+        IconButton(
+          key: const ValueKey('reply-read-aloud'),
+          tooltip: l10n.chatReadAloud,
+          onPressed: () {
+            HapticFeedback.lightImpact();
+            ScaffoldMessenger.maybeOf(context)?.showBriefNotice(l10n.chatReadAloudUnavailable);
+          },
+          style: style,
+          icon: const Icon(Icons.volume_up_outlined, size: 19),
+        ),
         if (onBranch != null) busyKey(MessageAction.branch, onBranch, widget.branching),
         if (onRegenerate != null) busyKey(MessageAction.regenerate, onRegenerate, widget.regenerating),
         if (onMore != null)

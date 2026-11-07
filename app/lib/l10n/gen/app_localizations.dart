@@ -6078,6 +6078,22 @@ abstract class L10n {
   ///
   /// In zh, this message translates to:
   /// **'后台任务通知'**
+  /// No description provided for @chatGoodResponse.
+  ///
+  /// **'好评'**
+  String get chatGoodResponse;
+  /// No description provided for @chatBadResponse.
+  ///
+  /// **'差评'**
+  String get chatBadResponse;
+  /// No description provided for @chatReadAloud.
+  ///
+  /// **'朗读'**
+  String get chatReadAloud;
+  /// No description provided for @chatReadAloudUnavailable.
+  ///
+  /// **'朗读暂未接入'**
+  String get chatReadAloudUnavailable;
   String get chatBackgroundTaskNotice;
 
   /// No description provided for @chatBackgroundTaskMessage.

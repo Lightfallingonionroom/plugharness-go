@@ -112,6 +112,7 @@ class SessionsDrawer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     void newChat() {
       ref.read(currentSessionProvider.notifier).select(null);
       onClose();
