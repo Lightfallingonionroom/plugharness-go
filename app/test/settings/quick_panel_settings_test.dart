@@ -91,13 +91,14 @@ void main() {
     await tester.tap(find.byKey(_swipeRow));
     await _settle(tester);
     expect(_container(tester).read(quickPanelProvider).swipe, isFalse);
-    expect(_container(tester).read(quickPanelProvider).available, isFalse);
     expect((await SharedPreferences.getInstance()).getBool(QuickPanelController.swipeKey), isFalse);
-
     await tester.tap(find.byKey(_swipeRow));
     await _settle(tester);
-    expect(_container(tester).read(quickPanelProvider).available, isTrue);
+    expect(_container(tester).read(quickPanelProvider).swipe, isTrue);
     expect((await SharedPreferences.getInstance()).getBool(QuickPanelController.swipeKey), isTrue);
+    // The right-hand panel is retired (its rows are in the drawer now), so the
+    // switch edits the stored preference and nothing answers "pull me" either way.
+    expect(_container(tester).read(quickPanelProvider).available, isFalse);
   });
 
   testWidgets('the sheet: what shows first, in order, then the rest', (tester) async {
