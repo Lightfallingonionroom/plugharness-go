@@ -346,5 +346,14 @@
  "cgBriefcase": 57688,
  "cgThumbDown": 57689,
  "cgThumbDownFill": 57690,
- "cgSpeakerSoundWave2": 57691
+ "cgSpeakerSoundWave2": 57691,
+ "cgPaw": 57692,
+ "cgPaintbrushOnPencil": 57693,
+ "cgMicrophoneFill": 57694,
+ "cgChatBubble": 57695,
+ "cgCodex": 57696,
+ "cgBook": 57697,
+ "cgPersonalization": 57698,
+ "cgStarOfLife": 57699,
+ "cgMusicNote": 57700
 }

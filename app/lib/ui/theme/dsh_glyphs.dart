@@ -51,6 +51,7 @@ abstract final class DshGlyphs {
   static const cgBarChart = IconData(0xe129, fontFamily: family);
   static const cgBell = IconData(0xe13d, fontFamily: family);
   static const cgBellSlash = IconData(0xe13e, fontFamily: family);
+  static const cgBook = IconData(0xe161, fontFamily: family);
   static const cgBookOpen = IconData(0xe157, fontFamily: family);
   static const cgBookmark = IconData(0xe139, fontFamily: family);
   static const cgBookmarkFill = IconData(0xe13a, fontFamily: family);
@@ -59,6 +60,7 @@ abstract final class DshGlyphs {
   static const cgBriefcase = IconData(0xe158, fontFamily: family);
   static const cgCalendarDay = IconData(0xe14e, fontFamily: family);
   static const cgCamera = IconData(0xe11d, fontFamily: family);
+  static const cgChatBubble = IconData(0xe15f, fontFamily: family);
   static const cgCheckmarkLg = IconData(0xe126, fontFamily: family);
   static const cgChevronDownMd = IconData(0xe115, fontFamily: family);
   static const cgChevronLeftLg = IconData(0xe10f, fontFamily: family);
@@ -71,6 +73,7 @@ abstract final class DshGlyphs {
   static const cgClock = IconData(0xe11c, fontFamily: family);
   static const cgClockArrowRotateCounterclockwise = IconData(0xe14f, fontFamily: family);
   static const cgCode = IconData(0xe14a, fontFamily: family);
+  static const cgCodex = IconData(0xe160, fontFamily: family);
   static const cgEllipsisHorizontal = IconData(0xe113, fontFamily: family);
   static const cgEllipsisVertical = IconData(0xe114, fontFamily: family);
   static const cgFolder = IconData(0xe134, fontFamily: family);
@@ -86,10 +89,15 @@ abstract final class DshGlyphs {
   static const cgLockFill = IconData(0xe145, fontFamily: family);
   static const cgMagnifyingGlassMd = IconData(0xe12b, fontFamily: family);
   static const cgMicrophone = IconData(0xe11b, fontFamily: family);
+  static const cgMicrophoneFill = IconData(0xe15e, fontFamily: family);
+  static const cgMusicNote = IconData(0xe164, fontFamily: family);
   static const cgPaintPalette = IconData(0xe151, fontFamily: family);
+  static const cgPaintbrushOnPencil = IconData(0xe15d, fontFamily: family);
   static const cgPaperclip = IconData(0xe11f, fontFamily: family);
   static const cgPasskey = IconData(0xe147, fontFamily: family);
+  static const cgPaw = IconData(0xe15c, fontFamily: family);
   static const cgPencil = IconData(0xe125, fontFamily: family);
+  static const cgPersonalization = IconData(0xe162, fontFamily: family);
   static const cgPhoto = IconData(0xe11e, fontFamily: family);
   static const cgPhotoOnTiltedSquare = IconData(0xe120, fontFamily: family);
   static const cgPin = IconData(0xe131, fontFamily: family);
@@ -106,6 +114,7 @@ abstract final class DshGlyphs {
   static const cgSquareCheckmark = IconData(0xe136, fontFamily: family);
   static const cgStar = IconData(0xe150, fontFamily: family);
   static const cgStarFill = IconData(0xe138, fontFamily: family);
+  static const cgStarOfLife = IconData(0xe163, fontFamily: family);
   static const cgStopFill = IconData(0xe11a, fontFamily: family);
   static const cgTerminal = IconData(0xe133, fontFamily: family);
   static const cgTextDashedBubble = IconData(0xe152, fontFamily: family);
@@ -285,6 +294,7 @@ abstract final class DshGlyphs {
     'cgBarChart': cgBarChart,
     'cgBell': cgBell,
     'cgBellSlash': cgBellSlash,
+    'cgBook': cgBook,
     'cgBookOpen': cgBookOpen,
     'cgBookmark': cgBookmark,
     'cgBookmarkFill': cgBookmarkFill,
@@ -293,6 +303,7 @@ abstract final class DshGlyphs {
     'cgBriefcase': cgBriefcase,
     'cgCalendarDay': cgCalendarDay,
     'cgCamera': cgCamera,
+    'cgChatBubble': cgChatBubble,
     'cgCheckmarkLg': cgCheckmarkLg,
     'cgChevronDownMd': cgChevronDownMd,
     'cgChevronLeftLg': cgChevronLeftLg,
@@ -305,6 +316,7 @@ abstract final class DshGlyphs {
     'cgClock': cgClock,
     'cgClockArrowRotateCounterclockwise': cgClockArrowRotateCounterclockwise,
     'cgCode': cgCode,
+    'cgCodex': cgCodex,
     'cgEllipsisHorizontal': cgEllipsisHorizontal,
     'cgEllipsisVertical': cgEllipsisVertical,
     'cgFolder': cgFolder,
@@ -320,10 +332,15 @@ abstract final class DshGlyphs {
     'cgLockFill': cgLockFill,
     'cgMagnifyingGlassMd': cgMagnifyingGlassMd,
     'cgMicrophone': cgMicrophone,
+    'cgMicrophoneFill': cgMicrophoneFill,
+    'cgMusicNote': cgMusicNote,
     'cgPaintPalette': cgPaintPalette,
+    'cgPaintbrushOnPencil': cgPaintbrushOnPencil,
     'cgPaperclip': cgPaperclip,
     'cgPasskey': cgPasskey,
+    'cgPaw': cgPaw,
     'cgPencil': cgPencil,
+    'cgPersonalization': cgPersonalization,
     'cgPhoto': cgPhoto,
     'cgPhotoOnTiltedSquare': cgPhotoOnTiltedSquare,
     'cgPin': cgPin,
@@ -340,6 +357,7 @@ abstract final class DshGlyphs {
     'cgSquareCheckmark': cgSquareCheckmark,
     'cgStar': cgStar,
     'cgStarFill': cgStarFill,
+    'cgStarOfLife': cgStarOfLife,
     'cgStopFill': cgStopFill,
     'cgTerminal': cgTerminal,
     'cgTextDashedBubble': cgTextDashedBubble,

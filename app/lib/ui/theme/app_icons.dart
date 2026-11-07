@@ -368,6 +368,12 @@ abstract final class AppIcons {
   static const tool = DshGlyphs.cgTerminal;
   static const tip = DshGlyphs.lightbulb;
 
+  /// 伙伴小屋: she now and then asks you to rest with her (companion_page.dart).
+  static const companionInvite = DshGlyphs.cgPaw;
+
+  /// 伙伴小屋: her words read aloud (companion_voice.dart). Not the microphone: that is the person's voice.
+  static const companionVoice = DshGlyphs.cgPaw;
+
   /// 「问 AI」: a question about the app for the agent (ui/common/ask_ai.dart).
   static const askAi = DshGlyphs.sparkle;
 
@@ -472,4 +478,36 @@ abstract final class AppIcons {
   static const qq = DshGlyphs.usersThreeFill;
   static const telegram = DshGlyphs.paperPlaneRight;
   static const discord = DshGlyphs.headset;
+
+  // ── 官方 ds_* 图标别名 ──────────────────────────────────────────
+  // 上一版按「官方 48 个 ds_*」导出时留下的角色名，现在统一指向完整的
+  // 418 个官方字形（docs/FLAGSHIP_PLAN_2026-11-07.md §0）。保留只为不
+  // 破坏既有调用方。
+  static const oaBrain = DshGlyphs.cgBrain;
+  static const oaCamera = DshGlyphs.cgCamera;
+  static const oaPhoto = DshGlyphs.cgPhoto;
+  static const oaPhotoOnSquare = DshGlyphs.cgPhotoOnTiltedSquare;
+  static const oaFolder = DshGlyphs.cgFolder;
+  static const oaPencil = DshGlyphs.cgPencil;
+  static const oaPencilBrush = DshGlyphs.cgPaintbrushOnPencil;
+  static const oaMicrophone = DshGlyphs.cgMicrophone;
+  static const oaMicrophoneFill = DshGlyphs.cgMicrophoneFill;
+  static const oaVoiceButton = DshGlyphs.cgMicrophone;
+  static const oaStop = DshGlyphs.cgStopFill;
+  static const oaChatBubble = DshGlyphs.cgChatBubble;
+  static const oaShare = DshGlyphs.cgShareAndroid;
+  static const oaSend = DshGlyphs.cgArrowUpLgButton;
+  static const oaGlobe = DshGlyphs.cgGlobe;
+  static const oaCodex = DshGlyphs.cgCodex;
+  static const oaTerminal = DshGlyphs.cgTerminal;
+  static const oaBook = DshGlyphs.cgBook;
+  static const oaBarChart = DshGlyphs.cgBarChart;
+  static const oaWrench = DshGlyphs.cgWrench;
+  static const oaPalette = DshGlyphs.cgPaintPalette;
+  static const oaPersonalization = DshGlyphs.cgPersonalization;
+  static const oaStarOfLife = DshGlyphs.cgStarOfLife;
+  static const oaOpenai = DshGlyphs.cgStarOfLife;
+  static const oaSuitcase = DshGlyphs.cgBriefcase;
+  static const oaMusic = DshGlyphs.cgMusicNote;
+  static const oaPlane = DshGlyphs.cgArrowUpLgButton;
 }
