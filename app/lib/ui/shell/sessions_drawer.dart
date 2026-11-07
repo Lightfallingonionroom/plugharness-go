@@ -22,6 +22,7 @@ import '../../state/session_attention_state.dart';
 import '../../state/session_deletion_state.dart';
 import '../../state/sessions_state.dart';
 import '../../state/read_list_identity.dart';
+import '../../state/quick_panel_state.dart';
 import '../../state/workspaces_state.dart';
 import '../bots/bots_page.dart' show BotsPage, UnreadBadge;
 import '../chat/media/media_format.dart' show chatTitleShown;
@@ -53,6 +54,7 @@ import 'drawer/drawer_filter_bar.dart';
 import 'drawer/drawer_list.dart';
 import 'drawer/selection_bars.dart';
 import 'drawer/session_deletion.dart';
+import 'quick_panel.dart' show QuickPanelRow;
 import 'session_search_page.dart';
 
 export '../../state/drawer_view_state.dart' show SessionDay, sessionDayOf;
@@ -140,6 +142,7 @@ class SessionsDrawer extends ConsumerWidget {
     }
     final quick = AppMotion.of(context, AppMotion.quick);
     final shell = ChatGptShellColors.of(context);
+    final quickItems = ref.watch(quickPanelProvider.select((p) => p.items));
     // A phone on its side: the top of the drawer (brand, search, filters)
     // would leave room for two conversations, so it scrolls away with them.
     final short = MediaQuery.sizeOf(context).height < WindowClass.compactHeight;
@@ -179,6 +182,21 @@ class SessionsDrawer extends ConsumerWidget {
         onDetails: () => onOpen(DrawerDestination.engine),
       ),
       SessionSearchBar(onClose: onClose),
+      // The quick panel's destinations live here now, where ChatGPT keeps
+      // them: one column that holds both the app's rooms and its
+      // conversations, instead of a second panel sliding in from the right.
+      // Same rows, same keys — only the place they are drawn.
+      if (quickItems.isNotEmpty)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(10, 2, 10, 2),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (final destination in quickItems)
+                QuickPanelRow(destination: destination, onTap: () => onOpen(destination)),
+            ],
+          ),
+        ),
       // The workspace switcher (once the host's workspace list has
       // arrived) and the list's options, then the status filters.
       SmoothSize(

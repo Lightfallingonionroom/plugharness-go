@@ -293,9 +293,11 @@ class _HomeShellState extends ConsumerState<HomeShell> with TickerProviderStateM
     // No quick panel beside a sidebar (the swipes are off there), or once
     // it's turned off: one left open goes, at once, as the window changes.
     final sidebar = layout.left == LeftPane.sidebar;
-    // With a conversation open the panel has that to show, whatever shortcuts it lists.
-    final quickPanelOn =
-        !sidebar && ref.watch(quickPanelProvider.select((p) => p.available || (p.swipe && sessionId != null)));
+    // The quick panel's destinations are drawn inside the drawer now (see
+    // SessionsDrawer): one column holding both the app's rooms and its
+    // conversations, the way ChatGPT lays it out. There is no second panel
+    // to pull in from the right, so nothing here turns it on.
+    const quickPanelOn = false;
     if (!quickPanelOn && _quickPanel.value > 0) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) _quickPanel.value = 0;

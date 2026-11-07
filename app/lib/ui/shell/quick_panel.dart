@@ -89,7 +89,7 @@ class QuickPanel extends ConsumerWidget {
                 child: ListView(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   children: [
-                    for (final destination in items) _Row(destination: destination, onTap: () => onOpen(destination)),
+                    for (final destination in items) QuickPanelRow(destination: destination, onTap: () => onOpen(destination)),
                   ],
                 ),
               ),
@@ -110,8 +110,8 @@ class QuickPanel extends ConsumerWidget {
 }
 
 /// A row on the drawer's grid: the highlight's edge at 10, the glyph at 20.
-class _Row extends StatelessWidget {
-  const _Row({required this.destination, required this.onTap});
+class QuickPanelRow extends StatelessWidget {
+  const QuickPanelRow({super.key, required this.destination, required this.onTap});
 
   final DrawerDestination destination;
   final VoidCallback onTap;
