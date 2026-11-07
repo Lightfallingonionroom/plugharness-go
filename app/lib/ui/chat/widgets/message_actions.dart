@@ -132,6 +132,9 @@ class _ReplyActionRowState extends State<ReplyActionRow> {
     final bad = AppLocale.isEnglish ? 'Bad response' : '差评';
     final aloud = AppLocale.isEnglish ? 'Read aloud' : '朗读';
     // A turn footnote needs the room: no rating keys in that row.
+    // ChatGPT's reply bar reads: copy · good · bad · read aloud · share · more.
+    // The icons come from AppIcons (official ds_* where one exists) rather than
+    // Material's, so the row matches the rest of the shell.
     final ratings = <Widget>[
       IconButton(
         key: const ValueKey('reply-good'),
@@ -141,7 +144,7 @@ class _ReplyActionRowState extends State<ReplyActionRow> {
           setState(() => _rating = _rating == true ? null : true);
         },
         style: style.copyWith(foregroundColor: WidgetStatePropertyAll(_rating == true ? colors.primary : muted)),
-        icon: Icon(_rating == true ? Icons.thumb_up : Icons.thumb_up_outlined, size: 18),
+        icon: Icon(_rating == true ? AppIcons.postLikeActive : AppIcons.postLike, size: 19),
       ),
       IconButton(
         key: const ValueKey('reply-bad'),
@@ -151,7 +154,7 @@ class _ReplyActionRowState extends State<ReplyActionRow> {
           setState(() => _rating = _rating == false ? null : false);
         },
         style: style.copyWith(foregroundColor: WidgetStatePropertyAll(_rating == false ? colors.primary : muted)),
-        icon: Icon(_rating == false ? Icons.thumb_down : Icons.thumb_down_outlined, size: 18),
+        icon: Icon(_rating == false ? AppIcons.postDislikeActive : AppIcons.postDislike, size: 19),
       ),
       IconButton(
         key: const ValueKey('reply-read-aloud'),
@@ -161,7 +164,7 @@ class _ReplyActionRowState extends State<ReplyActionRow> {
           ScaffoldMessenger.maybeOf(context)?.showBriefNotice(aloud);
         },
         style: style,
-        icon: const Icon(Icons.volume_up_outlined, size: 19),
+        icon: const Icon(AppIcons.readAloud, size: 20),
       ),
     ];
     final icons = Row(
@@ -177,6 +180,9 @@ class _ReplyActionRowState extends State<ReplyActionRow> {
                 : Icon(_copied ? AppIcons.done : AppIcons.copy, key: ValueKey(_copied)),
           ),
         ),
+        // Ratings sit right after copy, as ChatGPT orders them, and before the
+        // actions that open something else.
+        if (widget.trailing == null) ...ratings,
         if (onShare != null)
           IconButton(
             key: const ValueKey('reply-share'),
@@ -188,7 +194,6 @@ class _ReplyActionRowState extends State<ReplyActionRow> {
             style: style,
             icon: const Icon(AppIcons.share),
           ),
-        if (widget.trailing == null) ...ratings,
         if (onBranch != null) busyKey(MessageAction.branch, onBranch, widget.branching),
         if (onRegenerate != null) busyKey(MessageAction.regenerate, onRegenerate, widget.regenerating),
         if (onMore != null)

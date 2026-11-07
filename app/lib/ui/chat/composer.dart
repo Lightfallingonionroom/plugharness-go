@@ -804,20 +804,24 @@ class _SendButtonState extends State<_SendButton> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final colors = Theme.of(context).colorScheme;
+    final shell = ChatGptShellColors.of(context);
     final fluid = AppMotion.fluid(context);
     final enabled = widget.enabled && !widget.busy;
     final mode = widget.mode;
     final mic = mode == _KeyMode.mic || widget.quiet;
     final active = enabled || widget.busy;
+    // The official composer's send key is the shell's primary solid (near-white
+    // on dark, near-black on light) with the inverse glyph, and a flat grey
+    // while it cannot send — never the app's accent colour.
     final bg = mic
         ? colors.onSurface.withValues(alpha: 0.06)
         : active
-        ? colors.primary
+        ? shell.primaryAction
         : colors.onSurface.withValues(alpha: 0.12);
     final fg = mic
         ? colors.onSurface
         : active
-        ? colors.onPrimary
+        ? shell.onPrimaryAction
         : colors.onSurface.withValues(alpha: 0.38);
     final (icon, size, label) = switch (mode) {
       _KeyMode.send => (AppIcons.send, 20.0, l10n.commonSend),

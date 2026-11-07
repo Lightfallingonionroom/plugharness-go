@@ -188,6 +188,13 @@ abstract final class AppIcons {
   static const bookmarkActive = DshGlyphs.cgBookmarkFill;
   static const postLike = DshGlyphs.cgThumbUp;
   static const postLikeActive = DshGlyphs.cgThumbUpFill;
+
+  /// 回复下方的「差评」，与 [postLike] 成对。
+  static const postDislike = DshGlyphs.cgThumbDown;
+  static const postDislikeActive = DshGlyphs.cgThumbDownFill;
+
+  /// 回复下方的「朗读」。
+  static const readAloud = DshGlyphs.cgSpeakerSoundWave2;
   static const notifications = DshGlyphs.cgBell;
   static const notificationsOn = DshGlyphs.cgBell;
   static const notificationsOff = DshGlyphs.cgBellSlash;

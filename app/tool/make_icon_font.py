@@ -350,10 +350,13 @@ def openai_full(name):
     official set, not the 48 that happen to also exist as binary res/drawable
     files. Scaling and the transform caveat are identical.
     """
-    # cgPlusLg -> plus_lg ; cgArrowUpLgButton -> arrow_up_lg_button.
+    # cgPlusLg -> plus_lg ; cgArrowUpLgButton -> arrow_up_lg_button ;
+    # cgSpeakerSoundWave2 -> speaker_sound_wave_2 (a trailing digit is its own word).
     # The vendored files keep the resource's own underscores (plus_lg.svg), so
-    # camel case is split on capitals and underscores are left alone.
-    stem = kebab(name[2:])[1:].replace('-', '_')
+    # camel case is split on capitals, digits get their own segment, and the
+    # separators stay underscores.
+    spelled = re.sub(r'([A-Za-z])([0-9])', r'\1_\2', name[2:])
+    stem = kebab(spelled)[1:].replace('-', '_')
     svg_path = os.path.join(OPENAI_FULL_VENDOR, stem + '.svg')
     if not os.path.exists(svg_path):
         raise FileNotFoundError(f'no official icon for {name}: expected {svg_path}')

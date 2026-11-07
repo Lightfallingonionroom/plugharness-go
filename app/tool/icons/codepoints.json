@@ -343,5 +343,8 @@
  "cgAlarmClockCheckmark": 57685,
  "cgWrench": 57686,
  "cgBookOpen": 57687,
- "cgBriefcase": 57688
+ "cgBriefcase": 57688,
+ "cgThumbDown": 57689,
+ "cgThumbDownFill": 57690,
+ "cgSpeakerSoundWave2": 57691
 }

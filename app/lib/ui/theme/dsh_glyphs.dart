@@ -101,6 +101,7 @@ abstract final class DshGlyphs {
   static const cgShieldCheckmark = IconData(0xe146, fontFamily: family);
   static const cgSidebarMenu = IconData(0xe112, fontFamily: family);
   static const cgSliders = IconData(0xe14d, fontFamily: family);
+  static const cgSpeakerSoundWave2 = IconData(0xe15b, fontFamily: family);
   static const cgSquareAndPencil = IconData(0xe12d, fontFamily: family);
   static const cgSquareCheckmark = IconData(0xe136, fontFamily: family);
   static const cgStar = IconData(0xe150, fontFamily: family);
@@ -108,6 +109,8 @@ abstract final class DshGlyphs {
   static const cgStopFill = IconData(0xe11a, fontFamily: family);
   static const cgTerminal = IconData(0xe133, fontFamily: family);
   static const cgTextDashedBubble = IconData(0xe152, fontFamily: family);
+  static const cgThumbDown = IconData(0xe159, fontFamily: family);
+  static const cgThumbDownFill = IconData(0xe15a, fontFamily: family);
   static const cgThumbUp = IconData(0xe13b, fontFamily: family);
   static const cgThumbUpFill = IconData(0xe13c, fontFamily: family);
   static const cgTrash = IconData(0xe12a, fontFamily: family);
@@ -332,6 +335,7 @@ abstract final class DshGlyphs {
     'cgShieldCheckmark': cgShieldCheckmark,
     'cgSidebarMenu': cgSidebarMenu,
     'cgSliders': cgSliders,
+    'cgSpeakerSoundWave2': cgSpeakerSoundWave2,
     'cgSquareAndPencil': cgSquareAndPencil,
     'cgSquareCheckmark': cgSquareCheckmark,
     'cgStar': cgStar,
@@ -339,6 +343,8 @@ abstract final class DshGlyphs {
     'cgStopFill': cgStopFill,
     'cgTerminal': cgTerminal,
     'cgTextDashedBubble': cgTextDashedBubble,
+    'cgThumbDown': cgThumbDown,
+    'cgThumbDownFill': cgThumbDownFill,
     'cgThumbUp': cgThumbUp,
     'cgThumbUpFill': cgThumbUpFill,
     'cgTrash': cgTrash,
