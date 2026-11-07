@@ -346,6 +346,12 @@ class SettingsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    // ChatGPT's settings are one flat list: a small group label, then rows
+    // separated by a hairline. There is no rounded card around a group — that
+    // card is what made this page read as a different product.
+    // [spot] still wraps the rows that the settings index anchors to, so search
+    // and deep links keep landing on the right row.
+    final shell = ChatGptShellColors.of(context);
     return Padding(
       padding: margin,
       child: Column(
@@ -357,18 +363,29 @@ class SettingsSection extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
               child: Semantics(header: true, child: Text(title, style: titleStyle(context))),
             ),
-          SheetGroup(
-            margin: EdgeInsets.zero,
-            children: spot == null
-                ? children
-                : [
-                    // One child keeps SheetGroup's 2dp between rows inside it.
-                    SpotAnchor(
-                      spot: spot!,
-                      child: Column(mainAxisSize: MainAxisSize.min, spacing: 2, children: children),
-                    ),
+          // Hairlines between rows, not a card edge. The first row keeps no rule,
+          // the way a settings list is usually drawn. [spot], when this group is
+          // one place in the settings index, wraps the rows so search and deep
+          // links still light them together.
+          if (spot case final spot?)
+            SpotAnchor(
+              spot: spot,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  for (var i = 0; i < children.length; i++) ...[
+                    if (i > 0) Divider(height: 1, thickness: 1, color: shell.divider),
+                    children[i],
                   ],
-          ),
+                ],
+              ),
+            )
+          else
+            for (var i = 0; i < children.length; i++) ...[
+              if (i > 0) Divider(height: 1, thickness: 1, color: shell.divider),
+              children[i],
+            ],
           if (footer case final footer?)
             Padding(
               padding: const EdgeInsets.fromLTRB(8, footerGap, 8, 0),
