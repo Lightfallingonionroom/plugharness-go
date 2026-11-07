@@ -207,8 +207,14 @@ void main() {
       await _openSheet(tester, _harness(testCatalog));
       expect(find.text('选择模型'), findsOneWidget);
       expect(find.text('DeepSeek'), findsOneWidget);
-      expect(find.text('V4 Pro'), findsOneWidget);
-      expect(find.text('V41 Flash'), findsOneWidget);
+      // The header now shows the current model too (ChatGPT's layout), so a
+      // plain find.text would match both it and the card. Scope to the sheet.
+      final cardText = (String s) => find.descendant(
+            of: find.byType(GlassSurface),
+            matching: find.text(s),
+          );
+      expect(cardText('V4 Pro'), findsOneWidget);
+      expect(cardText('V41 Flash'), findsOneWidget);
       expect(find.text('思考深度'), findsOneWidget);
       // Only the effort selector is a segmented pill.
       expect(find.byType(SegmentedPill<String>), findsOneWidget);
