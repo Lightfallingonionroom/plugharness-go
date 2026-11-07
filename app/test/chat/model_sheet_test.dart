@@ -209,10 +209,7 @@ void main() {
       expect(find.text('DeepSeek'), findsOneWidget);
       // The header now shows the current model too (ChatGPT's layout), so a
       // plain find.text would match both it and the card. Scope to the sheet.
-      final cardText = (String s) => find.descendant(
-            of: find.byType(GlassSurface),
-            matching: find.text(s),
-          );
+      Finder cardText(String s) => find.descendant(of: find.byType(GlassSurface), matching: find.text(s));
       expect(cardText('V4 Pro'), findsOneWidget);
       expect(cardText('V41 Flash'), findsOneWidget);
       expect(find.text('思考深度'), findsOneWidget);
