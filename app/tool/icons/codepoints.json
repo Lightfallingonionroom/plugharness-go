@@ -258,8 +258,16 @@
  "oaSuitcase": 57600,
  "oaMusic": 57601,
  "oaPlane": 57602,
- "oaStopFill": 57603,
- "oaBraces": 57604,
- "oaDeskGlobe": 57605,
- "oaGraduationCap": 57606
+ "oaArrowLeft": 57603,
+ "oaArrowRight": 57604,
+ "oaBraces": 57605,
+ "oaHeart": 57606,
+ "oaLaptop": 57607,
+ "oaPaw": 57608,
+ "oaFlask": 57609,
+ "oaGraduationCap": 57610,
+ "oaBalance": 57611,
+ "oaStopFill": 57612,
+ "oaNotebook": 57613,
+ "oaPenTip": 57614
 }

@@ -45,6 +45,7 @@ import '../theme/theme.dart';
 import '../web/mode_home.dart';
 import '../workspace/workspace_switcher.dart';
 import '../workspace/workspaces_page.dart';
+import 'adaptive/adaptive_layout.dart' show WindowClass;
 import 'brand_mark.dart';
 import 'drawer/drawer_actions.dart';
 import 'drawer/drawer_destination.dart';
@@ -143,17 +144,24 @@ class SessionsDrawer extends ConsumerWidget {
     final quick = AppMotion.of(context, AppMotion.quick);
     final shell = ChatGptShellColors.of(context);
     final quickItems = ref.watch(quickPanelProvider.select((p) => p.items));
-    // Everything below the header scrolls as one list.
-    final header = <Widget>[
+    // A phone on its side: the top of the drawer (brand, search, filters)
+    // would leave room for two conversations, so it scrolls away with them.
+    final short = MediaQuery.sizeOf(context).height < WindowClass.compactHeight;
+    final top = <Widget>[
       AnimatedSwitcher(
         duration: quick,
         child: selecting
             ? DrawerSelectionHeader(key: const ValueKey('selecting'), now: now)
             : Padding(
                 key: const ValueKey('brand'),
+                // The lockup on the rows' 20 line, the action ending on the
+                // 10 line; the same 14 / 10 box as [DrawerSelectionHeader],
+                // so 完成 lands exactly where 新对话 was.
                 padding: const EdgeInsets.fromLTRB(20, 14, 10, 10),
                 child: Row(
                   children: [
+                    // On a narrow drawer with large text the lockup gives
+                    // way a little rather than the keys.
                     Expanded(
                       child: Align(
                         alignment: AlignmentDirectional.centerStart,
@@ -175,12 +183,13 @@ class SessionsDrawer extends ConsumerWidget {
         onDetails: () => onOpen(DrawerDestination.engine),
       ),
       SessionSearchBar(onClose: onClose),
-    ];
-    // Everything below the search scrolls as ONE list, exactly like the
-    // official drawer: the feature rows and the conversation history are
-    // siblings in a single scrollable, not a fixed stack above a list.
-    final scrollTop = <Widget>[
+      // ChatGPT splits its one column into labelled sections. Ours: the
+      // app's rooms first, then the conversations themselves.
       _sectionLabel(context, l10n.searchFeatures),
+      // The quick panel's destinations live here now, where ChatGPT keeps
+      // them: one column that holds both the app's rooms and its
+      // conversations, instead of a second panel sliding in from the right.
+      // Same rows, same keys — only the place they are drawn.
       if (quickItems.isNotEmpty)
         Padding(
           padding: const EdgeInsets.fromLTRB(10, 2, 10, 2),
@@ -192,6 +201,7 @@ class SessionsDrawer extends ConsumerWidget {
             ],
           ),
         ),
+      // Rooms ChatGPT has but we route through pages we already own.
       for (final destination in const [
         DrawerDestination.web,
         DrawerDestination.remote,
@@ -203,6 +213,8 @@ class SessionsDrawer extends ConsumerWidget {
             child: QuickPanelRow(destination: destination, onTap: () => onOpen(destination)),
           ),
       _sectionLabel(context, l10n.chatChat),
+      // The workspace switcher (once the host's workspace list has
+      // arrived) and the list's options, then the status filters.
       SmoothSize(
         duration: AppMotion.of(context, AppMotion.standard),
         curve: AppMotion.std,
@@ -221,7 +233,9 @@ class SessionsDrawer extends ConsumerWidget {
         child: const DrawerFilterBar(),
       ),
     ];
-    final list = _EdgeFade(child: _SessionList(onClose: onClose, now: now));
+    final list = _EdgeFade(
+      child: _SessionList(onClose: onClose, now: now),
+    );
 
     const radius = BorderRadius.only(topRight: Radius.circular(AppShape.xl), bottomRight: Radius.circular(AppShape.xl));
     final content = Material(
@@ -231,32 +245,26 @@ class SessionsDrawer extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-              ...header,
-              // The feature rows and the conversation list share ONE scroll:
-              // the header slivers scroll away with the history, exactly like
-              // ChatGPT's drawer (no fixed block above a separate list).
+            if (short)
               Expanded(
                 child: NestedScrollView(
                   headerSliverBuilder: (context, _) => [
                     SliverToBoxAdapter(
-                      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: scrollTop),
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: top),
                     ),
                   ],
                   body: list,
                 ),
-              ),
-              // ChatGPT's bottom bar: a filled "chat" pill on the left and the
-            // account avatar on the right. The avatar is the doorway to
-            // settings, so it must be tappable and large enough to hit.
+              )
+            else ...[
+              ...top,
+              Expanded(child: list),
+            ],
+            // ChatGPT's bottom action: one wide, filled pill that starts a chat.
+            // The host/status row stays below it as account chrome.
             Padding(
               padding: const EdgeInsets.fromLTRB(10, 6, 10, 0),
-              child: Row(
-                children: [
-                  Expanded(child: _NewChatPill(onTap: newChat, label: l10n.chatChat)),
-                  const SizedBox(width: 10),
-                  _DrawerAvatar(onTap: () => onOpen(DrawerDestination.settings)),
-                ],
-              ),
+              child: _NewChatPill(onTap: newChat, label: l10n.commonNewChat),
             ),
             // The action bar lies exactly over the identity bar, which
             // keeps its size while hidden: same height at any text size.
@@ -335,39 +343,6 @@ class SessionsDrawer extends ConsumerWidget {
       borderRadius: radius,
       style: shell.sidebarGlass,
       child: content,
-    );
-  }
-}
-
-/// Account avatar. A real account photo is not available in this fork, so
-/// the settings glyph stands in as the avatar material — it also makes the
-/// "tap the avatar to open settings" affordance obvious.
-class _DrawerAvatar extends StatelessWidget {
-  const _DrawerAvatar({required this.onTap});
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final shell = ChatGptShellColors.of(context);
-    return Semantics(
-      button: true,
-      label: context.l10n.commonSettings,
-      excludeSemantics: true,
-      child: Material(
-        color: shell.rowSelected,
-        shape: const CircleBorder(),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          child: SizedBox.square(
-            dimension: 44,
-            child: Center(
-              child: Icon(AppIcons.settings, size: 20, color: shell.secondaryText),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

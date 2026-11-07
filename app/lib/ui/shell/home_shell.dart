@@ -195,27 +195,13 @@ class _HomeShellState extends ConsumerState<HomeShell> with TickerProviderStateM
   }
 
   /// [opening]: pixels towards fully open.
-  ///
-  /// The official APK drives its drawer with AnchoredDraggableState +
-  /// DraggableAnchors (see docs/chatgpt-apk-spec.md). We cannot overshoot an
-  /// AnimationController's 0..1 bounds, so instead of a hard clamp we soften
-  /// the last stretch: near either anchor the same finger movement moves the
-  /// panel less. That removes the "glued to the edge" feel.
   void _onDragDelta(AnimationController side, double width, double opening) {
     if (width <= 0) return;
-    final delta = opening / width;
-    final v = side.value;
-    // Resistance grows towards the anchor being pushed against.
-    final resistance = delta < 0
-        ? (v < 0.06 ? v / 0.06 : 1.0)
-        : (v > 0.94 ? (1 - v) / 0.06 : 1.0);
-    side.value = (v + delta * resistance.clamp(0.15, 1.0)).clamp(0.0, 1.0);
+    side.value = (side.value + opening / width).clamp(0.0, 1.0);
   }
 
   /// [velocity]: pixels a second towards fully open.
   void _onDragEnd(AnimationController side, double width, double velocity) {
-    // AnchoredDraggable's two thresholds: a fast flick wins regardless of
-    // position; otherwise the nearest anchor (0.5) wins.
     if (velocity.abs() >= kMinFlingVelocity && width > 0) {
       final target = velocity > 0 ? 1.0 : 0.0;
       if (AppMotion.reduced(context)) {
