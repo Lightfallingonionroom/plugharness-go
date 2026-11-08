@@ -63,6 +63,26 @@ jobs:
           if git diff --cached --quiet; then
             echo "no golden changes"
           else
-            git commit -m "test(goldens): regenerate all goldens after the ChatGPT-style UI pass"
-            git push
+            # main may have moved while the run was going (a parallel CI push, a
+            # follow-up fix): rebase onto it and retry instead of failing.
+            for attempt in 1 2 3 4 5; do
+              git commit -m "test(goldens): regenerate all goldens after the ChatGPT-style UI pass" || exit 1
+              if git push; then
+                echo "pushed on attempt $attempt"
+                exit 0
+              fi
+              echo "push rejected (main moved); rebasing and retrying"
+              git fetch origin main || exit 1
+              git reset --soft HEAD~1
+              git stash -q --include-untracked || true
+              git rebase origin/main || {
+                git rebase --abort || true
+                git stash pop -q || true
+                exit 1
+              }
+              git stash pop -q || true
+              git add -A app/test
+            done
+            echo "could not push after retries"
+            exit 1
           fi
