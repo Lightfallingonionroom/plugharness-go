@@ -12,13 +12,16 @@ final class DshUiColorPair {
 }
 
 abstract final class DshUiPluginPalette {
-  // The existing card palette's neutral anchors. V2 paints these explicitly;
-  // it does not estimate the colour underneath a translucent parent card.
-  static const surface = DshUiColorPair(0xF8FAFE, 0x272A33);
-  static const elevated = DshUiColorPair(0xF0F3F9, 0x30343F);
-  static const ink = DshUiColorPair(0x20242B, 0xF1F4F9);
-  static const muted = DshUiColorPair(0x586372, 0xB5BDCA);
-  static const defaultAccent = 0x3D6FD6;
+  // 中性锚点。默认值 = 石墨档的官方中性灰阶（与 [DshPalette] 一致），
+  // 实际绘制时由 [DshUiPluginStyles] 从主题取色覆盖（见 _color）。
+  // 这里保留静态默认值，是为了没有主题上下文时（纯解析、单测）也有确定颜色。
+  static const surface = DshUiColorPair(0xFFFFFFFF, 0xFF212121);
+  static const elevated = DshUiColorPair(0xFFF9F9F9, 0xFF303030);
+  static const ink = DshUiColorPair(0xFF0D0D0D, 0xFFECECEC);
+  static const muted = DshUiColorPair(0xFF5D5D5D, 0xFFAFAFAF);
+
+  /// 默认强调色:官方 `--color-background-primary-solid`（浅 gray-900 / 深 gray-950）。
+  static const defaultAccent = 0xFF181818;
   // Original category palette, corrected only when a v2 background is used.
   static const chart = [
     DshUiColorPair(0x3D6FD6, 0x5B8EE6),
@@ -47,9 +50,9 @@ abstract final class DshUiPluginPalette {
 /// (docs/design/plugin-ui-v3.md §4.3): the light seed of the palette; the
 /// dark side is derived like any requested colour, by the contrast search.
 /// The app sets it whenever the palette changes; the plugin-view parse cache
-/// starts over when [revision] moves. The default is 雾蓝, the app's default.
+/// starts over when [revision] moves. The default is 石墨, the app's default.
 abstract final class DshUiAppAccent {
-  static const fallback = 0x4B67B4;
+  static const fallback = 0x181818;
   static int _rgb = fallback;
   static int _revision = 0;
 
