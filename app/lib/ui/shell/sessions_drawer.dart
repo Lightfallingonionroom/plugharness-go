@@ -255,13 +255,21 @@ class SessionsDrawer extends ConsumerWidget {
             // every feature row and left only the conversation list scrollable
             // — the exact complaint that drove this rewrite.
             Expanded(
-              child: NestedScrollView(
-                headerSliverBuilder: (context, _) => [
+              // One scroll body for the whole column, the way ChatGPT's
+              // sidebar works: the app's rooms and the conversations scroll
+              // together. Both parts are laid out in full (SliverToBoxAdapter
+              // builds its child), so nothing is hidden by lazy scrolling.
+              //
+              // This used to be `Column(top..., Expanded(list))`, which pinned
+              // every feature row and left only the conversation list
+              // scrollable — the complaint that drove this rewrite.
+              child: CustomScrollView(
+                slivers: [
                   SliverToBoxAdapter(
                     child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: top),
                   ),
+                  SliverToBoxAdapter(child: list),
                 ],
-                body: list,
               ),
             ),
             // No wide filled 新对话 pill down here: ChatGPT keeps a single round
