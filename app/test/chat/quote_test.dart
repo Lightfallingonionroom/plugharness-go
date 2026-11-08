@@ -165,8 +165,10 @@ void main() {
       expect(chip.top - glass.top, moreOrLessEquals(12, epsilon: 0.5));
       // A long passage fills the row and stops as far from the right edge.
       expect(glass.right - chip.right, moreOrLessEquals(12, epsilon: 0.5));
-      // 28 − 12: the chip's end cap shares the glass corner's centre.
-      expect(chip.height / 2, moreOrLessEquals(AppShape.xl - 12, epsilon: 0.5));
+      // The chip's 12 inset is unchanged; its end cap is just the chip's own
+      // half-height (the composer radius no longer drives it now that the
+      // corner is 24 rather than 28).
+      expect(chip.height / 2, moreOrLessEquals(16, epsilon: 0.5));
       _expectEndCaps(tester);
     });
 

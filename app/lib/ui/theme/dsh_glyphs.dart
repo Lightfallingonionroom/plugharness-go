@@ -66,10 +66,14 @@ abstract final class DshGlyphs {
   static const cgChevronLeftLg = IconData(0xe10f, fontFamily: family);
   static const cgChevronRightLg = IconData(0xe110, fontFamily: family);
   static const cgChevronUpMd = IconData(0xe116, fontFamily: family);
+  static const cgCircle = IconData(0xe168, fontFamily: family);
   static const cgCircleCheckmark = IconData(0xe135, fontFamily: family);
+  static const cgCircleCheckmarkFill = IconData(0xe167, fontFamily: family);
   static const cgCircleExclamationmark = IconData(0xe13f, fontFamily: family);
   static const cgCircleInfo = IconData(0xe141, fontFamily: family);
+  static const cgCirclePause = IconData(0xe166, fontFamily: family);
   static const cgCirclePerson = IconData(0xe153, fontFamily: family);
+  static const cgCirclePlayFill = IconData(0xe165, fontFamily: family);
   static const cgClock = IconData(0xe11c, fontFamily: family);
   static const cgClockArrowRotateCounterclockwise = IconData(0xe14f, fontFamily: family);
   static const cgCode = IconData(0xe14a, fontFamily: family);
@@ -110,6 +114,7 @@ abstract final class DshGlyphs {
   static const cgSidebarMenu = IconData(0xe112, fontFamily: family);
   static const cgSliders = IconData(0xe14d, fontFamily: family);
   static const cgSpeakerSoundWave2 = IconData(0xe15b, fontFamily: family);
+  static const cgSquare = IconData(0xe169, fontFamily: family);
   static const cgSquareAndPencil = IconData(0xe12d, fontFamily: family);
   static const cgSquareCheckmark = IconData(0xe136, fontFamily: family);
   static const cgStar = IconData(0xe150, fontFamily: family);
@@ -309,10 +314,14 @@ abstract final class DshGlyphs {
     'cgChevronLeftLg': cgChevronLeftLg,
     'cgChevronRightLg': cgChevronRightLg,
     'cgChevronUpMd': cgChevronUpMd,
+    'cgCircle': cgCircle,
     'cgCircleCheckmark': cgCircleCheckmark,
+    'cgCircleCheckmarkFill': cgCircleCheckmarkFill,
     'cgCircleExclamationmark': cgCircleExclamationmark,
     'cgCircleInfo': cgCircleInfo,
+    'cgCirclePause': cgCirclePause,
     'cgCirclePerson': cgCirclePerson,
+    'cgCirclePlayFill': cgCirclePlayFill,
     'cgClock': cgClock,
     'cgClockArrowRotateCounterclockwise': cgClockArrowRotateCounterclockwise,
     'cgCode': cgCode,
@@ -353,6 +362,7 @@ abstract final class DshGlyphs {
     'cgSidebarMenu': cgSidebarMenu,
     'cgSliders': cgSliders,
     'cgSpeakerSoundWave2': cgSpeakerSoundWave2,
+    'cgSquare': cgSquare,
     'cgSquareAndPencil': cgSquareAndPencil,
     'cgSquareCheckmark': cgSquareCheckmark,
     'cgStar': cgStar,

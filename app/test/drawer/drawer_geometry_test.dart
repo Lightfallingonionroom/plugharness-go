@@ -225,27 +225,29 @@ void main() {
   });
 
   group('identity bar', () {
-    testWidgets('设置: one key, as tall as the host pill, 10 from the edge', (tester) async {
+    testWidgets('设置: the account avatar is the settings entry, 10 from the edge', (tester) async {
       await _pump(tester);
       final drawer = _rect(tester, find.byType(SessionsDrawer));
       final bar = find.byType(IdentityBar);
-      // The one glass circle left; its icon says which.
-      Rect key(IconData icon) =>
-          _rect(tester, find.ancestor(of: find.byIcon(icon), matching: find.byType(GlassSurface)).first);
-      final settings = key(AppIcons.settings);
+      // The footer's settings entry is now the account avatar (circle_person on
+      // a hairline ring), not a gear glass circle. Its tap target is 44 and its
+      // right edge sits on the drawer's 10 line.
+      final avatar = _rect(
+        tester,
+        find.descendant(of: bar, matching: find.byTooltip('设置')).first,
+      );
       final pill = _rect(
         tester,
         find.descendant(of: bar, matching: find.byKey(const ValueKey('identity-host-controls'))),
       );
       // 全部功能 moved into the drawer's destination column: no second key.
       expect(find.byIcon(AppIcons.allFeatures), findsNothing);
-      expect(settings.width, _near(44));
-      expect(settings.height, _near(44));
+      expect(avatar.width, _near(44));
+      expect(avatar.height, _near(44));
       expect(pill.left - drawer.left, _near(10));
-      expect(drawer.right - settings.right, _near(10));
-      expect(pill.height, _near(settings.height));
-      expect(pill.center.dy, _near(settings.center.dy));
-      expect(settings.center.dy, _near(pill.center.dy));
+      expect(drawer.right - avatar.right, _near(10));
+      expect(pill.height, _near(avatar.height));
+      expect(pill.center.dy, _near(avatar.center.dy));
     });
   });
 

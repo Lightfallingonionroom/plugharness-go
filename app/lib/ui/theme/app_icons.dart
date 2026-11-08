@@ -148,8 +148,8 @@ abstract final class AppIcons {
   static const stop = DshGlyphs.cgStopFill;
 
   /// 回放的播放键:媒体控件按惯例用实心。
-  static const mediaPlay = DshGlyphs.cgPhoto;
-  static const mediaPause = DshGlyphs.cgPhoto;
+  static const mediaPlay = DshGlyphs.cgCirclePlayFill;
+  static const mediaPause = DshGlyphs.cgCirclePause;
 
   /// 回放播完后从头再放。
   static const replay = DshGlyphs.arrowCounterClockwise;
@@ -176,10 +176,10 @@ abstract final class AppIcons {
   /// 列表里当前选中的那一项。
   static const selected = DshGlyphs.cgCircleCheckmark;
   static const allowed = DshGlyphs.cgCircleCheckmark;
-  static const radioOn = DshGlyphs.cgCircleCheckmark;
-  static const radioOff = DshGlyphs.cgCircleCheckmark;
+  static const radioOn = DshGlyphs.cgCircleCheckmarkFill;
+  static const radioOff = DshGlyphs.cgCircle;
   static const checkboxOn = DshGlyphs.cgSquareCheckmark;
-  static const checkboxOff = DshGlyphs.cgSquareCheckmark;
+  static const checkboxOff = DshGlyphs.cgSquare;
   static const isDefault = DshGlyphs.checkCircleFill;
   static const setDefault = DshGlyphs.checkCircle;
   static const favorite = DshGlyphs.cgHeart;

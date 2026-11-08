@@ -127,7 +127,7 @@ void main() {
     for (final finder in [
       find.byType(NewChatButton),
       find.widgetWithText(SessionTile, '归档测试'),
-      find.bySemanticsLabel('全部功能'),
+      // 全部功能 is gone: every destination it opened is a row in the column.
       find.bySemanticsLabel('设置'),
       find.bySemanticsLabel(RegExp('当前主机：.*')),
     ]) {

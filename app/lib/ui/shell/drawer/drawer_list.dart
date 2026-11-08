@@ -15,7 +15,6 @@ import '../../../state/sessions_state.dart';
 import '../../../state/workspaces_state.dart';
 import '../../common/empty_view.dart';
 import '../../theme/app_icons.dart';
-import '../../theme/motion.dart';
 import '../sessions_drawer.dart' show sessionTitle;
 import 'drawer_actions.dart';
 import 'folder_header.dart';
@@ -161,9 +160,14 @@ class DrawerConversationList extends ConsumerWidget {
     // Preserve keyed row/folder state when pinning, sorting or hiding the
     // leading row changes indices. A new filter still starts at the top.
     final indices = {for (var i = 0; i < rows.length; i++) rows[i].key: i};
+    // The drawer is one scroll body ([NestedScrollView] in SessionsDrawer): the
+    // feature rows above and these conversations scroll together. Build every
+    // row instead of lazily, so the list's height is real and the outer scroll
+    // view owns the scrolling (`shrinkWrap` + never-scroll physics).
     return ListView.builder(
       key: ValueKey(filter),
-      physics: AppMotion.scrollPhysics(context),
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       padding: padding,
       itemCount: rows.length,
       itemBuilder: (context, index) => rows[index].builder(context),

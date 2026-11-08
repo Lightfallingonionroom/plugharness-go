@@ -77,25 +77,23 @@ void main() {
       await expectBrandLockup(tester, find.byType(BrandLockup));
     });
 
-    testWidgets('identity bar: avatar on the 20 line, 全部功能 and 设置 equal, ending on the 10 line', (tester) async {
+    testWidgets('identity bar: host on the 20 line, the account avatar ends on the 10 line', (tester) async {
       await _pumpDrawer(tester);
       final drawer = tester.getRect(find.byType(SessionsDrawer));
       final bar = find.byType(IdentityBar);
-      final avatar = tester.getRect(
+      // The host chip still shows thisPhone; the settings entry is the account
+      // avatar (circle_person). The old 全部功能 key is gone — its destinations
+      // are rows in the column above now.
+      final chip = tester.getRect(
         find.ancestor(of: find.byIcon(AppIcons.thisPhone), matching: find.byType(DecoratedBox)).first,
       );
-      final features = tester.getRect(find.descendant(of: bar, matching: find.byTooltip('全部功能')));
-      final settings = tester.getRect(find.descendant(of: bar, matching: find.byTooltip('设置')));
-
-      expect(avatar.left - drawer.left, _near(20));
-      expect(features.size, settings.size);
-      expect(features.width, _near(44));
-      expect(features.height, _near(44));
-      expect(drawer.right - settings.right, _near(10));
-      expect(settings.left - features.right, _near(8));
-      // One centre line through the avatar and both buttons.
-      expect(features.center.dy, _near(avatar.center.dy));
-      expect(settings.center.dy, _near(avatar.center.dy));
+      final avatar = tester.getRect(find.descendant(of: bar, matching: find.byTooltip('设置')));
+      expect(chip.left - drawer.left, _near(20));
+      expect(avatar.width, _near(44));
+      expect(avatar.height, _near(44));
+      expect(drawer.right - avatar.right, _near(10));
+      // One centre line through the host chip and the avatar.
+      expect(avatar.center.dy, _near(chip.center.dy));
     });
   });
 

@@ -355,5 +355,10 @@
  "cgBook": 57697,
  "cgPersonalization": 57698,
  "cgStarOfLife": 57699,
- "cgMusicNote": 57700
+ "cgMusicNote": 57700,
+ "cgCirclePlayFill": 57701,
+ "cgCirclePause": 57702,
+ "cgCircleCheckmarkFill": 57703,
+ "cgCircle": 57704,
+ "cgSquare": 57705
 }
