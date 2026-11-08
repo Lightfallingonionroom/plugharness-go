@@ -1,0 +1,68 @@
+name: Regen all goldens (temporary)
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  regen:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      DSH_TEST_FONT_DIR: /usr/share/fonts/opentype/noto
+      NOTO_CJK_VERSION: 1:20230817+repack1-3
+      NOTO_EMOJI_VERSION: v2.051
+      TZ: Asia/Shanghai
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: true
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2
+        with:
+          flutter-version: 3.47.7
+          channel: stable
+          cache: true
+      - name: Flutter pub
+        working-directory: app
+        run: flutter pub get --enforce-lockfile
+      - name: Restore test fonts
+        id: fonts
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: ~/test-fonts
+          key: test-fonts-1:20230817+repack1-3-v2.051
+      - name: Install test fonts
+        if: steps.fonts.outputs.cache-hit != 'true'
+        run: |
+          sudo apt-get update -q
+          apt-get download fonts-noto-cjk="$NOTO_CJK_VERSION" fonts-noto-cjk-extra="$NOTO_CJK_VERSION"
+          for deb in fonts-noto-cjk*.deb; do dpkg-deb -x "$deb" unpacked; done
+          mkdir -p ~/test-fonts
+          cp unpacked/usr/share/fonts/opentype/noto/NotoSansCJK-{Regular,Bold,Light}.ttc ~/test-fonts/
+          curl -fsSL --retry 3 -o ~/test-fonts/NotoColorEmoji.ttf https://raw.githubusercontent.com/googlefonts/noto-emoji/v2.051/fonts/NotoColorEmoji.ttf
+      - name: Save test fonts
+        if: steps.fonts.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: ~/test-fonts
+          key: test-fonts-1:20230817+repack1-3-v2.051
+      - name: Activate test fonts
+        run: |
+          sudo install -Dm644 -t /usr/share/fonts/opentype/noto ~/test-fonts/NotoSansCJK-*.ttc
+          sudo install -Dm644 ~/test-fonts/NotoColorEmoji.ttf /usr/share/fonts/noto/NotoColorEmoji.ttf
+      - name: Regenerate ALL goldens
+        working-directory: app
+        run: |
+          python3 tool/l10n_merge.py || true
+          flutter test --no-pub --update-goldens --concurrency=2 --reporter expanded \
+            $(find test -type f \( -name '*_golden_test.dart' -o -name '*_golden*_test.dart' \) | sort -u)
+      - name: Commit regenerated goldens
+        run: |
+          git config user.name "dsh-goldens"
+          git config user.email "dsh-goldens@local"
+          git add -A app/test
+          if git diff --cached --quiet; then
+            echo "no golden changes"
+          else
+            git commit -m "test(goldens): regenerate all goldens after the ChatGPT-style UI pass"
+            git push
+          fi
