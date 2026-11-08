@@ -19,7 +19,6 @@ import 'package:dsh_app/ui/shell/drawer/folder_mark.dart';
 import 'package:dsh_app/ui/shell/drawer/selection_bars.dart';
 import 'package:dsh_app/ui/shell/home_shell.dart';
 import 'package:dsh_app/ui/shell/sessions_drawer.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
 import 'package:dsh_app/ui/workspace/workspace_switcher.dart';
 import 'package:dsh_client/dsh_client.dart' show SessionSummary;
 import 'package:flutter/material.dart';
