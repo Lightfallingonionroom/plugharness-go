@@ -1137,32 +1137,32 @@ class _DrawerAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final shell = ChatGptShellColors.of(context);
-    return Tooltip(
-      message: tooltip,
-      child: Semantics(
-        button: true,
-        label: tooltip,
+    // No [Tooltip] wrapper: the avatar's Semantics already carries the label,
+    // and a Tooltip would add a second node with the same text (widget tests
+    // and screen readers would both see two "设置" targets).
+    return Semantics(
+      button: true,
+      label: tooltip,
+      onTap: onTap,
+      excludeSemantics: true,
+      child: InkResponse(
         onTap: onTap,
-        excludeSemantics: true,
-        child: InkResponse(
-          onTap: onTap,
-          onLongPress: onLongPress,
-          radius: IdentityBar.keySize / 2,
-          child: SizedBox.square(
-            dimension: IdentityBar.keySize,
-            child: Center(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: shell.composerBorder, width: 1),
-                ),
-                child: SizedBox.square(
-                  dimension: _ring,
-                  child: Icon(
-                    AppIcons.avatar,
-                    size: 20,
-                    color: shell.secondaryText,
-                  ),
+        onLongPress: onLongPress,
+        radius: IdentityBar.keySize / 2,
+        child: SizedBox.square(
+          dimension: IdentityBar.keySize,
+          child: Center(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: shell.composerBorder, width: 1),
+              ),
+              child: SizedBox.square(
+                dimension: _ring,
+                child: Icon(
+                  AppIcons.avatar,
+                  size: 20,
+                  color: shell.secondaryText,
                 ),
               ),
             ),

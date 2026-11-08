@@ -239,8 +239,10 @@ void main() {
         tester,
         find.descendant(of: bar, matching: find.byKey(const ValueKey('identity-host-controls'))),
       );
-      // 全部功能 moved into the drawer's destination column: no second key.
-      expect(find.byIcon(AppIcons.allFeatures), findsNothing);
+      // 全部功能 moved into the drawer's destination column: no second key. Its
+      // glyph is shared with openWith, so assert on the semantics label rather
+      // than the icon.
+      expect(find.bySemanticsLabel('全部功能'), findsNothing);
       expect(avatar.width, _near(44));
       expect(avatar.height, _near(44));
       expect(pill.left - drawer.left, _near(10));
