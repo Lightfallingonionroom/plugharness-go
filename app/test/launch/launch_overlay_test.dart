@@ -71,7 +71,7 @@ void main() {
       final flat = tester.widget<ColoredBox>(
         find.descendant(of: find.byType(LaunchBackground), matching: find.byType(ColoredBox)),
       );
-      expect(flat.color, const Color(0xFFEBF1FE));
+      expect(flat.color, const Color(0xFFFFFFFF));
       await _finish(tester, c);
     });
 
@@ -81,7 +81,7 @@ void main() {
         find.descendant(of: find.byType(LaunchBackground), matching: find.byType(DecoratedBox)),
       );
       final gradient = (box.decoration as BoxDecoration).gradient! as LinearGradient;
-      expect(gradient.colors, const [Color(0xFFEBF1FE), Color(0xFFF6F7FC)]);
+      expect(gradient.colors, const [Color(0xFFFFFFFF), Color(0xFFFFFFFF)]);
       expect(rectOf(tester, _icon), _systemRect);
       await tester.pump();
       expect(c.phase, LaunchPhase.playing);
@@ -95,7 +95,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 700));
       expect(c.phase, LaunchPhase.playing);
       final text = tester.widget<Text>(find.descendant(of: _wordmark, matching: find.byType(Text)));
-      expect(text.style!.color, const Color(0xFFE6E9F0));
+      expect(text.style!.color, const Color(0xFFECECEC));
       expect(text.data, 'DSH Go');
     });
   });
