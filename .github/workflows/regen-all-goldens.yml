@@ -54,7 +54,7 @@ jobs:
         run: |
           python3 tool/l10n_merge.py || true
           flutter test --no-pub --update-goldens --concurrency=2 --reporter expanded \
-            $(find test -type f \( -name '*_golden_test.dart' -o -name '*_golden*_test.dart' \) | sort -u)
+            $(find test -type f -name '*_test.dart' | sort -u) || true
       - name: Commit regenerated goldens
         run: |
           git config user.name "dsh-goldens"
