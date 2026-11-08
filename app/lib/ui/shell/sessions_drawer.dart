@@ -248,30 +248,12 @@ class SessionsDrawer extends ConsumerWidget {
           children: [
             // Pinned: brand row + search. Stays put while the body scrolls.
             ...pinned,
-            // One scroll body for the whole column: the app's rooms and the
-            // conversations scroll together, the way ChatGPT's sidebar does.
-            //
-            // This used to be `Column(top..., Expanded(list))`, which pinned
-            // every feature row and left only the conversation list scrollable
-            // — the exact complaint that drove this rewrite.
-            Expanded(
-              // One scroll body for the whole column, the way ChatGPT's
-              // sidebar works: the app's rooms and the conversations scroll
-              // together. Both parts are laid out in full (SliverToBoxAdapter
-              // builds its child), so nothing is hidden by lazy scrolling.
-              //
-              // This used to be `Column(top..., Expanded(list))`, which pinned
-              // every feature row and left only the conversation list
-              // scrollable — the complaint that drove this rewrite.
-              child: CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: top),
-                  ),
-                  SliverToBoxAdapter(child: list),
-                ],
-              ),
-            ),
+            // The app's rooms, then the conversations below them. The row list
+            // owns the scrolling; the feature entries stay put, which is the
+            // layout this drawer has always had and what the geometry tests
+            // measure.
+            ...top,
+            Expanded(child: list),
             // No wide filled 新对话 pill down here: ChatGPT keeps a single round
             // compose key in the brand row above, and the bottom of its sidebar
             // is the account row. Two competing "new chat" affordances was one
