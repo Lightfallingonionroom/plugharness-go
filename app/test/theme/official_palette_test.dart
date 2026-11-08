@@ -1,0 +1,141 @@
+// The shell's neutral palette is pinned to the official ChatGPT tokens
+// (openai/apps-sdk-ui `--gray-*`, docs/openai-sdk-ui-spec.md §3) and to the
+// 石墨 preset that carries them. Changing one without the others is the bug
+// this file exists to catch: the chat shell reads `ChatGptShellColors`, every
+// other surface reads `DshColors`/`DshSurfaces`, so a change to only one side
+// leaves settings looking like the old app.
+//
+// Values are checked against the official table, not against each other.
+
+import 'package:dsh_app/ui/theme/accent.dart';
+import 'package:dsh_app/ui/theme/chatgpt_palette.dart';
+import 'package:dsh_app/ui/theme/oklch.dart';
+import 'package:dsh_app/ui/theme/palette.dart';
+import 'package:dsh_app/ui/theme/semantic_colors.dart';
+import 'package:dsh_app/ui/theme/surfaces.dart';
+import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+/// The official `--gray-*` scale (dark) from docs/openai-sdk-ui-spec.md §3.
+const _officialDark = <String, int>{
+  'surface': 0xFF212121, // gray-200
+  'surfaceSecondary': 0xFF181818, // gray-100
+  'surfaceTertiary': 0xFF131313, // gray-50
+  'surfaceElevated': 0xFF303030, // gray-300
+  'text': 0xFFECECEC, // gray-900
+  'textSecondary': 0xFFAFAFAF, // gray-700
+  'textTertiary': 0xFF8F8F8F, // gray-600
+  'backgroundPrimarySolid': 0xFFF3F3F3, // gray-950
+  'backgroundPrimarySolidText': 0xFF0D0D0D, // gray-0
+};
+
+void main() {
+  test('the dark neutral scale is the official gray ramp, with no blue cast', () {
+    final n = NeutralTones.defaults;
+    expect(n.night, const Color(_officialDark['surface']!));
+    expect(n.nightLowest, const Color(0xFF171717), reason: 'one step below the sidebar');
+    expect(n.nightContainer, const Color(_officialDark['surfaceElevated']!));
+    expect(n.paper, const Color(_officialDark['text']!));
+    expect(n.paperMuted, const Color(_officialDark['textSecondary']!));
+    expect(n.paperFaint, const Color(_officialDark['textTertiary']!));
+    expect(n.sheetDark, const Color(_officialDark['surfaceElevated']!));
+
+    // No blue cast: R == G == B on every neutral (the old palette was blue-tinted).
+    for (final (name, c) in {
+      'night': n.night,
+      'nightTop': n.nightTop,
+      'nightBottom': n.nightBottom,
+      'nightLowest': n.nightLowest,
+      'nightContainer': n.nightContainer,
+      'paper': n.paper,
+      'paperMuted': n.paperMuted,
+      'paperFaint': n.paperFaint,
+      'ruleDark': n.ruleDark,
+      'sheetDark': n.sheetDark,
+    }.entries) {
+      expect(c.r, c.g, reason: '$name must be neutral (R == G): $c');
+      expect(c.g, c.b, reason: '$name must be neutral (G == B): $c');
+      expect(Oklch.fromColor(c).c, lessThan(0.002), reason: '$name must be achromatic: $c');
+    }
+  });
+
+  test('the light neutral scale is the official gray ramp', () {
+    final n = NeutralTones.defaults;
+    expect(n.mist, const Color(0xFFFFFFFF));
+    expect(n.mistTop, const Color(0xFFFFFFFF));
+    expect(n.mistBottom, const Color(0xFFFFFFFF));
+    expect(n.mistLow, const Color(0xFFF9F9F9));
+    expect(n.mistContainer, const Color(0xFFF3F3F3));
+    expect(n.ink, const Color(0xFF0D0D0D));
+    expect(n.inkMuted, const Color(0xFF5D5D5D));
+    expect(n.inkFaint, const Color(0xFF8F8F8F));
+    expect(n.ruleLight, const Color(0xFFE5E5E5));
+  });
+
+  test('graphite is the default preset and carries the official solid action', () {
+    expect(AppAccent.preset(null).id, 'graphite');
+    expect(AppAccent.preset('bogus').id, 'graphite');
+    const g = AppAccent.graphite;
+    expect(g.seedDark, const Color(_officialDark['backgroundPrimarySolid']!));
+    expect(g.onSeedDark, const Color(_officialDark['backgroundPrimarySolidText']!));
+    expect(g.tintChroma, 0, reason: 'zero chroma: the neutrals are not tinted');
+  });
+
+  test('tintChroma 0 is mathematically safe and reproduces the grey ramp', () {
+    // Zero chroma must not divide, NaN or throw anywhere in the derivation.
+    final n = NeutralTones.of(tintHue: NeutralTones.baseHue, tintChroma: 0);
+    for (final c in [
+      n.night,
+      n.nightContainer,
+      n.paper,
+      n.ruleDark,
+      n.smoke,
+      n.sheetDark,
+      n.codeWellDark,
+      n.inverseSurface,
+    ]) {
+      expect(c.toARGB32(), isNot(0), reason: 'a zeroed colour is a bug: $c');
+      expect(c.r, c.g, reason: 'achromatic: $c');
+      expect(c.g, c.b, reason: 'achromatic: $c');
+    }
+    // The ramp survives the OKLCH round trip with no drift (the probe measured 0).
+    expect(n.nightLowest, const Color(0xFF171717));
+    expect(n.nightContainer, const Color(0xFF303030));
+  });
+
+  test('both halves of the shell agree: chat shell vs the rest of the app', () {
+    final light = buildLightTheme();
+    final dark = buildDarkTheme();
+    final shellDark = ChatGptShellColors.dark(AppAccent.graphite);
+    final surfacesDark = dark.extension<DshSurfaces>()!;
+
+    // The page colour is the same colour on both sides (that was the split).
+    expect(surfacesDark.backdropTop, shellDark.page);
+    expect(dark.colorScheme.surface, shellDark.page);
+    expect(light.colorScheme.surface, ChatGptShellColors.light(AppAccent.graphite).page);
+
+    // The dark action is the official near-white solid on both sides.
+    expect(dark.colorScheme.primary, shellDark.primaryAction);
+    expect(dark.colorScheme.onPrimary, shellDark.onPrimaryAction);
+
+    // Text tiers agree between the shared extension and the chat shell.
+    expect(dark.colorScheme.onSurface, shellDark.primaryText);
+    expect(dark.colorScheme.onSurfaceVariant, shellDark.secondaryText);
+    expect(dark.extension<DshColors>()!.textTertiary, shellDark.tertiaryText);
+  });
+
+  test('the official palette test itself: contrast still holds on the grey ramp', () {
+    for (final brightness in Brightness.values) {
+      final dark = brightness == Brightness.dark;
+      final theme = dark ? buildDarkTheme() : buildLightTheme();
+      final scheme = theme.colorScheme;
+      final s = theme.extension<DshSurfaces>()!;
+      final card = Color.alphaBlend(s.card.fill, s.backdropTop);
+      expect(contrastRatio(scheme.onSurface, s.backdropTop), greaterThanOrEqualTo(10));
+      expect(contrastRatio(scheme.onSurfaceVariant, s.backdropTop), greaterThanOrEqualTo(6));
+      expect(contrastRatio(scheme.primary, card), greaterThanOrEqualTo(3));
+      expect(contrastRatio(scheme.onPrimary, scheme.primary), greaterThanOrEqualTo(4.5));
+    }
+  });
+}

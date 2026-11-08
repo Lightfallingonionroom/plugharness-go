@@ -6,18 +6,20 @@ import 'accent.dart';
 import 'oklch.dart';
 import 'surfaces.dart';
 
-/// 雾蓝玻璃(Mist Glass)配色:**手工构造**,不走 `ColorScheme.fromSeed`。
+/// ChatGPT 式中性配色:**手工构造**,不走 `ColorScheme.fromSeed`。
 ///
 /// 为什么不用 fromSeed:M3 tonalSpot 会把任何种子推成一套高彩度"现代 App"
 /// 色阶,恰好抹掉这里要的低饱和。所以每个槽位手工指定。
 ///
 /// ## 两套印次
 ///
-/// - 浅色:晨雾蓝纸面。页面是一条极淡的竖向渐变(顶 `#EBF1FE` → 底 `#F6F7FC`),
-///   彩度 ≤ 0.019。
-/// - 深色:深海石板。明度 0.23–0.25,与 Claude 深色同一档,**不是**纯黑科技风:
-///   纯黑底上的亮字长时间看会"晕"。
-/// - 浅深都**不用**纯白 / 纯黑做大面积面色;纯白只出现在玻璃的高光和主按钮字上。
+/// - 浅色:纸白。页面是纯色 `#FFFFFF`(官方 `--color-surface` = gray-0),
+///   卡片面 `#F9F9F9` / 输入面 `#F3F3F3`。
+/// - 深色:中性炭灰 `#212121`(官方 `--gray-200` = surface),比侧栏
+///   `#171717` 浅一档、比卡片 `#303030` 深一档。**无蓝调**——这是
+///   "层级靠明度递进,不靠染色"的官方做法。
+/// - 数值全部来自 openai/apps-sdk-ui 源码实测,见
+///   `docs/openai-sdk-ui-spec.md` §3 的 `--gray-*` 表;改之前先读它。
 ///
 /// ## 比例
 ///
@@ -26,66 +28,67 @@ import 'surfaces.dart';
 ///
 /// ## 配色
 ///
-/// 这里的中性色常量是默认配色(雾蓝)的。用户换了配色,页面、玻璃、文字
-/// 走 [NeutralTones](同明度、换色调),界面代码一律从主题取色,不直接用
+/// 这里的中性色常量是**默认(石墨)配色**的。用户换成别的配色,页面、玻璃、
+/// 文字走 [NeutralTones](同明度、换色调),界面代码一律从主题取色,不直接用
 /// 这些常量;暮紫 tertiary 和错误色是语义色,不随配色转。
 abstract final class DshPalette {
-  // ══ 浅色:晨雾 ══════════════════════════════════════════
-  /// 页面渐变顶 · 晨雾蓝(与 DSH 官方 deepseek-50 同族)。
-  static const mistTop = Color(0xFFEBF1FE);
+  // ══ 浅色:纸白(官方 gray-0 / gray-50 / gray-75)═════════
+  /// 页面渐变顶 · 纯白(官方 `--color-surface` = gray-0)。
+  static const mistTop = Color(0xFFFFFFFF);
 
-  /// 页面渐变底 · 近白微紫。
-  static const mistBottom = Color(0xFFF6F7FC);
+  /// 页面渐变底 · 与顶同色 —— 官方页面是纯色,不是渐变。
+  static const mistBottom = Color(0xFFFFFFFF);
 
   /// 不透明页面底(渐变的中值;无法铺渐变时用)。
-  static const mist = Color(0xFFF0F4FD);
+  static const mist = Color(0xFFFFFFFF);
 
   /// 面色阶梯(不透明),玻璃关闭或 M3 组件需要实色时用。
-  static const mistLowest = Color(0xFFFBFCFF);
-  static const mistLow = Color(0xFFF6F9FE);
-  static const mistContainer = Color(0xFFEEF1F9);
-  static const mistHigh = Color(0xFFE7EBF4);
-  static const mistHighest = Color(0xFFDFE4EE);
+  /// 官方:gray-0 → gray-50 → gray-75 → gray-100 → gray-150。
+  static const mistLowest = Color(0xFFFFFFFF);
+  static const mistLow = Color(0xFFF9F9F9);
+  static const mistContainer = Color(0xFFF3F3F3);
+  static const mistHigh = Color(0xFFECECEC);
+  static const mistHighest = Color(0xFFE5E5E5);
 
-  /// 主文字 · 深墨蓝(对所有浅色面 ≥ 13)。
-  static const ink = Color(0xFF1E232E);
+  /// 主文字 · 近黑(官方 `--color-text` = gray-1000)。
+  static const ink = Color(0xFF0D0D0D);
 
-  /// 次级文字(≥ 6.2)。
-  static const inkMuted = Color(0xFF4F5562);
+  /// 次级文字(官方 `--color-text-secondary` = gray-500)。
+  static const inkMuted = Color(0xFF5D5D5D);
 
-  /// 三级文字 · 时间戳、摘要、占位符(≥ 4.6,仍可承载信息)。
-  static const inkFaint = Color(0xFF646974);
+  /// 三级文字 · 时间戳、摘要、占位符(官方 `--color-text-tertiary` = gray-400)。
+  static const inkFaint = Color(0xFF8F8F8F);
 
   /// 禁用 / 纯装饰(约 2.5,**不得**承载必要信息)。
-  static const inkGhost = Color(0xFFA1A5AC);
+  static const inkGhost = Color(0xFFAFAFAF);
 
   /// 输入框等交互边界(非文字对比 ≥ 3)。
-  static const outlineLight = Color(0xFF7E838D);
+  static const outlineLight = Color(0xFF8F8F8F);
 
   /// 分割线 / 发丝描边(装饰性)。
-  static const ruleLight = Color(0xFFDCE0E8);
+  static const ruleLight = Color(0xFFE5E5E5);
 
   /// 冷墨阴影基色:阴影带一点蓝,比纯黑阴影干净。
   static const shadowInk = Color(0xFF0B152D);
 
-  // ══ 深色:深海石板 ══════════════════════════════════════
-  static const nightTop = Color(0xFF1D222C);
-  static const nightBottom = Color(0xFF1B1C23);
-  static const night = Color(0xFF1C1F28);
-  static const nightLowest = Color(0xFF14171E);
-  static const nightLow = Color(0xFF232730);
-  static const nightContainer = Color(0xFF272C36);
-  static const nightHigh = Color(0xFF2D323C);
-  static const nightHighest = Color(0xFF343944);
+  // ══ 深色:中性炭灰(官方 gray-200 系)══════════════════
+  static const nightTop = Color(0xFF212121);
+  static const nightBottom = Color(0xFF212121);
+  static const night = Color(0xFF212121);
+  static const nightLowest = Color(0xFF171717);
+  static const nightLow = Color(0xFF282828);
+  static const nightContainer = Color(0xFF303030);
+  static const nightHigh = Color(0xFF303030);
+  static const nightHighest = Color(0xFF393939);
 
-  /// 主文字 · 雾白(不是纯白,对深色面 ≥ 10.5)。
-  static const paper = Color(0xFFE6E9F0);
-  static const paperMuted = Color(0xFFB6BBC5);
-  static const paperFaint = Color(0xFF9A9EA9);
-  static const paperGhost = Color(0xFF656971);
-  static const outlineDark = Color(0xFF737781);
-  static const ruleDark = Color(0xFF343841);
-  static const shadowNight = Color(0xFF03060D);
+  /// 主文字 · 官方 `--gray-900`。
+  static const paper = Color(0xFFECECEC);
+  static const paperMuted = Color(0xFFAFAFAF);
+  static const paperFaint = Color(0xFF8F8F8F);
+  static const paperGhost = Color(0xFF5D5D5D);
+  static const outlineDark = Color(0xFF414141);
+  static const ruleDark = Color(0xFF2F2F2F);
+  static const shadowNight = Color(0xFF000000);
 
   // ══ 中性辅助色(两套共用的语义角色) ═════════════════════
   /// 浅色 secondary · 板岩蓝灰:次要按钮、未选中强调。
@@ -313,14 +316,14 @@ class NeutralTones {
     shadowInk: DshPalette.shadowInk,
     slate: DshPalette.slate,
     slateContainer: DshPalette.slateContainer,
-    inverseSurface: Color(0xFF252A35),
-    onInverseSurface: Color(0xFFECEEF4),
+    inverseSurface: Color(0xFFECECEC),
+    onInverseSurface: Color(0xFF212121),
     scrim: DshPalette.scrim,
-    codeWell: Color(0xFFEDF0F6),
-    codeWellHeader: Color(0xFFE7EBF3),
-    codeWellBorder: Color(0xFFDBDEE5),
-    lineNumber: Color(0xFF7D8088),
-    comment: Color(0xFF636975),
+    codeWell: Color(0xFFF3F3F3),
+    codeWellHeader: Color(0xFFECECEC),
+    codeWellBorder: Color(0xFFE5E5E5),
+    lineNumber: Color(0xFF8F8F8F),
+    comment: Color(0xFF5D5D5D),
     nightTop: DshPalette.nightTop,
     nightBottom: DshPalette.nightBottom,
     night: DshPalette.night,
@@ -338,13 +341,13 @@ class NeutralTones {
     shadowNight: DshPalette.shadowNight,
     slateLift: DshPalette.slateLift,
     onSlateLift: DshPalette.onSlateLift,
-    smoke: Color(0xFF292E39),
-    sheetDark: Color(0xFF232832),
-    codeWellDark: Color(0xFF14171E),
-    codeWellHeaderDark: Color(0xFF1A1E26),
-    codeWellBorderDark: Color(0xFF2F333A),
-    lineNumberDark: Color(0xFF71747D),
-    commentDark: Color(0xFF868C97),
+    smoke: Color(0xFF2F2F2F),
+    sheetDark: Color(0xFF303030),
+    codeWellDark: Color(0xFF181818),
+    codeWellHeaderDark: Color(0xFF212121),
+    codeWellBorderDark: Color(0xFF2F2F2F),
+    lineNumberDark: Color(0xFF777777),
+    commentDark: Color(0xFF8F8F8F),
     terminal: Color(0xFF12151C),
     terminalKey: Color(0xFF262A33),
   );
@@ -355,7 +358,7 @@ class NeutralTones {
 
   /// 当前主题那套配色的中性色。
   static NeutralTones current(BuildContext context) =>
-      forAccent(Theme.of(context).extension<DshSurfaces>()?.accent ?? AppAccent.mist);
+      forAccent(Theme.of(context).extension<DshSurfaces>()?.accent ?? AppAccent.graphite);
 
   /// 把一个按雾蓝调出来的中性色换到 [accent] 的色调上(零散的灰,比如图表
   /// 里的「其他」)。

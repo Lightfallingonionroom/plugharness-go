@@ -111,7 +111,7 @@ class DshSurfaces extends ThemeExtension<DshSurfaces> {
     required this.sheet,
     required this.card,
     required this.pill,
-    this.accent = AppAccent.mist,
+    this.accent = AppAccent.graphite,
     this.blurEnabled = true,
   });
 
@@ -206,12 +206,12 @@ class DshSurfaces extends ThemeExtension<DshSurfaces> {
     );
   }
 
-  /// 深色:深海石板渐变 + 烟灰玻璃(石板与烟灰跟配色的中性色走)。
+  /// 深色:中性炭灰渐变 + 烟灰玻璃(石板与烟灰跟配色的中性色走)。
   factory DshSurfaces.dark(AppAccent accent, {bool blurEnabled = true}) {
     final n = NeutralTones.forAccent(accent);
     const white = Color(0xFFFFFFFF);
     const black = Color(0xFF000000);
-    // 雾蓝里是 OKLCH(0.30, 0.022, 266):比页面高一档的石板灰。
+    // 比页面高一档的中性灰(chrome 的烟灰底)。
     final smoke = n.smoke;
     return DshSurfaces(
       backdropTop: n.nightTop,

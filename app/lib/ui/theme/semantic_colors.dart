@@ -178,8 +178,8 @@ class DshColors extends ThemeExtension<DshColors> {
   }
 
   static const light = DshColors(
-    textTertiary: Color(0xFF646974),
-    textDisabled: Color(0xFFA1A5AC),
+    textTertiary: Color(0xFF8F8F8F),
+    textDisabled: Color(0xFFAFAFAF),
     // 状态色一律低饱和:鲜绿 / 鲜红一出现,界面立刻变成"运维面板"。
     success: Color(0xFF337250),
     onSuccess: Color(0xFFF7FBF9),
@@ -193,19 +193,20 @@ class DshColors extends ThemeExtension<DshColors> {
     onDanger: Color(0xFFFDF9F8),
     dangerContainer: Color(0xFFFFE2E0),
     onDangerContainer: Color(0xFF642724),
-    info: Color(0xFF2971A7),
+    // 官方链接蓝(--link-primary):蓝色只留给链接与焦点环。
+    info: Color(0xFF0169CC),
     infoContainer: Color(0xFFDBECFC),
     onInfoContainer: Color(0xFF123B5A),
     diffAddBg: Color(0xFFDCF4E3),
     diffAddFg: Color(0xFF1F613C),
     diffDelBg: Color(0xFFFFE4E2),
     diffDelFg: Color(0xFF923A37),
-    diffHunkFg: Color(0xFF4F5562),
-    codeWellBg: Color(0xFFEDF0F6),
-    codeWellHeader: Color(0xFFE7EBF3),
-    codeWellFg: Color(0xFF1E232E),
-    codeWellBorder: Color(0xFFDBDEE5),
-    lineNumberFg: Color(0xFF7D8088),
+    diffHunkFg: Color(0xFF5D5D5D),
+    codeWellBg: Color(0xFFF3F3F3),
+    codeWellHeader: Color(0xFFECECEC),
+    codeWellFg: Color(0xFF0D0D0D),
+    codeWellBorder: Color(0xFFE5E5E5),
+    lineNumberFg: Color(0xFF8F8F8F),
     // 浅色井底上的 ANSI:"白"必须映射成深灰,否则在浅底上看不见。
     ansi: [
       Color(0xFF1E232E),
@@ -269,8 +270,8 @@ class DshColors extends ThemeExtension<DshColors> {
   );
 
   static const dark = DshColors(
-    textTertiary: Color(0xFF9A9EA9),
-    textDisabled: Color(0xFF656971),
+    textTertiary: Color(0xFF8F8F8F),
+    textDisabled: Color(0xFF5D5D5D),
     success: Color(0xFF8BCCA6),
     onSuccess: Color(0xFF0C2518),
     successContainer: Color(0xFF233F2F),
@@ -283,20 +284,21 @@ class DshColors extends ThemeExtension<DshColors> {
     onDanger: Color(0xFF331513),
     dangerContainer: Color(0xFF542C29),
     onDangerContainer: Color(0xFFF8D9D7),
-    info: Color(0xFF8CBDE8),
+    // 官方链接蓝(--link-primary,dark = blue-400)。
+    info: Color(0xFF0285FF),
     infoContainer: Color(0xFF253C4F),
     onInfoContainer: Color(0xFFD1E4F4),
     diffAddBg: Color(0xFF1C3424),
     diffAddFg: Color(0xFF98D5AC),
     diffDelBg: Color(0xFF422423),
     diffDelFg: Color(0xFFF2A7A1),
-    diffHunkFg: Color(0xFFB6BBC5),
+    diffHunkFg: Color(0xFFAFAFAF),
     // 夜里的井底比页面更深:代码像嵌进纸里,而不是浮在上面。
-    codeWellBg: Color(0xFF14171E),
-    codeWellHeader: Color(0xFF1A1E26),
-    codeWellFg: Color(0xFFE6E9F0),
-    codeWellBorder: Color(0xFF2F333A),
-    lineNumberFg: Color(0xFF71747D),
+    codeWellBg: Color(0xFF181818),
+    codeWellHeader: Color(0xFF212121),
+    codeWellFg: Color(0xFFECECEC),
+    codeWellBorder: Color(0xFF2F2F2F),
+    lineNumberFg: Color(0xFF777777),
     ansi: [
       Color(0xFF7C8089),
       Color(0xFFDE958E),

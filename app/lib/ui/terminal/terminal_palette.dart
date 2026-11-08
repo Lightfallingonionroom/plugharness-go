@@ -69,10 +69,11 @@ class TerminalPalette {
   static const _mistSoft = Color(0xFF9DB4FF);
 
   static Color _softAccent(AppAccent accent) {
-    if (accent == AppAccent.mist) return _mistSoft;
-    final base = Oklch.fromColor(AppAccent.mist.seedDark);
+    if (accent.tintChroma == 0) return _mistSoft;
+    final base = Oklch.fromColor(AppAccent.graphite.seedDark);
     final own = Oklch.fromColor(accent.seedDark);
-    return retint(_mistSoft, hueShift: own.h - base.h, chromaScale: own.c / base.c);
+    final scale = base.c == 0 ? 1.0 : own.c / base.c;
+    return retint(_mistSoft, hueShift: own.h - base.h, chromaScale: scale);
   }
 
   TerminalTheme _theme({required Color cursor}) {

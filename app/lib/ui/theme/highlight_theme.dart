@@ -27,7 +27,7 @@ import 'palette.dart';
 ///
 /// 角色色相是语义,不随配色变;正文、注释、标点这几格中性色跟 [accent]
 /// 的中性色走(同明度,对代码井的对比度不变)。
-Map<String, TextStyle> dshHighlightTheme(Brightness brightness, [AppAccent accent = AppAccent.mist]) {
+Map<String, TextStyle> dshHighlightTheme(Brightness brightness, [AppAccent accent = AppAccent.graphite]) {
   final dark = brightness == Brightness.dark;
   final base = dark ? _dark : _light;
   final n = NeutralTones.forAccent(accent);

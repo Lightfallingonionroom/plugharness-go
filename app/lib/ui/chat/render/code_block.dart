@@ -234,7 +234,7 @@ TextSpan highlightCode(
   String? language,
   Brightness brightness, {
   TextStyle? style,
-  AppAccent accent = AppAccent.mist,
+  AppAccent accent = AppAccent.graphite,
 }) {
   final base = style ?? AppType.mono();
   final lang = _normalizeLanguage(language);

@@ -278,7 +278,7 @@ abstract final class GlassTint {
 
   /// The colour the set was painted to, per brightness: the default accent's
   /// `primary` (what [TilePalette.ink] is for it).
-  static Color reference(Brightness brightness) => AppAccent.mist.seedFor(brightness);
+  static Color reference(Brightness brightness) => AppAccent.graphite.seedFor(brightness);
 
   static final _cache = <(int, Brightness), ColorFilter?>{};
 

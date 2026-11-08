@@ -28,7 +28,7 @@ import 'typography.dart';
 ///
 /// [fluid] 灵动档:默认水波换成按压光晕([AppInkGlow])。
 ThemeData buildLightTheme({
-  AppAccent accent = AppAccent.mist,
+  AppAccent accent = AppAccent.graphite,
   bool glassBlur = true,
   Locale? glyphLocale,
   bool instantPages = false,
@@ -45,7 +45,7 @@ ThemeData buildLightTheme({
 
 /// 深色主题。
 ThemeData buildDarkTheme({
-  AppAccent accent = AppAccent.mist,
+  AppAccent accent = AppAccent.graphite,
   bool glassBlur = true,
   Locale? glyphLocale,
   bool instantPages = false,

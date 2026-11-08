@@ -232,27 +232,30 @@ class AppAccent {
     hazeDark: Color(0xFF64443D),
   );
 
-  /// 石墨:中性灰。主色在浅色里近黑(L 0.30)、深色里近白(L 0.93),
-  /// 中性色只留一丝冷调。像系统设置那样的黑白。
+  /// 石墨:**默认档**。中性灰,主色在浅色里近黑、深色里近白,
+  /// 中性色零彩度。数值对齐官方 `--color-background-primary-solid`
+  /// (浅 gray-900 / 深 gray-950)与 `--color-surface` 阶梯。
   static const graphite = AppAccent(
     id: 'graphite',
-    seed: Color(0xFF2C2E32),
-    pressed: Color(0xFF1D1F23),
-    container: Color(0xFFE3E6EC),
-    onContainer: Color(0xFF2C2E32),
-    bubble: Color(0xFFE0E3E8),
-    glow: Color(0xFFBBBEC3),
-    seedDark: Color(0xFFE5E8ED),
-    pressedDark: Color(0xFFCED1D6),
-    onSeedDark: Color(0xFF191B1E),
-    containerDark: Color(0xFF3B3D41),
-    onContainerDark: Color(0xFFDEE1E7),
-    bubbleDark: Color(0xFF2E3034),
-    glowDark: Color(0xFF616368),
-    tintHue: 262,
-    tintChroma: 0.25,
-    haze: Color(0xFFCED1D6),
-    hazeDark: Color(0xFF4A4D52),
+    seed: Color(0xFF181818),
+    pressed: Color(0xFF0D0D0D),
+    container: Color(0xFFF3F3F3),
+    onContainer: Color(0xFF0D0D0D),
+    bubble: Color(0x0D0D0D0D),
+    glow: Color(0xFFFFFFFF),
+    seedDark: Color(0xFFF3F3F3),
+    pressedDark: Color(0xFFECECEC),
+    onSeedDark: Color(0xFF0D0D0D),
+    containerDark: Color(0xFF303030),
+    onContainerDark: Color(0xFFECECEC),
+    bubbleDark: Color(0xFF2F2F2F),
+    glowDark: Color(0xFF212121),
+    // 中性色不染色:零彩度。[NeutralTones.of] 对 c=0 只乘不除,数学安全
+    // (test/theme/official_palette_test.dart 逐格钉死)。
+    tintHue: NeutralTones.baseHue,
+    tintChroma: 0,
+    haze: Color(0xFFFFFFFF),
+    hazeDark: Color(0xFF212121),
   );
 
   /// 设置页里的顺序。
@@ -261,12 +264,15 @@ class AppAccent {
   static const customId = 'custom';
   static const wallpaperId = 'wallpaper';
 
-  /// 按 [id] 取预设;未知 / 缺失回退雾蓝(向前兼容旧值)。
+  /// 按 [id] 取预设;未知 / 缺失回退石墨(向前兼容旧值)。
+  ///
+  /// 石墨是默认档:它的色值就是 [DshPalette] 的中性灰阶,所以"用户没存过
+  /// 偏好"和"用户选了石墨"看到的是同一套颜色。
   static AppAccent preset(String? id) {
     for (final p in presets) {
       if (p.id == id) return p;
     }
-    return mist;
+    return graphite;
   }
 
   // ══ 现推:自定义、跟随壁纸 ═══════════════════════════════════════════

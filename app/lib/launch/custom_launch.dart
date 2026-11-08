@@ -214,12 +214,12 @@ class CustomLaunch {
 /// the app doesn't reach the system's launch window. test/launch/launch_colors_test.dart reads
 /// colors.xml to keep them equal.
 abstract final class LaunchColors {
-  static const mistTop = Color(0xFFEBF1FE);
-  static const mistBottom = Color(0xFFF6F7FC);
-  static const nightTop = Color(0xFF1D222C);
-  static const nightBottom = Color(0xFF1B1C23);
+  static const mistTop = Color(0xFFFFFFFF);
+  static const mistBottom = Color(0xFFFFFFFF);
+  static const nightTop = Color(0xFF212121);
+  static const nightBottom = Color(0xFF212121);
 
   /// The wordmark: the default palette's main text on each.
-  static const ink = Color(0xFF1E232E);
-  static const paper = Color(0xFFE6E9F0);
+  static const ink = Color(0xFF0D0D0D);
+  static const paper = Color(0xFFECECEC);
 }

@@ -47,10 +47,10 @@ Map<String, Object?> _view() => {
 void main() {
   tearDown(() => DshUiAppAccent.set(DshUiAppAccent.fallback));
 
-  test("the default is the app's default palette, 雾蓝", () {
-    expect(DshUiAppAccent.fallback, _rgb(AppAccent.mist.seed));
+  test("the default is the app's default palette, 石墨", () {
+    expect(DshUiAppAccent.fallback, _rgb(AppAccent.graphite.seed));
     final view = (parsePluginView(_view()) as DshUiParsed).view;
-    expect(view.styles[view.root.path]!.accent.light, _rgb(AppAccent.mist.seed), reason: 'already ≥ 4.5:1 on the light surface');
+    expect(view.styles[view.root.path]!.accent.light, _rgb(AppAccent.graphite.seed), reason: 'already ≥ 4.5:1 on the light surface');
   });
 
   test('a palette change re-parses the same view object with the new accent', () {

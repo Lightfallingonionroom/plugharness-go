@@ -101,7 +101,7 @@ void main() {
 
   testWidgets('a preset swatch switches the whole app and is stored', (tester) async {
     final container = await _pumpApp(tester);
-    expect(_scheme(tester).primary, AppAccent.mist.seed);
+    expect(_scheme(tester).primary, AppAccent.graphite.seed);
 
     await tester.tap(find.bySemanticsLabel('配色：琥珀'));
     await tester.pumpAndSettle();

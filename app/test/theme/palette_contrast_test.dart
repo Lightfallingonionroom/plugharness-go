@@ -26,21 +26,22 @@ final _palettes = <AppAccent>[
 ];
 
 void main() {
-  test('mist is the original Mist Glass, untouched', () {
+  test('graphite is the original neutral default, untouched', () {
     final light = buildLightTheme();
     final dark = buildDarkTheme();
-    expect(light.colorScheme.primary, const Color(0xFF4B67B4));
+    expect(light.colorScheme.primary, const Color(0xFF181818));
     expect(light.colorScheme.surface, DshPalette.mist);
     expect(light.colorScheme.onSurface, DshPalette.ink);
     expect(dark.colorScheme.surface, DshPalette.night);
+    expect(dark.colorScheme.primary, const Color(0xFFF3F3F3));
     expect(identical(light.extension<DshColors>(), DshColors.light), isTrue);
     expect(identical(dark.extension<DshColors>(), DshColors.dark), isTrue);
     final s = light.extension<DshSurfaces>()!;
     expect(s.backdropTop, DshPalette.mistTop);
-    expect(s.glowSecondary, const Color(0xFFD5CBEB).withValues(alpha: 0.38));
-    expect(s.accent, AppAccent.mist);
-    expect(identical(NeutralTones.forAccent(AppAccent.mist), NeutralTones.defaults), isTrue);
-    expect(dshHighlightTheme(Brightness.light)['root']!.color, const Color(0xFF1E232E));
+    expect(s.glowSecondary, const Color(0xFFFFFFFF).withValues(alpha: 0.38));
+    expect(s.accent, AppAccent.graphite);
+    expect(identical(NeutralTones.forAccent(AppAccent.graphite), NeutralTones.defaults), isTrue);
+    expect(dshHighlightTheme(Brightness.light)['root']!.color, const Color(0xFF0D0D0D));
   });
 
   test('the derivation reproduces mist from its seed (one recipe for every hue)', () {
@@ -65,7 +66,9 @@ void main() {
     expect(AppAccent.presets.first, AppAccent.mist);
     expect(AppAccent.presets.map((p) => p.id).toSet(), hasLength(6));
     expect(AppAccent.presets.map((p) => p.label), ['雾蓝', '黛青', '暮紫', '松石', '琥珀', '石墨']);
-    expect(AppAccent.preset('nope'), AppAccent.mist);
+    // 默认档是石墨(中性灰),不是雾蓝:没存过偏好时看到的是官方灰阶。
+    expect(AppAccent.preset('nope'), AppAccent.graphite);
+    expect(AppAccent.preset(null), AppAccent.graphite);
     expect(AppAccent.preset('amber'), AppAccent.amber);
   });
 
