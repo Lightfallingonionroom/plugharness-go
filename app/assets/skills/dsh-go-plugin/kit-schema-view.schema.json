@@ -1104,7 +1104,7 @@
         "enforcedText": 4.5,
         "description": "All text uses 4.5, including large text, so reducing the system font scale cannot invalidate the bound."
       },
-      "backgrounds": {"surface": ["#F8FAFE", "#272A33"], "elevated": ["#F0F3F9", "#30343F"]},
+      "backgrounds": {"surface": ["#FFFFFF", "#212121"], "elevated": ["#F9F9F9", "#303030"]},
       "chartPalette": [
         ["#3D6FD6", "#5B8EE6"], ["#DC6530", "#D9692F"], ["#169470", "#1F9E76"],
         ["#B88000", "#B88510"], ["#D0628F", "#D6649A"], ["#6B58D0", "#8A7DE0"]
@@ -1131,10 +1131,10 @@
         "zIndex"
       ],
       "reservedRoles": ["system", "approval", "authorization", "dialog", "permission"],
-      "ink": ["#20242B", "#F1F4F9"],
-      "muted": ["#586372", "#B5BDCA"],
-      "defaultAccent": "#3D6FD6",
-      "appAccent": "#4B67B4",
+      "ink": ["#0D0D0D", "#ECECEC"],
+      "muted": ["#5D5D5D", "#AFAFAF"],
+      "defaultAccent": "#181818",
+      "appAccent": "#181818",
       "namedColors": {
         "red": "#D04545",
         "orange": "#CA6328",

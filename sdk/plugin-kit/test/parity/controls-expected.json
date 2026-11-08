@@ -5,7 +5,7 @@
   "issues": [
    {
     "path": "view.accent",
-    "message": "dark：#3D6FD6 已校正为 #698FDF，对比度至少 4.5:1"
+    "message": "dark：#181818 已校正为 #888888，对比度至少 4.5:1"
    }
   ]
  },
@@ -35,7 +35,7 @@
   "issues": [
    {
     "path": "view.accent",
-    "message": "dark：#3D6FD6 已校正为 #698FDF，对比度至少 4.5:1"
+    "message": "dark：#181818 已校正为 #888888，对比度至少 4.5:1"
    }
   ]
  },
@@ -45,7 +45,7 @@
   "issues": [
    {
     "path": "view.accent",
-    "message": "dark：#3D6FD6 已校正为 #698FDF，对比度至少 4.5:1"
+    "message": "dark：#181818 已校正为 #888888，对比度至少 4.5:1"
    }
   ]
  },
@@ -115,7 +115,7 @@
   "issues": [
    {
     "path": "view.accent",
-    "message": "dark：#3D6FD6 已校正为 #698FDF，对比度至少 4.5:1"
+    "message": "dark：#181818 已校正为 #888888，对比度至少 4.5:1"
    },
    {
     "path": "view.children[1].bind",
@@ -129,7 +129,7 @@
   "issues": [
    {
     "path": "view.accent",
-    "message": "dark：#3D6FD6 已校正为 #698FDF，对比度至少 4.5:1"
+    "message": "dark：#181818 已校正为 #888888，对比度至少 4.5:1"
    },
    {
     "path": "view.children[1].bind",
@@ -143,7 +143,7 @@
   "issues": [
    {
     "path": "view.accent",
-    "message": "dark：#3D6FD6 已校正为 #698FDF，对比度至少 4.5:1"
+    "message": "dark：#181818 已校正为 #888888，对比度至少 4.5:1"
    },
    {
     "path": "view.children[1].children[12]",
@@ -185,7 +185,7 @@
   "issues": [
    {
     "path": "view.accent",
-    "message": "dark：#3D6FD6 已校正为 #698FDF，对比度至少 4.5:1"
+    "message": "dark：#181818 已校正为 #888888，对比度至少 4.5:1"
    },
    {
     "path": "view.options",
@@ -199,7 +199,7 @@
   "issues": [
    {
     "path": "view.accent",
-    "message": "dark：#3D6FD6 已校正为 #698FDF，对比度至少 4.5:1"
+    "message": "dark：#181818 已校正为 #888888，对比度至少 4.5:1"
    },
    {
     "path": "view.options[1]",
@@ -221,7 +221,7 @@
   "issues": [
    {
     "path": "view.accent",
-    "message": "dark：#3D6FD6 已校正为 #698FDF，对比度至少 4.5:1"
+    "message": "dark：#181818 已校正为 #888888，对比度至少 4.5:1"
    },
    {
     "path": "view.maxLength",
@@ -267,7 +267,7 @@
   "issues": [
    {
     "path": "view.accent",
-    "message": "dark：#3D6FD6 已校正为 #698FDF，对比度至少 4.5:1"
+    "message": "dark：#181818 已校正为 #888888，对比度至少 4.5:1"
    },
    {
     "path": "view.min",
@@ -301,7 +301,7 @@
   "issues": [
    {
     "path": "view.accent",
-    "message": "dark：#3D6FD6 已校正为 #698FDF，对比度至少 4.5:1"
+    "message": "dark：#181818 已校正为 #888888，对比度至少 4.5:1"
    },
    {
     "path": "view.children[1]",
@@ -335,7 +335,7 @@
   "issues": [
    {
     "path": "view.accent",
-    "message": "dark：#3D6FD6 已校正为 #698FDF，对比度至少 4.5:1"
+    "message": "dark：#181818 已校正为 #888888，对比度至少 4.5:1"
    },
    {
     "path": "view.items",
@@ -349,7 +349,7 @@
   "issues": [
    {
     "path": "view.accent",
-    "message": "dark：#3D6FD6 已校正为 #698FDF，对比度至少 4.5:1"
+    "message": "dark：#181818 已校正为 #888888，对比度至少 4.5:1"
    },
    {
     "path": "view.items[10].children",
@@ -367,7 +367,7 @@
   "issues": [
    {
     "path": "view.accent",
-    "message": "dark：#3D6FD6 已校正为 #698FDF，对比度至少 4.5:1"
+    "message": "dark：#181818 已校正为 #888888，对比度至少 4.5:1"
    }
   ]
  },
@@ -377,7 +377,7 @@
   "issues": [
    {
     "path": "view.accent",
-    "message": "dark：#3D6FD6 已校正为 #698FDF，对比度至少 4.5:1"
+    "message": "dark：#181818 已校正为 #888888，对比度至少 4.5:1"
    },
    {
     "path": "view.src",
@@ -391,7 +391,7 @@
   "issues": [
    {
     "path": "view.accent",
-    "message": "dark：#3D6FD6 已校正为 #698FDF，对比度至少 4.5:1"
+    "message": "dark：#181818 已校正为 #888888，对比度至少 4.5:1"
    },
    {
     "path": "view.code",
@@ -405,7 +405,7 @@
   "issues": [
    {
     "path": "view.accent",
-    "message": "dark：#3D6FD6 已校正为 #698FDF，对比度至少 4.5:1"
+    "message": "dark：#181818 已校正为 #888888，对比度至少 4.5:1"
    },
    {
     "path": "view.value",
@@ -419,7 +419,7 @@
   "issues": [
    {
     "path": "view.accent",
-    "message": "dark：#3D6FD6 已校正为 #698FDF，对比度至少 4.5:1"
+    "message": "dark：#181818 已校正为 #888888，对比度至少 4.5:1"
    }
   ]
  },
@@ -433,7 +433,7 @@
    },
    {
     "path": "view.accent",
-    "message": "dark：#3D6FD6 已校正为 #698FDF，对比度至少 4.5:1"
+    "message": "dark：#181818 已校正为 #888888，对比度至少 4.5:1"
    }
   ]
  },
@@ -447,7 +447,7 @@
    },
    {
     "path": "view.accent",
-    "message": "dark：#3D6FD6 已校正为 #698FDF，对比度至少 4.5:1"
+    "message": "dark：#181818 已校正为 #888888，对比度至少 4.5:1"
    }
   ]
  },
@@ -477,7 +477,7 @@
   "issues": [
    {
     "path": "view.accent",
-    "message": "dark：#3D6FD6 已校正为 #698FDF，对比度至少 4.5:1"
+    "message": "dark：#181818 已校正为 #888888，对比度至少 4.5:1"
    },
    {
     "path": "view.onChange.args",
@@ -511,19 +511,15 @@
   "issues": [
    {
     "path": "view.accent",
-    "message": "dark：#3D6FD6 已校正为 #698FDF，对比度至少 4.5:1"
+    "message": "dark：#181818 已校正为 #888888，对比度至少 4.5:1"
    },
    {
     "path": "view.children[0].children[0].palette.other",
-    "message": "light：#9AA0AA 已校正为 #8C919B，对比度至少 3:1"
-   },
-   {
-    "path": "view.children[0].children[0].palette.other",
-    "message": "dark：#6B707A 已校正为 #6E737C，对比度至少 3:1"
+    "message": "light：#9AA0AA 已校正为 #90959F，对比度至少 3:1"
    },
    {
     "path": "view.children[0].children[1].style.color",
-    "message": "dark：#258051 已校正为 #599E7A，对比度至少 4.5:1"
+    "message": "dark：#258051 已校正为 #4A966E，对比度至少 4.5:1"
    }
   ]
  },
@@ -533,15 +529,11 @@
   "issues": [
    {
     "path": "view.accent",
-    "message": "dark：#3D6FD6 已校正为 #698FDF，对比度至少 4.5:1"
+    "message": "dark：#181818 已校正为 #888888，对比度至少 4.5:1"
    },
    {
     "path": "view.children[0].palette.other",
-    "message": "light：#9AA0AA 已校正为 #8C919B，对比度至少 3:1"
-   },
-   {
-    "path": "view.children[0].palette.other",
-    "message": "dark：#6B707A 已校正为 #6E737C，对比度至少 3:1"
+    "message": "light：#9AA0AA 已校正为 #90959F，对比度至少 3:1"
    },
    {
     "path": "view.children[0].shape",
@@ -611,7 +603,7 @@
   "issues": [
    {
     "path": "view.accent",
-    "message": "dark：#3D6FD6 已校正为 #698FDF，对比度至少 4.5:1"
+    "message": "dark：#181818 已校正为 #888888，对比度至少 4.5:1"
    },
    {
     "path": "view.children[0].title",
@@ -641,7 +633,7 @@
   "issues": [
    {
     "path": "view.accent",
-    "message": "dark：#3D6FD6 已校正为 #698FDF，对比度至少 4.5:1"
+    "message": "dark：#181818 已校正为 #888888，对比度至少 4.5:1"
    },
    {
     "path": "view.items",
@@ -655,7 +647,7 @@
   "issues": [
    {
     "path": "view.accent",
-    "message": "dark：#3D6FD6 已校正为 #698FDF，对比度至少 4.5:1"
+    "message": "dark：#181818 已校正为 #888888，对比度至少 4.5:1"
    },
    {
     "path": "view.items",

@@ -83,7 +83,7 @@ test('every semantic size/weight and named colour retains 4.5 in both themes', (
 
 test('correction diagnostics contain the actual light/dark colours and ratio', () => {
   const result = checkView(text({ color: '#FFFFFF' }), { lang: 'en' })
-  assert.ok(result.issues.some(i => i.path === 'view.style.color' && i.message === 'light: #FFFFFF adjusted to #737373, contrast at least 4.5:1'))
+  assert.ok(result.issues.some(i => i.path === 'view.style.color' && i.message === 'light: #FFFFFF adjusted to #767676, contrast at least 4.5:1'))
   assert.ok(result.issues.some(i => i.path === 'view.accent' && i.message.includes('dark:')))
 })
 
