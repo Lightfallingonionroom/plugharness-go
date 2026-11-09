@@ -86,8 +86,12 @@ test('a general Cordis plugin installs, enables, boots and uninstalls without le
   // Install through the real manager (pnpm), from the local fixture directory. `enabled:
   // false` is what the market's install button does: install first, then let the user
   // decide whether to turn it on.
+  // `saveExact: true` makes pnpm rewrite the local directory spec as an exact semver,
+  // which then goes to the registry and 404s (measured: `pnpm add file:<dir> --save-exact`
+  // fails, plain `pnpm add file:<dir>` succeeds in ~200ms). Keep the range form so the
+  // dependency stays `file:...` in the profile.
   const install = await f.ctx.pluginManager.installBundle(`file:${join(fixtures, 'cordis-basic')}`, {
-    saveExact: true,
+    saveExact: false,
     enabled: false,
   });
   assert.equal(install.packageResult?.exitCode, 0, `pnpm install failed: ${install.packageResult?.output ?? ''}`);

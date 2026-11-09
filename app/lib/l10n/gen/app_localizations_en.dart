@@ -14021,6 +14021,15 @@ class L10nEn extends L10n {
   String get pluginsLoadRemoteLogs => 'Check the engine logs on this host.';
 
   @override
+  String get pluginsCompatBlockedTitle => 'This plugin does not fit this runtime';
+  @override
+  String get pluginsCompatUnverifiedTitle => 'Compatibility not verified';
+  @override
+  String get pluginsCompatRuntimeIs => 'this device';
+  @override
+  String get pluginsCompatInstallAnyway => 'Install anyway';
+
+  @override
   String get plugslotsSurfaceComposerTools => 'Plus panel tools';
 
   @override

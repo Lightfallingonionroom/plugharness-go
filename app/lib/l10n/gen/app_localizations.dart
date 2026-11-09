@@ -24469,6 +24469,30 @@ abstract class L10n {
   /// In zh, this message translates to:
   /// **'请在这台主机上查看引擎日志。'**
   String get pluginsLoadRemoteLogs;
+  /// No description provided for @pluginsCompatBlockedTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'这个插件和当前运行时不兼容'**
+  String get pluginsCompatBlockedTitle;
+
+  /// No description provided for @pluginsCompatUnverifiedTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'兼容性未验证'**
+  String get pluginsCompatUnverifiedTitle;
+
+  /// No description provided for @pluginsCompatRuntimeIs.
+  ///
+  /// In zh, this message translates to:
+  /// **'本机'**
+  String get pluginsCompatRuntimeIs;
+
+  /// No description provided for @pluginsCompatInstallAnyway.
+  ///
+  /// In zh, this message translates to:
+  /// **'仍然安装'**
+  String get pluginsCompatInstallAnyway;
+
 
   /// No description provided for @plugslotsSurfaceComposerTools.
   ///
