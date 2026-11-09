@@ -16,7 +16,7 @@ import javax.xml.parsers.DocumentBuilderFactory
  */
 class LaunchThemesTest {
     private val main = File("src/main")
-    private val ns = "io.github.ccch1mneyyy.dsh_app"
+    private val ns = "io.github.lightfallingonionroom.dsh_app"
 
     private fun xml(file: File): Element = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file).documentElement
 
@@ -102,11 +102,14 @@ class LaunchThemesTest {
         assertEquals(LaunchThemes.WHITE, next("white"))
         assertEquals(LaunchThemes.BLACK, next("black"))
         // 取自图片: whichever of page, white and black is nearest the picture's edge.
+        // 页色已是中性灰:浅色 = 纯白(与 WHITE 重合),深色 = #212121。
         assertEquals(LaunchThemes.BLACK, next("edge", 0xFF050608.toInt()))
-        assertEquals(LaunchThemes.WHITE, next("edge", 0xFFFCFCFC.toInt()))
+        // 浅页就是白:近白的浅灰归页色(页色与 WHITE 同为纯白时 BLANK 在前)。
+        assertEquals(LaunchThemes.BLANK, next("edge", 0xFFFCFCFC.toInt()))
         assertEquals(LaunchThemes.BLANK, next("edge", 0xFFE8EEFB.toInt()))
+        // 深页 #212121:冷灰蓝归页色。
         assertEquals(LaunchThemes.BLANK, next("edge", 0xFF1E232D.toInt(), dark = true))
-        // A sky blue is nearer the light page than white or black.
+        // A sky blue is nearer the light page than black or white.
         assertEquals(LaunchThemes.BLANK, next("edge", 0xFF8DB3E2.toInt()))
         // No colour to take: the page.
         assertEquals(LaunchThemes.BLANK, next("edge", null))
