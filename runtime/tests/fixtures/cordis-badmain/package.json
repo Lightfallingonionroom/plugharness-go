@@ -1,0 +1,8 @@
+{
+  "name": "@dsh-go-fixture/cordis-badmain",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "missing-entry.js",
+  "description": "Test-only Cordis plugin (issue #4) whose main file does not exist. Used to prove a missing entry is attributed rather than crashing the host."
+}

@@ -89,7 +89,7 @@ RangeCheck checkVersionRange(String? range, String? version) {
         break;
     }
   }
-  if (sawUnknown) return RangeCheck.unknown(declared, unknownReason);
+  if (sawUnknown) return RangeCheck.unknown(declared, unknownReason ?? 'unverifiable range');
   return RangeCheck.bad(declared);
 }
 
@@ -116,7 +116,7 @@ RangeCheck _checkConjunction(String alternative, String version) {
 
 /// One comparator: `^1.2.3`, `~1.2`, `>=1.2.3`, `1.2.3`, `1.x`, ...
 RangeCheck _checkComparator(String raw, String version) {
-  var text = raw.trim();
+  final text = raw.trim();
   if (text.isEmpty) return RangeCheck.ok(raw);
 
   // `1.x` / `1.2.x` / `1.*`: a partial version. Only the named parts must match.
@@ -184,7 +184,7 @@ bool _tildeSatisfied(String version, String base) {
   if (m == null) return false;
   final major = BigInt.parse(m.group(1)!);
   final minor = BigInt.parse(m.group(2)!);
-  final upper = '${major}.${minor + BigInt.one}.0';
+  final upper = '$major.${minor + BigInt.one}.0';
   return compareSemver(version, upper) < 0;
 }
 

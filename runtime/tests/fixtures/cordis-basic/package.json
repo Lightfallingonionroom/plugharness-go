@@ -1,0 +1,8 @@
+{
+  "name": "@dsh-go-fixture/cordis-basic",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "description": "Test-only general Cordis plugin (issue #4). No dshGo manifest: it exercises the ordinary bundle/Cordis lifecycle — install, resolve, enable, boot, disable, uninstall — not the native UI protocol."
+}

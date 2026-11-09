@@ -1,0 +1,8 @@
+{
+  "name": "@dsh-go-fixture/cordis-throws",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "description": "Test-only Cordis plugin (issue #4) whose apply() throws. Used to prove a failing plugin is attributed and leaves no half-written profile."
+}
