@@ -1,5 +1,7 @@
 package io.github.ccch1mneyyy.dsh_app.runtime
 
+import java.io.File
+
 /**
  * Why the local DSH stopped when nobody asked it to.
  * DSH fatal markers and explicit early V8 heap exhaustion can count toward recovery.
@@ -51,6 +53,18 @@ data class RunFailure(
     val diagnostics: String?,
     /** Seconds between the ready transition and exit; null when ready was never reported. */
     val upSeconds: Long?,
+    /**
+     * Package name → version for packages the crash evidence actually names.
+     *
+     * Empty for a silent exit. A suspect whose version is unknown is simply absent here;
+     * [CrashClassifier.VersionSource] says why the map has no entry for it.
+     */
+    val suspectVersions: Map<String, String> = emptyMap(),
+    /**
+     * How the evidence names each suspect, for the safe-mode briefing to tell
+     * "the stack hit it" apart from "it merely changed since the last good run".
+     */
+    val attributions: List<SuspectAttribution> = emptyList(),
 ) {
     fun toMap(): Map<String, Any?> = mapOf(
         "kind" to kind.wire,
@@ -63,7 +77,59 @@ data class RunFailure(
         "recent" to recent,
         "diagnostics" to diagnostics,
         "upSeconds" to upSeconds,
+        "suspectVersions" to suspectVersions,
+        "attributions" to attributions.map { it.toMap() },
     )
+}
+
+/** Why a package is on the suspect list, and how sure that is. */
+enum class SuspectSource(val wire: String) {
+    /** A stack frame or a `Package:` line named it. The strongest evidence there is. */
+    STACK("stack"),
+
+    /** Only `recentChanges()` named it: enabled or upgraded since the last good run. */
+    RECENT_CHANGE("recent"),
+
+    /** Both: the stack named it *and* it changed. */
+    STACK_AND_RECENT("stackAndRecent"),
+}
+
+/**
+ * One suspect and the evidence behind it.
+ *
+ * [version] is null when the manifest could not be read — a missing `package.json`, an
+ * unreadable pnpm virtual-store path, or a package that is simply not on disk any more.
+ * Guessing a version there would be worse than saying "unknown".
+ */
+data class SuspectAttribution(
+    val name: String,
+    val version: String?,
+    val source: SuspectSource,
+) {
+    fun toMap(): Map<String, Any?> = mapOf(
+        "name" to name,
+        "version" to version,
+        "source" to source.wire,
+    )
+}
+
+/**
+ * Fill in [RunFailure.attributions] and [RunFailure.suspectVersions] from the runtime's
+ * `node_modules`, keeping the evidence source each suspect came from.
+ *
+ * Called once the `recent` list is known (the controller fills it, the classifier cannot).
+ * Everything here is best-effort: a recovery path must never throw while *explaining* a crash.
+ */
+fun RunFailure.withVersionAttribution(rootfs: java.io.File?): RunFailure {
+    val merged = CrashClassifier.attribute(suspects, recent)
+    if (rootfs == null) return copy(attributions = merged)
+    val versions = merged.mapNotNull { attribution ->
+        CrashClassifier.versionOf(rootfs, attribution.name)?.let { attribution.name to it }
+    }.toMap()
+    val resolved = merged.map { attribution ->
+        attribution.copy(version = versions[attribution.name] ?: attribution.version)
+    }
+    return copy(attributions = resolved, suspectVersions = versions)
 }
 
 /** Pure classification of one finished run from its exit code, timing and last output lines. */
@@ -80,6 +146,26 @@ object CrashClassifier {
         Regex("^[A-Za-z]*Error: dsh: "),
         Regex("^dsh: profile startup and cleanup failed"),
     )
+    /**
+     * A Node process dying of an uncaught throw, and Node's own trailer.
+     *
+     * Measured against Node 24 (the version this repo pins): an uncaught throw prints its
+     * source line, `^`, `Error: …`, the frames, then exactly one `Node.js v24.22.0` line as
+     * the process unwinds. **Both** halves are required — the trailer alone also shows up in
+     * `node --version` and in a plugin that merely logs its runtime, and the error line alone
+     * also shows up for a throw a plugin caught and printed.
+     */
+    private val NODE_TRAILER = Regex("^Node\\.js v\\d+\\.\\d+\\.\\d+")
+    private val NODE_UNCAUGHT_HEAD = Regex("^(?:\\w*Error|Error): .+")
+    /**
+     * Node prints this one line for an unhandled rejection on its way out; it is the only
+     * marker that tells a rejection apart from a throw when the stack has no `await`.
+     */
+    private val NODE_UNHANDLED_REJECTION = Regex("^(?:UnhandledPromiseRejection|node:internal/process/promises)")
+    /** `Require stack:` / `- /path/to/whatever` — Node's module-loader failure block. */
+    private val NODE_REQUIRE_STACK = Regex("^Require stack:|^- \\S")
+    /** `node:internal/modules/cjs/loader:1568` — Node's own frames, never a plugin's. */
+    private val NODE_INTERNAL = Regex("^node:internal/")
     private val HEAP_OOM = Regex(
         "^FATAL ERROR: (?:Reached heap limit|Ineffective mark-compacts near heap limit) " +
             "Allocation failed - JavaScript heap out of memory$",
@@ -123,7 +209,41 @@ object CrashClassifier {
 
     fun isFatal(line: String): Boolean = FATAL.any { it.containsMatchIn(line) }
 
-    fun redact(line: String): String = TOKEN.replace(line, "token=•••")
+    /**
+     * Whether the tail holds a Node process dying of an uncaught throw or rejection.
+     *
+     * Requires the trailer (`Node.js vX.Y.Z`) *and* an error head, and rejects the shapes
+     * that are not a host death:
+     *
+     * - a plugin that catches its own throw and logs it also prints `Error: …`, but the
+     *   process keeps running, so no trailer follows;
+     * - `node --version`, `process.version` or a plugin's startup banner prints the trailer
+     *   with no error head;
+     * - a *tool* that failed (a lint run, a test run) exits non-zero with an error head but
+     *   prints `node:internal` frames only when Node itself died — a tool's own stack names
+     *   the tool's files.
+     *
+     * Returns the offending error line so the caller can both classify and summarise it.
+     */
+    fun nodeUncaught(tail: List<String>): String? {
+        val trailer = tail.indexOfLast { NODE_TRAILER.matches(it) }
+        if (trailer < 0) return null
+        // The throw's own line is the last `Error: …` before the trailer, not the first:
+        // Node prints the source line, `^`, then the error.
+        val head = (0 until trailer).lastOrNull { NODE_UNCAUGHT_HEAD.matches(tail[it]) } ?: return null
+        // Node's own frames must be in the block; a bare two-line "Error + trailer" is a
+        // plugin printing its version right after a caught error.
+        val frames = (head + 1 until trailer).map { tail[it] }
+        val nodeFrames = frames.count { NODE_INTERNAL.matches(it) }
+        val pluginFrames = frames.count { it.trimStart().startsWith("at ") }
+        if (nodeFrames == 0 && pluginFrames == 0) return null
+        return tail[head]
+    }
+
+    /** True for Node's module-loader block, which names a package but not a running module. */
+    fun isRequireFailure(tail: List<String>): Boolean = tail.any { NODE_REQUIRE_STACK.matches(it) }
+
+    fun redact(line: String): String = TOKEN.replace(line, "•••")
 
     /**
      * [readyAt] and [now] share one monotonic clock (elapsedRealtime); [readyAt] is null when
@@ -141,7 +261,13 @@ object CrashClassifier {
         // V8 running out of heap while starting or just after counts like a DSH fatal (#75);
         // later it stays KILLED, which restarts. Neither names a culprit plugin.
         val early = exitCode != 0 && (readyAt == null || now - readyAt <= EARLY_WINDOW_MS)
-        val fatal = tail.firstOrNull(::isFatal) ?: tail.firstOrNull { HEAP_OOM.matches(it) }?.takeIf { early }
+        val dshFatal = tail.firstOrNull(::isFatal)
+        // A plugin's uncaught throw kills Node with no `dsh:` marker at all. Treat it as
+        // fatal only when the process really died: a non-zero exit *and* Node's trailer.
+        // A plugin that logged a caught error and kept running has no trailer and stays
+        // out of this branch, so it never counts toward safe mode.
+        val nodeFatal = if (exitCode != 0) nodeUncaught(tail) else null
+        val fatal = dshFatal ?: nodeFatal ?: tail.firstOrNull { HEAP_OOM.matches(it) }?.takeIf { early }
         val launch = if (readyAt == null && exitCode != 0) tail.firstOrNull {
             EXEC_FAILED.matches(it) || (!directEngine && PROOT_EXEC_FAILED.matches(it)) ||
                 (directEngine && DIRECT_FAILED.any { pattern -> pattern.matches(it) })
@@ -163,6 +289,7 @@ object CrashClassifier {
             stackPackage(line)?.let { if (!it.startsWith(SHIPPED_SCOPE)) suspects += it }
             DIAGNOSTICS.find(line)?.let { diagnostics = it.groupValues[1] }
         }
+        val attributions = attribute(suspects.toList(), emptyList())
         return RunFailure(
             kind = kind,
             exitCode = exitCode,
@@ -175,7 +302,46 @@ object CrashClassifier {
             suspects = suspects.toList(),
             diagnostics = diagnostics,
             upSeconds = readyAt?.let { ((now - it).coerceAtLeast(0)) / 1000 },
+            attributions = attributions,
         )
+    }
+
+    /**
+     * Pair each suspect with what we actually know about it.
+     *
+     * [recent] comes from the controller (bundles changed since the last good run) and is
+     * the weaker evidence: it says "this changed", not "this crashed". A package in both
+     * lists is [SuspectSource.STACK_AND_RECENT] — the only case worth calling a culprit.
+     *
+     * Versions come from [versionOf]; a package whose manifest cannot be read keeps a null
+     * version and the briefing says "version unknown" instead of inventing one.
+     */
+    fun attribute(suspects: List<String>, recent: List<String>): List<SuspectAttribution> {
+        val recentSet = recent.toSet()
+        return suspects.map { name ->
+            SuspectAttribution(
+                name = name,
+                version = null,
+                source = if (name in recentSet) SuspectSource.STACK_AND_RECENT else SuspectSource.STACK,
+            )
+        } + recent.filter { it !in suspects }.map { name ->
+            SuspectAttribution(name = name, version = null, source = SuspectSource.RECENT_CHANGE)
+        }
+    }
+
+    /**
+     * Read `version` out of `<root>/<package path>/package.json`.
+     *
+     * Deliberately swallows everything: a missing file, a half-written manifest during an
+     * install, a pnpm virtual-store layout we do not recognise. A recovery path that throws
+     * while *explaining* a crash is worse than one that says "version unknown".
+     */
+    fun versionOf(root: File, name: String): String? = try {
+        val manifest = File(File(root, "node_modules/$name"), "package.json")
+        if (!manifest.isFile) null
+        else Regex("\"version\"\\s*:\\s*\"([^\"]+)\"").find(manifest.readText())?.groupValues?.get(1)
+    } catch (_: Exception) {
+        null
     }
 
     /** `…/profiles/web/node_modules/[.pnpm/x@1/node_modules/]<pkg>/…` → `<pkg>` (scoped names kept whole). */

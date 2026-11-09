@@ -321,11 +321,7 @@ object SafeMode {
                 )
             }
             // l10n:keep agent repair briefing
-            val suspects = if (f.kind == FailureKind.LAUNCH_FAILED) emptyList() else f.suspects.map { "`$it`（崩溃信息里出现）" } +
-                // l10n:keep agent repair briefing
-                f.recent.filter { it !in f.suspects }.map { "`$it`（上次正常运行后新启用或升级过）" }
-            // l10n:keep agent repair briefing
-            appendLine("- 可疑插件：" + if (suspects.isEmpty()) "没能自动判断" else suspects.joinToString("、"))
+            appendLine("- 可疑插件：" + renderSuspects(f))
             // l10n:keep agent repair briefing
             appendLine("- 失败前后的输出（token 已打码）：`$GUEST_DIR/last-failure.log`")
             // l10n:keep agent repair briefing
@@ -439,6 +435,33 @@ object SafeMode {
         appendLine("- 不要删 `/root/.dsh/sessions`、`/root/.dsh/storages`、`/root/.dsh/.credentials.yaml`。")
         // l10n:keep agent repair briefing
         appendLine("- 诊断文件和日志里可能有密钥，不要整段贴给用户。")
+    }
+
+    /**
+     * The suspects line: evidence first, guesswork last.
+     *
+     * `attributions` keeps what the classifier actually knew, so a package the stack named
+     * reads differently from one that merely appeared since the last good run. The old code
+     * flattened both into one list, which let a fresh install look as guilty as a stack hit.
+     */
+    private fun renderSuspects(f: RunFailure): String {
+        if (f.kind == FailureKind.LAUNCH_FAILED) return "没能自动判断"
+        val known = f.attributions
+        val rows = if (known.isEmpty()) {
+            // Older persisted failures carry no attributions; keep the old, weaker wording.
+            f.suspects.map { "`$it`（崩溃信息里出现）" } +
+                f.recent.filter { it !in f.suspects }.map { "`$it`（上次正常运行后新启用或升级过）" }
+        } else {
+            known.map { a ->
+                val version = a.version?.let { v -> " $v" } ?: "（版本未知）"
+                when (a.source) {
+                    SuspectSource.STACK -> "`${a.name}`$version（崩溃栈里点到）"
+                    SuspectSource.STACK_AND_RECENT -> "`${a.name}`$version（崩溃栈里点到，且最近变过）"
+                    SuspectSource.RECENT_CHANGE -> "`${a.name}`$version（仅最近变过，未被崩溃栈点名）"
+                }
+            }
+        }
+        return if (rows.isEmpty()) "没能自动判断" else rows.joinToString("、")
     }
 
     private fun kindText(f: RunFailure): String = when (f.kind) {

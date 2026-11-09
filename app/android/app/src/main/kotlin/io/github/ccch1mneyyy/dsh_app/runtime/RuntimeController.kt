@@ -874,6 +874,24 @@ class RuntimeController private constructor(private val app: Context) : DshProce
                 val array = json.optJSONArray(name) ?: return emptyList()
                 return List(array.length()) { array.optString(it) }
             }
+            // Persisted attributions: a later read must not lose the version/evidence a
+            // previous run already worked out, or the briefing would downgrade a known
+            // culprit to "changed recently" after an app restart.
+            val attributions = json.optJSONArray("attributions")?.let { array ->
+                List(array.length()) { i ->
+                    val o = array.optJSONObject(i) ?: return@List null
+                    val source = SuspectSource.entries.firstOrNull { it.wire == o.optString("source") }
+                        ?: SuspectSource.STACK
+                    SuspectAttribution(
+                        name = o.optString("name"),
+                        version = if (o.isNull("version")) null else o.optString("version"),
+                        source = source,
+                    )
+                }.filterNotNull()
+            } ?: emptyList()
+            val suspectVersions = json.optJSONObject("suspectVersions")?.let { o ->
+                o.keys().asSequence().associateWith { o.optString(it) }
+            } ?: emptyMap()
             RunFailure(
                 kind = kind,
                 exitCode = json.optInt("exitCode"),
@@ -885,6 +903,8 @@ class RuntimeController private constructor(private val app: Context) : DshProce
                 recent = list("recent"),
                 diagnostics = if (json.isNull("diagnostics")) null else json.optString("diagnostics"),
                 upSeconds = if (json.isNull("upSeconds")) null else json.optLong("upSeconds"),
+                suspectVersions = suspectVersions,
+                attributions = attributions,
             )
         }
     } catch (_: Exception) {
@@ -1004,7 +1024,7 @@ class RuntimeController private constructor(private val app: Context) : DshProce
                 restartNow("with compatible launch")
                 return
             }
-            if (!runSafe) f = f.copy(recent = recentChanges())
+            if (!runSafe) f = f.copy(recent = recentChanges()).withVersionAttribution(installer.rootfs)
             val outcome = SafePolicy.onFailure(safeState, strikes, f, autoSafe(),
                 AppStrings.get(app, R.string.safe_probation_failed), AppStrings.get(app, R.string.safe_auto_started))
             val now = SystemClock.elapsedRealtime()
