@@ -1542,7 +1542,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     // its own key.
     final centerSelection =
         (sessionId == null ? pendingModel : chat?.model) ?? modelCatalog?.defaultSelection;
-    final centerModel = modelShortName(centerSelection, modelCatalog);
     final newFolder = sessionId == null
         ? ref.watch(drawerViewProvider).byId(ref.watch(pendingSessionFolderProvider))
         : null;

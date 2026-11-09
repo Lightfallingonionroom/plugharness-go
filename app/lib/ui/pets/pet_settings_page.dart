@@ -17,7 +17,6 @@ import '../common/expand_reveal.dart';
 import '../settings/settings_widgets.dart';
 import '../theme/app_icons.dart';
 import '../shell/page_frame.dart';
-import 'custom_pet_manager.dart';
 import 'overlay_settings_tile.dart';
 import 'pet_picker.dart';
 

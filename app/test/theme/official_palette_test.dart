@@ -7,12 +7,6 @@
 //
 // Values are checked against the official table, not against each other.
 
-import 'package:dsh_app/ui/theme/accent.dart';
-import 'package:dsh_app/ui/theme/chatgpt_palette.dart';
-import 'package:dsh_app/ui/theme/oklch.dart';
-import 'package:dsh_app/ui/theme/palette.dart';
-import 'package:dsh_app/ui/theme/semantic_colors.dart';
-import 'package:dsh_app/ui/theme/surfaces.dart';
 import 'package:dsh_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
