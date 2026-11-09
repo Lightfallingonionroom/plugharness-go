@@ -15,6 +15,7 @@ import '../../../l10n/l10n.dart';
 import '../../../state/appearance_state.dart';
 import '../../../state/settings_state.dart';
 import '../../common/expand_reveal.dart';
+import '../../common/pressable.dart';
 import '../../shell/page_frame.dart';
 import '../../theme/app_icons.dart';
 import '../../theme/theme.dart';
@@ -122,6 +123,14 @@ abstract final class PickerGrid {
   static const gap = 12.0;
   static const labelGap = 8.0;
 
+  /// The name under a choice: the accent and heavier when chosen.
+  static TextStyle labelStyle(BuildContext context, {required bool selected}) {
+    final theme = Theme.of(context);
+    return theme.textTheme.labelMedium!.copyWith(
+      color: selected ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant,
+      fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+    );
+  }
 }
 
 // ── 外观模式 ─────────────────────────────────────────────────────────────

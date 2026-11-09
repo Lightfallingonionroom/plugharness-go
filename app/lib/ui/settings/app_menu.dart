@@ -7,7 +7,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/theme.dart';
-import 'settings_widgets.dart' show SettingsMetrics, settingsTitleStyle, rowSplash;
+import 'settings_widgets.dart' show SettingsMetrics, settingsTitleStyle;
 
 /// 菜单的度量。改这里,`test/settings/app_menu_test.dart` 一起改。
 abstract final class AppMenuMetrics {
