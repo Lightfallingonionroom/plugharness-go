@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
+import '../../runtime/runtime_bridge.dart';
 import '../../state/engine_control.dart';
 import '../../state/hosts_state.dart';
+import '../../state/plugin_compat.dart';
 import '../../state/plugins_state.dart';
 import '../common/app_dialog.dart';
 import '../common/app_sheet.dart';
@@ -67,9 +69,76 @@ Future<PluginInstallJob?> installMarketEntry(BuildContext context, MarketEntry e
   if (marketNeedsApp(entry, container.read(appVersionProvider)) != null) return null;
   if (!await confirmMarketRisk(context, entry) || !context.mounted) return null;
   if (!identical(container.read(pluginHostProvider), host)) return null;
+  // #3: the runtime contract, before pnpm touches node_modules. A hard conflict
+  // stops here with a readable reason; an unknown one is shown but does not block.
+  if (!await confirmPluginCompatibility(context, entry)) return null;
+  if (!context.mounted || !identical(container.read(pluginHostProvider), host)) return null;
   return runPluginInstall(context, marketInstallRequest(entry));
 }
 
+/// #3: the pre-install compatibility gate.
+///
+/// Runs before anything is written: [checkPluginCompatibility] reads only the market
+/// index's `engines.dsh` and the runtime's own manifest, so a conflict costs the user
+/// nothing. Three outcomes, and the copy for each:
+///
+///   * **blocked** — a dialog names the item, what the plugin wants and what this runtime
+///     is. Returns false: the install stops here.
+///   * **unverified** — a dialog says which item could not be checked and offers
+///     「仍然安装」. The issue asks for a warning, not a refusal.
+///   * **ok / nothing declared** — straight through, no dialog (a plugin that declares
+///     nothing is the pre-convention norm, and every one of them would otherwise nag).
+Future<bool> confirmPluginCompatibility(BuildContext context, MarketEntry entry) async {
+  final container = ProviderScope.containerOf(context, listen: false);
+  final status = container.read(localRuntimeProvider).status;
+  final report = checkPluginCompatibility(
+    plugin: entry.plugin,
+    version: entry.plugin.versions.isEmpty ? null : entry.plugin.latest,
+    dshVersion: status.dshVersion,
+    nodeVersion: status.nodeVersion,
+  );
+  final locale = Localizations.localeOf(context).languageCode;
+
+  // Nothing to say: install straight away.
+  if (!report.blocked && !report.unverified) return true;
+
+  final l10n = context.l10n;
+  final title = report.blocked ? l10n.pluginsCompatBlockedTitle : l10n.pluginsCompatUnverifiedTitle;
+  final body = describeCompatibility(report, locale: locale);
+
+  final proceed = await showDialog<bool>(
+    context: context,
+    builder: (dialog) => AlertDialog(
+      title: Text(title),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(body),
+          const SizedBox(height: 12),
+          for (final item in report.items)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Text(
+                '${item.label}: ${item.declared ?? '—'}  ·  ${l10n.pluginsCompatRuntimeIs} ${item.actual ?? '—'}',
+                style: Theme.of(dialog).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(dialog).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+        ],
+      ),
+      actions: report.blocked
+          ? [TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(l10n.commonOk))]
+          : [
+              TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(l10n.commonCancel)),
+              FilledButton(onPressed: () => Navigator.pop(dialog, true), child: Text(l10n.pluginsCompatInstallAnyway)),
+            ],
+    ),
+  );
+  // A blocked report has no way to say yes: dismissing the dialog is a no either way.
+  return report.blocked ? false : (proceed ?? false);
+}
 /// Replaces the installed copy with [entry]'s pinned version: the risk first
 /// (when there is one to confirm), then what an update costs.
 Future<void> updateMarketEntry(BuildContext context, MarketEntry entry, {String? from}) async {
@@ -85,7 +154,9 @@ Future<void> updateMarketEntry(BuildContext context, MarketEntry entry, {String?
     from: from,
     to: entry.plugin.latest.version,
   );
-  if (ok && context.mounted && identical(container.read(pluginHostProvider), host)) {
+  // The new version's contract may differ from the one already installed.
+  final compatible = ok && await confirmPluginCompatibility(context, entry);
+  if (compatible && context.mounted && identical(container.read(pluginHostProvider), host)) {
     await runPluginInstall(context, marketInstallRequest(entry, replace: true));
   }
 }

@@ -836,5 +836,9 @@
         "type": "int"
       }
     }
-  }
+  },
+  "pluginsCompatBlockedTitle": "这个插件和当前运行时不兼容",
+  "pluginsCompatUnverifiedTitle": "兼容性未验证",
+  "pluginsCompatRuntimeIs": "本机",
+  "pluginsCompatInstallAnyway": "仍然安装"
 }

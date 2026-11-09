@@ -371,5 +371,9 @@
         "type": "int"
       }
     }
-  }
+  },
+  "pluginsCompatBlockedTitle": "This plugin does not fit this runtime",
+  "pluginsCompatUnverifiedTitle": "Compatibility not verified",
+  "pluginsCompatRuntimeIs": "this device",
+  "pluginsCompatInstallAnyway": "Install anyway"
 }
