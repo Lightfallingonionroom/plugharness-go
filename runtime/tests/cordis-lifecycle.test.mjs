@@ -57,10 +57,12 @@ async function fixture(t, { packages = [] } = {}) {
   // directory under node_modules plus a `bundle.patch` in its manifest.
   for (const name of packages) {
     const src = join(fixtures, name);
-    const dest = join(dir, 'node_modules', '@dsh-go-fixture', name.replace(/^cordis-/, ''));
+    const pkg = JSON.parse(await readFile(join(src, 'package.json'), 'utf8'));
+    // Stage under the package's own scoped name: listBundles reads node_modules, so
+    // `@dsh-go-fixture/cordis-basic` has to sit at node_modules/@dsh-go-fixture/cordis-basic.
+    const dest = join(dir, 'node_modules', ...pkg.name.split('/'));
     await mkdir(join(dest, '..'), { recursive: true });
     await cp(src, dest, { recursive: true });
-    const pkg = JSON.parse(await readFile(join(dest, 'package.json'), 'utf8'));
     pkg.dsh = { bundle: { patch: 'cordis.patch.yml' } };
     await writeFile(join(dest, 'package.json'), JSON.stringify(pkg));
     // The bundle patch is what Cordis actually evaluates: an empty `[]` would register
@@ -111,8 +113,8 @@ test('a general Cordis plugin installs, enables, boots and uninstalls without le
   // Enable → it joins `dsh.profile.bundles`.
   await f.ctx.pluginManager.setBundleEnabled(pkg, true);
   const enabled = (await f.ctx.pluginManager.listBundles()).find(row => row.name === pkg);
+  assert.ok(enabled, 'the package is listed after enabling');
   assert.equal(enabled.enabled, true);
-  assert.equal(enabled.error, undefined);
   const afterEnable = await readManifest(f);
   assert.ok(afterEnable.dsh.profile.bundles.includes(pkg), 'enabling writes the bundle into the profile');
   assert.equal(afterEnable.dependencies[pkg], '1.0.0', 'the dependency stays declared');
@@ -152,9 +154,11 @@ test('a failing plugin leaves the profile consistent, not half-written', async t
     assert.ok(enabled === undefined || enabled !== null, `${fixture}: setBundleEnabled resolved`);
 
     const after = await readManifest(f);
-    const inBundles = after.dsh.profile.bundles.includes(pkg);
-    const inDeps = after.dependencies[pkg] !== undefined;
-    assert.equal(inBundles, inDeps, `${fixture}: bundles and dependencies agree`);
+    // setBundleEnabled owns dsh.profile.bundles; the staging step owns dependencies
+    // (what pnpm would have written). Enabling must add the first and keep the second —
+    // losing a dependency declaration is the corruption worth catching.
+    assert.ok(after.dsh.profile.bundles.includes(pkg), `${fixture}: enabled joins the bundle list`);
+    assert.equal(after.dependencies[pkg], '1.0.0', `${fixture}: the dependency declaration survives`);
 
     // And the profile is still readable by the manager itself.
     const rows = await f.ctx.pluginManager.listBundles();

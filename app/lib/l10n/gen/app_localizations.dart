@@ -24494,7 +24494,6 @@ abstract class L10n {
   /// **'仍然安装'**
   String get pluginsCompatInstallAnyway;
 
-
   /// No description provided for @plugslotsSurfaceComposerTools.
   ///
   /// In zh, this message translates to:
