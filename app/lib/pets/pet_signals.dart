@@ -21,6 +21,7 @@ import '../state/notify_state.dart' show FlagController, appForegroundProvider, 
 import '../state/run_pulse.dart';
 import '../state/session_attention_state.dart';
 import '../ui/chat/run_info.dart';
+import 'custom_pets.dart' show FilePetBundle;
 import 'overlay_channel.dart' show petOverlayChannelProvider;
 import 'pet_mood.dart';
 import 'pet_overlay_actions.dart';

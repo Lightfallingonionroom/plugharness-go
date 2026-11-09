@@ -208,6 +208,7 @@ class _PetPickerState extends ConsumerState<PetPicker> {
                 ],
               ],
             ),
+          ],
         ],
       ),
     );

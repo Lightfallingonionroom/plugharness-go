@@ -33,16 +33,16 @@ const _officialDark = <String, int>{
 void main() {
   test('the dark neutral scale is the official gray ramp, with no blue cast', () {
     final n = NeutralTones.defaults;
-    expect(n.night, const Color(_officialDark['surface']!));
+    expect(n.night, Color(_officialDark['surface']!));
     expect(n.nightLowest, const Color(0xFF171717), reason: 'one step below the sidebar');
-    expect(n.nightContainer, const Color(_officialDark['surfaceElevated']!));
-    expect(n.paper, const Color(_officialDark['text']!));
-    expect(n.paperMuted, const Color(_officialDark['textSecondary']!));
-    expect(n.paperFaint, const Color(_officialDark['textTertiary']!));
-    expect(n.sheetDark, const Color(_officialDark['surfaceElevated']!));
+    expect(n.nightContainer, Color(_officialDark['surfaceElevated']!));
+    expect(n.paper, Color(_officialDark['text']!));
+    expect(n.paperMuted, Color(_officialDark['textSecondary']!));
+    expect(n.paperFaint, Color(_officialDark['textTertiary']!));
+    expect(n.sheetDark, Color(_officialDark['surfaceElevated']!));
 
     // No blue cast: R == G == B on every neutral (the old palette was blue-tinted).
-    for (final (name, c) in {
+    final neutrals = {
       'night': n.night,
       'nightTop': n.nightTop,
       'nightBottom': n.nightBottom,
@@ -53,7 +53,10 @@ void main() {
       'paperFaint': n.paperFaint,
       'ruleDark': n.ruleDark,
       'sheetDark': n.sheetDark,
-    }.entries) {
+    };
+    for (final entry in neutrals.entries) {
+      final name = entry.key;
+      final c = entry.value;
       expect(c.r, c.g, reason: '$name must be neutral (R == G): $c');
       expect(c.g, c.b, reason: '$name must be neutral (G == B): $c');
       expect(Oklch.fromColor(c).c, lessThan(0.002), reason: '$name must be achromatic: $c');
@@ -77,8 +80,8 @@ void main() {
     expect(AppAccent.preset(null).id, 'graphite');
     expect(AppAccent.preset('bogus').id, 'graphite');
     const g = AppAccent.graphite;
-    expect(g.seedDark, const Color(_officialDark['backgroundPrimarySolid']!));
-    expect(g.onSeedDark, const Color(_officialDark['backgroundPrimarySolidText']!));
+    expect(g.seedDark, Color(_officialDark['backgroundPrimarySolid']!));
+    expect(g.onSeedDark, Color(_officialDark['backgroundPrimarySolidText']!));
     expect(g.tintChroma, 0, reason: 'zero chroma: the neutrals are not tinted');
   });
 
