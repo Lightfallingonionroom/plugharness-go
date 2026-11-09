@@ -11314,6 +11314,33 @@ class L10nEn extends L10n {
   String get phoneAccentGraphite => 'Slate';
 
   @override
+  String get phoneAccentBlue => 'Blue';
+
+  @override
+  String get phoneAccentCyan => 'Cyan';
+
+  @override
+  String get phoneAccentGreen => 'Green';
+
+  @override
+  String get phoneAccentLime => 'Lime';
+
+  @override
+  String get phoneAccentYellow => 'Yellow';
+
+  @override
+  String get phoneAccentOrange => 'Orange';
+
+  @override
+  String get phoneAccentPink => 'Pink';
+
+  @override
+  String get phoneAccentMagenta => 'Magenta';
+
+  @override
+  String get phoneAccentPurple => 'Purple';
+
+  @override
   String get phoneAccentCustom => 'Custom';
 
   @override

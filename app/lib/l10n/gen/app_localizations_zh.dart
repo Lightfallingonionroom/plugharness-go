@@ -2568,6 +2568,59 @@ class L10nZh extends L10n {
   String get botsPetNone => '不显示';
 
   @override
+  String get botsPetCustom => '自定义宠物';
+
+  @override
+  String get botsPetCustomName => '给宠物起个名字';
+
+  @override
+  String get botsPetAddImage => '从图片添加宠物';
+
+  @override
+  String get botsPetAddImageHint => '支持相册图片，所有状态先使用同一形象';
+
+  @override
+  String get botsPetImportFailed => '图片无法导入，请换一张较小的常见格式图片';
+
+  @override
+  String get botsPetDeleteConfirm => '删除这个自定义宠物？只删除导入的形象，不影响对话。';
+
+  @override
+  String get botsPetAddPack => '导入完整宠物包';
+
+  @override
+  String get botsPetAddPackHint => 'ZIP 内含 pack.json 和动作图片，可展示不同状态';
+
+  @override
+  String get botsPetPackImportFailed => '宠物包无效。请检查 pack.json、图片和 ZIP 结构。';
+
+  @override
+  String get sceneAccounts => '场景账户';
+
+  @override
+  String get sceneAccountsHint => '为不同用途保存主机、默认模型和宠物配置';
+
+  @override
+  String get sceneDefaultAccount => '主账户';
+
+  @override
+  String get sceneCreate => '新建场景账户';
+
+  @override
+  String get sceneAdmin => '主账户 · 配置场景';
+
+  @override
+  String get sceneConfigOnly => '配置场景';
+
+  @override
+  String sceneDeleteConfirm(String name) {
+    return '删除场景“$name”？只删除这份配置，不删除会话、文件或云端账号。';
+  }
+
+  @override
+  String get sceneIsolationNotice => '当前版本切换的是应用配置，不是完整数据沙箱。会话、插件进程和凭据的隔离仍需单独实现。';
+
+  @override
   String get botsPets => '宠物';
 
   @override
@@ -3331,6 +3384,18 @@ class L10nZh extends L10n {
 
   @override
   String get diagnosticsForAiFailed => '写不进去：本机运行时还没装好';
+
+  @override
+  String get chatGoodResponse => '好评';
+
+  @override
+  String get chatBadResponse => '差评';
+
+  @override
+  String get chatReadAloud => '朗读';
+
+  @override
+  String get chatReadAloudUnavailable => '朗读暂未接入';
 
   @override
   String get chatBackgroundTaskNotice => '后台任务通知';
@@ -4568,6 +4633,18 @@ class L10nZh extends L10n {
 
   @override
   String get commonViewLogs => '查看日志';
+
+  @override
+  String get commonRestore => '恢复';
+
+  @override
+  String get commonReset => '恢复默认';
+
+  @override
+  String get commonCompact => '紧凑布局';
+
+  @override
+  String get commonNone => '没有显示的功能';
 
   @override
   String commonItemCount(int count) {
@@ -10694,6 +10771,33 @@ class L10nZh extends L10n {
 
   @override
   String get phoneAccentGraphite => '石墨';
+
+  @override
+  String get phoneAccentBlue => '蓝色';
+
+  @override
+  String get phoneAccentCyan => '青色';
+
+  @override
+  String get phoneAccentGreen => '绿色';
+
+  @override
+  String get phoneAccentLime => '青柠绿';
+
+  @override
+  String get phoneAccentYellow => '黄色';
+
+  @override
+  String get phoneAccentOrange => '橙色';
+
+  @override
+  String get phoneAccentPink => '粉色';
+
+  @override
+  String get phoneAccentMagenta => '洋红色';
+
+  @override
+  String get phoneAccentPurple => '紫色';
 
   @override
   String get phoneAccentCustom => '自定义';
@@ -19075,6 +19179,9 @@ class L10nZh extends L10n {
 
   @override
   String get viewEmptySubtitle => '今天想做点什么？';
+
+  @override
+  String get viewEmptyTitle => '有什么可以帮你？';
 
   @override
   String get viewEmptyStarting => '正在启动引擎…';
