@@ -72,6 +72,15 @@ class AppAccent {
         'turquoise' => appL10n.phoneAccentTurquoise,
         'amber' => appL10n.phoneAccentAmber,
         'graphite' => appL10n.phoneAccentGraphite,
+        'official_blue' => appL10n.phoneAccentBlue,
+        'official_cyan' => appL10n.phoneAccentCyan,
+        'official_green' => appL10n.phoneAccentGreen,
+        'official_lime' => appL10n.phoneAccentLime,
+        'official_yellow' => appL10n.phoneAccentYellow,
+        'official_orange' => appL10n.phoneAccentOrange,
+        'official_pink' => appL10n.phoneAccentPink,
+        'official_magenta' => appL10n.phoneAccentMagenta,
+        'official_purple' => appL10n.phoneAccentPurple,
         _ => appL10n.phoneAccentCustom,
       };
 
@@ -260,6 +269,217 @@ class AppAccent {
 
   /// 设置页里的顺序。
   static const presets = [mist, daiqing, dusk, turquoise, amber, graphite];
+
+  /// ChatGPT 官方十色强调色板（2026-11-09 从 App 截图逐像素实测）。
+  ///
+  /// 每色两套值：`seed` 浅色模式、`seedDark` 深色模式——官方在两种模式下
+  /// 用的是**不同**的 hex，不是同一个种子自动推导。
+  ///
+  /// 其余角色（pressed / container / bubble / glow / haze ...）由
+  /// [derive] 的 OKLCH 规则按 seed 推出，保证对比度守卫仍然成立。
+  ///
+  /// 第十色 white/black 是"反色"：深色模式白、浅色模式黑——即 [graphite]。
+  static const official = <AppAccent>[
+    _officialBlue,
+    _officialCyan,
+    _officialGreen,
+    _officialLime,
+    _officialYellow,
+    _officialOrange,
+    _officialPink,
+    _officialMagenta,
+    _officialPurple,
+    graphite,
+  ];
+
+  static const _officialBlue = AppAccent(
+    id: 'official_blue',
+    seed: Color(0xFF3566ED),
+    pressed: Color(0xFF2A55CC),
+    container: Color(0xFFDDE5FD),
+    onContainer: Color(0xFF14265C),
+    bubble: Color(0xFFD8E2FC),
+    glow: Color(0xFF9DB8F8),
+    seedDark: Color(0xFF3463E6),
+    pressedDark: Color(0xFF2B54C8),
+    onSeedDark: Color(0xFF0A1430),
+    containerDark: Color(0xFF2A3557),
+    onContainerDark: Color(0xFFDCE4FB),
+    bubbleDark: Color(0xFF242C42),
+    glowDark: Color(0xFF4A67A8),
+    tintHue: 225,
+    tintChroma: 0.9,
+    haze: Color(0xFFC7D2F0),
+    hazeDark: Color(0xFF3F4C6B),
+  );
+
+  static const _officialCyan = AppAccent(
+    id: 'official_cyan',
+    seed: Color(0xFF0BB4FD),
+    pressed: Color(0xFF0991CE),
+    container: Color(0xFFD6F1FE),
+    onContainer: Color(0xFF053849),
+    bubble: Color(0xFFD1EEFC),
+    glow: Color(0xFF8AD8FB),
+    seedDark: Color(0xFF01ABF5),
+    pressedDark: Color(0xFF0190CF),
+    onSeedDark: Color(0xFF021E2A),
+    containerDark: Color(0xFF17414F),
+    onContainerDark: Color(0xFFD5F0FC),
+    bubbleDark: Color(0xFF1B333D),
+    glowDark: Color(0xFF2A6E8A),
+    tintHue: 200,
+    tintChroma: 0.95,
+    haze: Color(0xFFBFE6F5),
+    hazeDark: Color(0xFF2F5566),
+  );
+
+  static const _officialGreen = AppAccent(
+    id: 'official_green',
+    seed: Color(0xFF0EBDA3),
+    pressed: Color(0xFF0B9A85),
+    container: Color(0xFFD5F5EF),
+    onContainer: Color(0xFF04423A),
+    bubble: Color(0xFFD0F1EB),
+    glow: Color(0xFF88DFD1),
+    seedDark: Color(0xFF05B499),
+    pressedDark: Color(0xFF049882),
+    onSeedDark: Color(0xFF031F1B),
+    containerDark: Color(0xFF16443E),
+    onContainerDark: Color(0xFFD4F3ED),
+    bubbleDark: Color(0xFF1A3431),
+    glowDark: Color(0xFF277A6D),
+    tintHue: 172,
+    tintChroma: 0.9,
+    haze: Color(0xFFBFE9E2),
+    hazeDark: Color(0xFF2C5852),
+  );
+
+  static const _officialLime = AppAccent(
+    id: 'official_lime',
+    seed: Color(0xFFB9D814),
+    pressed: Color(0xFF99B210),
+    container: Color(0xFFF3F9D2),
+    onContainer: Color(0xFF3D4705),
+    bubble: Color(0xFFEFF6CD),
+    glow: Color(0xFFD8E98A),
+    seedDark: Color(0xFFAFCF0A),
+    pressedDark: Color(0xFF94AF08),
+    onSeedDark: Color(0xFF202602),
+    containerDark: Color(0xFF454E18),
+    onContainerDark: Color(0xFFF1F7CE),
+    bubbleDark: Color(0xFF2E331B),
+    glowDark: Color(0xFF7A8A2E),
+    tintHue: 68,
+    tintChroma: 0.8,
+    haze: Color(0xFFE9EDBF),
+    hazeDark: Color(0xFF565C33),
+  );
+
+  static const _officialYellow = AppAccent(
+    id: 'official_yellow',
+    seed: Color(0xFFFECD3E),
+    pressed: Color(0xFFD9AE31),
+    container: Color(0xFFFFF6DC),
+    onContainer: Color(0xFF4D3B08),
+    bubble: Color(0xFFFCF2D6),
+    glow: Color(0xFFF7DE94),
+    seedDark: Color(0xFFF4C335),
+    pressedDark: Color(0xFFD2A72B),
+    onSeedDark: Color(0xFF2A1F04),
+    containerDark: Color(0xFF52441C),
+    onContainerDark: Color(0xFFFFF4D8),
+    bubbleDark: Color(0xFF39321E),
+    glowDark: Color(0xFF9C8137),
+    tintHue: 48,
+    tintChroma: 0.8,
+    haze: Color(0xFFF2E5C4),
+    hazeDark: Color(0xFF615436),
+  );
+
+  static const _officialOrange = AppAccent(
+    id: 'official_orange',
+    seed: Color(0xFFFE8066),
+    pressed: Color(0xFFD96C56),
+    container: Color(0xFFFFE4DE),
+    onContainer: Color(0xFF4D1A10),
+    bubble: Color(0xFFFCDFD8),
+    glow: Color(0xFFF5AE9C),
+    seedDark: Color(0xFFF57B63),
+    pressedDark: Color(0xFFD26853),
+    onSeedDark: Color(0xFF2A0D07),
+    containerDark: Color(0xFF543028),
+    onContainerDark: Color(0xFFFFE3DC),
+    bubbleDark: Color(0xFF3A2723),
+    glowDark: Color(0xFF9C5C4C),
+    tintHue: 12,
+    tintChroma: 0.85,
+    haze: Color(0xFFF2D3C9),
+    hazeDark: Color(0xFF62463D),
+  );
+
+  static const _officialPink = AppAccent(
+    id: 'official_pink',
+    seed: Color(0xFFF970AA),
+    pressed: Color(0xFFD35F91),
+    container: Color(0xFFFFE2EE),
+    onContainer: Color(0xFF4D122C),
+    bubble: Color(0xFFFCDDE9),
+    glow: Color(0xFFF7A9C6),
+    seedDark: Color(0xFFF06CA4),
+    pressedDark: Color(0xFFCC5C8B),
+    onSeedDark: Color(0xFF2A0A18),
+    containerDark: Color(0xFF52283A),
+    onContainerDark: Color(0xFFFFE1EC),
+    bubbleDark: Color(0xFF39222C),
+    glowDark: Color(0xFF9A5573),
+    tintHue: 335,
+    tintChroma: 0.85,
+    haze: Color(0xFFF2CFDD),
+    hazeDark: Color(0xFF614252),
+  );
+
+  static const _officialMagenta = AppAccent(
+    id: 'official_magenta',
+    seed: Color(0xFFDB69DC),
+    pressed: Color(0xFFB857B9),
+    container: Color(0xFFFBE0FB),
+    onContainer: Color(0xFF491149),
+    bubble: Color(0xFFF7DBF7),
+    glow: Color(0xFFEBA0EB),
+    seedDark: Color(0xFFD366D4),
+    pressedDark: Color(0xFFB056B1),
+    onSeedDark: Color(0xFF280928),
+    containerDark: Color(0xFF502850),
+    onContainerDark: Color(0xFFFBDFFB),
+    bubbleDark: Color(0xFF372237),
+    glowDark: Color(0xFF8F5490),
+    tintHue: 300,
+    tintChroma: 0.85,
+    haze: Color(0xFFEDCBED),
+    hazeDark: Color(0xFF5C3F5C),
+  );
+
+  static const _officialPurple = AppAccent(
+    id: 'official_purple',
+    seed: Color(0xFFA15BFD),
+    pressed: Color(0xFF894CD7),
+    container: Color(0xFFEDE0FF),
+    onContainer: Color(0xFF2E1152),
+    bubble: Color(0xFFE8DBFB),
+    glow: Color(0xFFC9A6F7),
+    seedDark: Color(0xFF9C58F5),
+    pressedDark: Color(0xFF854AD1),
+    onSeedDark: Color(0xFF190829),
+    containerDark: Color(0xFF3D2A57),
+    onContainerDark: Color(0xFFECDFFF),
+    bubbleDark: Color(0xFF2F243D),
+    glowDark: Color(0xFF6F4E9C),
+    tintHue: 275,
+    tintChroma: 0.9,
+    haze: Color(0xFFDCCBF0),
+    hazeDark: Color(0xFF4E3D66),
+  );
 
   static const customId = 'custom';
   static const wallpaperId = 'wallpaper';

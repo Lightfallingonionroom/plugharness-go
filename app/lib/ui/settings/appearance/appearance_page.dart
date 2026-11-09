@@ -1,12 +1,12 @@
-// 设置 › 主题: light / dark, the palette (six presets,
-// a custom hue, the wallpaper), the feature tile style, the launcher icon (and a
-// picture shortcut) and the launch screen.
+// 设置 › 主题:明暗与强调色都是 ChatGPT 式的「行 + 弹出菜单」,后面依次是
+// 功能图标、桌面图标、启动图和壁纸。
 //
-// Every picker on the page shares one grid: previews start 16 from the card's
-// edges and sit 12 apart, labels 8 under them (TileStylePicker, AppIconPicker).
+// 明暗:一行「外观」+ 右侧当前值,点开三个选项(系统 / 浅色 / 深色)。
+// 强调色:一行「强调色」+ 右侧色点与名字,点开官方十色 + 自定义。
+// 其余选择器(TileStylePicker、AppIconPicker)仍共用一片网格:预览离卡片边
+// 16、列间 12、名字在预览下 8。
 
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,10 +15,10 @@ import '../../../l10n/l10n.dart';
 import '../../../state/appearance_state.dart';
 import '../../../state/settings_state.dart';
 import '../../common/expand_reveal.dart';
-import '../../common/pressable.dart';
 import '../../shell/page_frame.dart';
 import '../../theme/app_icons.dart';
 import '../../theme/theme.dart';
+import '../app_menu.dart';
 import '../settings_widgets.dart';
 import 'app_icon_picker.dart';
 import 'icon_shortcut_sheet.dart';
@@ -122,14 +122,6 @@ abstract final class PickerGrid {
   static const gap = 12.0;
   static const labelGap = 8.0;
 
-  /// The name under a choice: the accent and heavier when chosen.
-  static TextStyle labelStyle(BuildContext context, {required bool selected}) {
-    final theme = Theme.of(context);
-    return theme.textTheme.labelMedium!.copyWith(
-      color: selected ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant,
-      fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-    );
-  }
 }
 
 // ── 外观模式 ─────────────────────────────────────────────────────────────
@@ -142,267 +134,36 @@ class ThemeModePicker extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final modes = [
-      (ThemeMode.light, l10n.commonLight),
-      (ThemeMode.dark, l10n.commonDark),
-      (ThemeMode.system, l10n.commonFollowSystem),
-    ];
     final mode = ref.watch(settingsProvider.select((s) => s.themeMode));
-    final (light, dark) = _themesFor(ref.watch(accentProvider));
-    // The ring sits outside each preview, in [_ModeTile.room]: the padding
-    // and gap leave room for it, so previews land 16 from the card and 12
-    // apart, column for column with the tile styles below.
-    const room = _ModeTile.room;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        PickerGrid.inset - room,
-        PickerGrid.inset - room,
-        PickerGrid.inset - room,
-        PickerGrid.inset,
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          for (final (i, (m, label)) in modes.indexed) ...[
-            if (i > 0) const SizedBox(width: PickerGrid.gap - 2 * room),
-            Expanded(
-              child: _ModeTile(
-                label: label,
-                selected: mode == m,
-                light: m == ThemeMode.dark ? null : light,
-                dark: m == ThemeMode.light ? null : dark,
-                onTap: () =>
-                    unawaited(ThemeRevealHost.run(context, () => ref.read(settingsProvider.notifier).setThemeMode(m))),
-              ),
-            ),
-          ],
-        ],
-      ),
+    String labelOf(ThemeMode m) => switch (m) {
+      ThemeMode.light => l10n.commonLight,
+      ThemeMode.dark => l10n.commonDark,
+      ThemeMode.system => l10n.commonFollowSystem,
+    };
+    // ChatGPT 的做法:一行「外观」+ 右侧当前值,点开一列三个选项。
+    return AppMenuTile(
+      key: const ValueKey('theme-mode-menu'),
+      title: l10n.hubThemeLightDark,
+      value: Text(labelOf(mode)),
+      menuBuilder: (context, close) => [
+        for (final m in [ThemeMode.system, ThemeMode.light, ThemeMode.dark])
+          AppMenuItem(
+            label: labelOf(m),
+            selected: mode == m,
+            onTap: () {
+              close();
+              unawaited(ThemeRevealHost.run(context, () => ref.read(settingsProvider.notifier).setThemeMode(m)));
+            },
+          ),
+      ],
     );
   }
 }
 
-/// Light and dark themes of [accent], built once per palette.
-(ThemeData, ThemeData) _themesFor(AppAccent accent) {
-  final hit = _themeCache[accent];
-  if (hit != null) return hit;
-  if (_themeCache.length > 4) _themeCache.clear();
-  return _themeCache[accent] = (buildLightTheme(accent: accent), buildDarkTheme(accent: accent));
-}
 
-final _themeCache = <AppAccent, (ThemeData, ThemeData)>{};
 
-class _ModeTile extends StatelessWidget {
-  const _ModeTile({required this.label, required this.selected, required this.onTap, this.light, this.dark});
 
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
 
-  /// Null: that half isn't drawn ([dark] alone fills the tile).
-  final ThemeData? light;
-  final ThemeData? dark;
-
-  /// Ring stroke and the gap between the ring and the preview.
-  static const ring = 2.0;
-  static const gap = 3.0;
-
-  /// Room around the preview for the ring.
-  static const room = ring + gap;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    final quick = AppMotion.of(context, AppMotion.quick);
-    final fade = AppMotion.of(context, AppMotion.standard);
-    Widget preview(ThemeData? end) => end == null
-        ? const SizedBox.shrink()
-        : TweenAnimationBuilder<ThemeData>(
-            tween: ThemeDataTween(end: end),
-            duration: fade,
-            curve: AppMotion.std,
-            builder: (context, t, _) => CustomPaint(painter: _PhonePainter(t), size: Size.infinite),
-          );
-    return Semantics(
-      button: true,
-      selected: selected,
-      label: label,
-      excludeSemantics: true,
-      child: Pressable(
-        onTap: onTap,
-        child: Column(
-          children: [
-            AspectRatio(
-              aspectRatio: 0.8,
-              child: CustomPaint(
-                foregroundPainter: _RingPainter(
-                  color: scheme.primary.withValues(alpha: selected ? 1 : 0),
-                  width: ring,
-                  radius: AppShape.md + ring + gap,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(room),
-                  child: ClipRSuperellipse(
-                    key: ValueKey('theme-mode-$label'),
-                    borderRadius: AppShape.radiusMd,
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        if (light != null) preview(light),
-                        if (dark != null)
-                          ClipRect(clipper: light == null ? null : const _RightHalf(), child: preview(dark)),
-                        // Edge of the preview: a hairline, like a card.
-                        DecoratedBox(
-                          decoration: ShapeDecoration(
-                            shape: RoundedSuperellipseBorder(
-                              borderRadius: AppShape.radiusMd,
-                              side: BorderSide(color: scheme.outlineVariant, width: 0.5),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: PickerGrid.labelGap - room),
-            // A narrow column at a large text size: the name shrinks to fit
-            // rather than losing its end.
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: AnimatedDefaultTextStyle(
-                duration: quick,
-                style: PickerGrid.labelStyle(context, selected: selected),
-                child: Text(label, textAlign: TextAlign.center, maxLines: 1),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _RightHalf extends CustomClipper<Rect> {
-  const _RightHalf();
-
-  @override
-  Rect getClip(Size size) => Rect.fromLTWH(size.width / 2, 0, size.width / 2, size.height);
-
-  @override
-  bool shouldReclip(_RightHalf oldClipper) => false;
-}
-
-/// A ring just outside a rounded rect (the selected mode).
-class _RingPainter extends CustomPainter {
-  _RingPainter({required this.color, required this.width, required this.radius});
-
-  final Color color;
-  final double width;
-  final double radius;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (color.a == 0) return;
-    final rect = (Offset.zero & size).deflate(width / 2);
-    canvas.drawRSuperellipse(
-      RSuperellipse.fromRectAndRadius(rect, Radius.circular(radius - width / 2)),
-      Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = width
-        ..color = color,
-    );
-  }
-
-  @override
-  bool shouldRepaint(_RingPainter old) => old.color != color || old.width != width || old.radius != radius;
-}
-
-/// A tiny chat screen in [theme]: the page with its two glows, a header
-/// capsule, two reply lines, the user's bubble and the composer with its
-/// send key.
-class _PhonePainter extends CustomPainter {
-  _PhonePainter(this.theme);
-
-  final ThemeData theme;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final s = theme.extension<DshSurfaces>()!;
-    final scheme = theme.colorScheme;
-    final w = size.width;
-    final h = size.height;
-    final rect = Offset.zero & size;
-    canvas.drawRect(
-      rect,
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [s.backdropTop, s.backdropBottom],
-        ).createShader(rect),
-    );
-    void glow(Offset c, double r, Color color) {
-      final b = Rect.fromCircle(center: c, radius: r);
-      canvas.drawRect(b, Paint()..shader = RadialGradient(colors: [color, color.withValues(alpha: 0)]).createShader(b));
-    }
-
-    glow(Offset(w * 0.92, 0), h * 0.7, s.glowPrimary);
-    glow(Offset(0, h), h * 0.62, s.glowSecondary);
-
-    final glass = Paint()..color = s.chrome.fallbackFill;
-    final edge = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.5
-      ..color = s.chrome.hairline;
-    final unit = w / 100;
-
-    // Header capsule.
-    final header = RRect.fromRectAndRadius(
-      Rect.fromCenter(center: Offset(w / 2, 12 * unit), width: 44 * unit, height: 9 * unit),
-      const Radius.circular(99),
-    );
-    canvas
-      ..drawRRect(header, glass)
-      ..drawRRect(header, edge);
-
-    final ink = Paint()..color = scheme.onSurface.withValues(alpha: theme.brightness == Brightness.dark ? 0.26 : 0.2);
-    RRect bar(double x, double y, double width, double height) =>
-        RRect.fromRectAndRadius(Rect.fromLTWH(x, y, width, height), Radius.circular(height / 2));
-
-    // The user's bubble, then the reply under it.
-    final bubble = RRect.fromRectAndRadius(
-      Rect.fromLTWH(w - 12 * unit - 46 * unit, 30 * unit, 46 * unit, 15 * unit),
-      Radius.circular(6 * unit),
-    );
-    canvas.drawRRect(bubble, Paint()..color = s.userBubble);
-    canvas.drawRRect(bar(w - 12 * unit - 38 * unit, 35.5 * unit, 30 * unit, 4 * unit), ink);
-    canvas.drawRRect(bar(12 * unit, 54 * unit, 66 * unit, 4.5 * unit), ink);
-    canvas.drawRRect(bar(12 * unit, 63 * unit, 76 * unit, 4.5 * unit), ink);
-    canvas.drawRRect(bar(12 * unit, 72 * unit, 48 * unit, 4.5 * unit), ink);
-
-    // Composer with the send key: the one accent on the screen.
-    final composerH = 15 * unit;
-    final composer = RRect.fromRectAndRadius(
-      Rect.fromLTWH(8 * unit, h - 8 * unit - composerH, w - 16 * unit, composerH),
-      const Radius.circular(99),
-    );
-    canvas
-      ..drawRRect(composer, glass)
-      ..drawRRect(composer, edge);
-    final send = composer.outerRect;
-    canvas.drawCircle(
-      Offset(send.right - send.height / 2, send.center.dy),
-      send.height / 2 - 2.5 * unit,
-      Paint()..color = scheme.primary,
-    );
-  }
-
-  @override
-  bool shouldRepaint(_PhonePainter old) => old.theme != theme;
-}
 
 // ── 配色 ─────────────────────────────────────────────────────────────────
 
@@ -412,23 +173,10 @@ class _PhonePainter extends CustomPainter {
 class PalettePicker extends ConsumerWidget {
   const PalettePicker({super.key, this.custom = true});
 
-  /// The seventh slot, a hue wheel for a colour of one's own.
+  /// The last slot, an entry to a colour of one's own.
   final bool custom;
 
-  /// How tall the row is at this text size. It lays out with a
-  /// [LayoutBuilder], which a column measuring intrinsic heights (the
-  /// first-run pages) cannot ask: such a column gives it this height.
-  static double heightFor(BuildContext context) {
-    final label = PickerGrid.labelStyle(context, selected: true);
-    final line = MediaQuery.textScalerOf(context).scale(label.fontSize!) * (label.height ?? 1.35);
-    return 2 * PickerGrid.inset + disc + 2 * (ringGap + ringWidth) + PickerGrid.labelGap + line;
-  }
 
-  /// Swatch disc, its ring, and the widest a slot (disc + name) gets.
-  static const disc = 30.0;
-  static const ringGap = 2.5;
-  static const ringWidth = 2.0;
-  static const slot = 52.0;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -436,118 +184,52 @@ class PalettePicker extends ConsumerWidget {
     final appearance = ref.watch(appearanceProvider);
     final notifier = ref.read(appearanceProvider.notifier);
     final brightness = Theme.of(context).brightness;
-    final customAccent = AppAccent.derive(Color(appearance.customColor));
+    final accent = ref.watch(accentProvider);
     bool chosen(AppAccent p) => appearance.source == AccentSource.preset && appearance.presetId == p.id;
-    final items = [
-      for (final p in AppAccent.presets)
-        _Swatch(
-          label: p.label,
-          selected: chosen(p),
-          color: p.seedFor(brightness),
-          onTap: () => unawaited(notifier.selectPreset(p.id)),
-        ),
-      if (custom)
-        _Swatch(
-          label: l10n.pluginsCustomColor,
-          selected: appearance.source == AccentSource.custom,
-          color: customAccent.seedFor(brightness),
-          wheel: true,
-          onTap: () => unawaited(notifier.selectCustom()),
-        ),
-    ];
-    // Rings 16 from the card's edges, centres evenly spaced; each slot is as
-    // wide as the spacing allows (up to [slot]) so the names have room.
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        const ringSide = disc + 2 * (ringGap + ringWidth);
-        final step = (constraints.maxWidth - 2 * PickerGrid.inset - ringSide) / (items.length - 1);
-        final width = math.max(ringSide, math.min(slot, step));
-        final side = PickerGrid.inset - (width - ringSide) / 2;
-        return Padding(
-          padding: EdgeInsets.fromLTRB(side, PickerGrid.inset, side, PickerGrid.inset),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [for (final item in items) SizedBox(width: width, child: item)],
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _Swatch extends StatelessWidget {
-  const _Swatch({
-    required this.label,
-    required this.selected,
-    required this.color,
-    required this.onTap,
-    this.wheel = false,
-  });
-
-  final String label;
-  final bool selected;
-  final Color color;
-  final VoidCallback onTap;
-
-  /// The custom slot: a hue wheel around the chosen colour.
-  final bool wheel;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    final quick = AppMotion.of(context, AppMotion.quick);
-    const size = PalettePicker.disc + 2 * (PalettePicker.ringGap + PalettePicker.ringWidth);
-    return Semantics(
-      button: true,
-      selected: selected,
-      label: l10n.pluginsColorLabel(label),
-      excludeSemantics: true,
-      child: Pressable(
-        onTap: onTap,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox.square(
-              dimension: size,
-              child: TweenAnimationBuilder<double>(
-                tween: Tween(end: selected ? 1 : 0),
-                duration: quick,
-                curve: AppMotion.std,
-                builder: (context, t, _) => CustomPaint(
-                  painter: _SwatchPainter(
-                    color: color,
-                    ring: t,
-                    wheel: wheel ? _wheelColors(theme.brightness) : null,
-                    hole: _cardColor(context),
-                    edge: scheme.onSurface.withValues(alpha: 0.08),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: PickerGrid.labelGap),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: AnimatedDefaultTextStyle(
-                duration: quick,
-                style: PickerGrid.labelStyle(context, selected: selected),
-                child: Text(label, maxLines: 1),
-              ),
-            ),
-          ],
-        ),
+    // ChatGPT 的做法:一行「强调色」+ 右侧色点与名字,点开一列十个色板。
+    return AppMenuTile(
+      key: const ValueKey('accent-menu'),
+      title: l10n.pluginsColors,
+      value: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AccentDot(color: accent.seedFor(brightness), size: 12),
+          const SizedBox(width: 6),
+          Text(accent.label),
+        ],
       ),
+      menuBuilder: (context, close) => [
+        for (final p in AppAccent.official) ...[
+          AppMenuItem(
+            label: p.label,
+            leading: AccentDot(color: p.seedFor(brightness), size: 16),
+            selected: chosen(p),
+            onTap: () {
+              close();
+              unawaited(notifier.selectPreset(p.id));
+            },
+          ),
+        ],
+        const AppMenuDivider(),
+        if (custom)
+          AppMenuItem(
+            label: l10n.pluginsCustomColor,
+            leading: AccentDot(color: accent.seedFor(brightness), size: 16),
+            selected: appearance.source == AccentSource.custom,
+            onTap: () {
+              close();
+              unawaited(notifier.selectCustom());
+            },
+          ),
+        if (appearance.source == AccentSource.wallpaper)
+          AppMenuItem(label: l10n.pluginsWallpaper, selected: true, onTap: close),
+      ],
     );
   }
 }
+
 
 /// What a card looks like on the page (the glass over the backdrop).
-Color _cardColor(BuildContext context) {
-  final s = DshSurfaces.of(context);
-  return Color.alphaBlend(s.card.fill, Color.lerp(s.backdropTop, s.backdropBottom, 0.5)!);
-}
 
 /// The hue wheel and the hue track: guarded colours every 15°, per brightness.
 List<Color> _wheelColors(Brightness brightness) => _wheels[brightness] ??= [
@@ -556,54 +238,6 @@ List<Color> _wheelColors(Brightness brightness) => _wheels[brightness] ??= [
 
 final _wheels = <Brightness, List<Color>>{};
 
-class _SwatchPainter extends CustomPainter {
-  _SwatchPainter({required this.color, required this.ring, required this.hole, required this.edge, this.wheel});
-
-  final Color color;
-
-  /// 0–1: how far the selection ring has drawn in.
-  final double ring;
-  final Color hole;
-  final Color edge;
-  final List<Color>? wheel;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final c = size.center(Offset.zero);
-    const r = PalettePicker.disc / 2;
-    if (ring > 0) {
-      canvas.drawCircle(
-        c,
-        r + PalettePicker.ringGap + PalettePicker.ringWidth / 2,
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = PalettePicker.ringWidth
-          ..color = color.withValues(alpha: ring),
-      );
-    }
-    final wheel = this.wheel;
-    if (wheel == null) {
-      canvas.drawCircle(c, r, Paint()..color = color);
-    } else {
-      final bounds = Rect.fromCircle(center: c, radius: r);
-      canvas.drawCircle(c, r, Paint()..shader = SweepGradient(colors: wheel).createShader(bounds));
-      canvas.drawCircle(c, r * 0.62, Paint()..color = hole);
-      canvas.drawCircle(c, r * 0.44, Paint()..color = color);
-    }
-    canvas.drawCircle(
-      c,
-      r - 0.25,
-      Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 0.5
-        ..color = edge,
-    );
-  }
-
-  @override
-  bool shouldRepaint(_SwatchPainter old) =>
-      old.color != color || old.ring != ring || old.hole != hole || old.edge != edge || old.wheel != wheel;
-}
 
 /// A small filled circle (the hub row's value, the wallpaper row).
 class AccentDot extends StatelessWidget {
