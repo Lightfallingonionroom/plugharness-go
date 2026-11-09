@@ -51,7 +51,7 @@ Map<String, TextStyle> dshHighlightTheme(Brightness brightness, [AppAccent accen
 final _tinted = <(bool, NeutralTones), Map<String, TextStyle>>{};
 
 const _light = <String, TextStyle>{
-  'root': TextStyle(color: Color(0xFF1E232E)),
+  'root': TextStyle(color: Color(0xFF0D0D0D)),
   'keyword': TextStyle(color: Color(0xFF6A499B)),
   'doctag': TextStyle(color: Color(0xFF6A499B)),
   'template-tag': TextStyle(color: Color(0xFF6A499B)),
@@ -65,8 +65,8 @@ const _light = <String, TextStyle>{
   'literal': TextStyle(color: Color(0xFF90561A)),
   'symbol': TextStyle(color: Color(0xFF90561A)),
   'bullet': TextStyle(color: Color(0xFF90561A)),
-  'comment': TextStyle(color: Color(0xFF636975), fontStyle: FontStyle.italic),
-  'quote': TextStyle(color: Color(0xFF636975), fontStyle: FontStyle.italic),
+  'comment': TextStyle(color: Color(0xFF5D5D5D), fontStyle: FontStyle.italic),
+  'quote': TextStyle(color: Color(0xFF5D5D5D), fontStyle: FontStyle.italic),
   'title': TextStyle(color: Color(0xFF2C5CA3)),
   'title.function_': TextStyle(color: Color(0xFF2C5CA3)),
   'function': TextStyle(color: Color(0xFF2C5CA3)),
@@ -85,8 +85,8 @@ const _light = <String, TextStyle>{
   'selector-pseudo': TextStyle(color: Color(0xFF97464F)),
   'meta': TextStyle(color: Color(0xFF726042)),
   'meta keyword': TextStyle(color: Color(0xFF726042)),
-  'operator': TextStyle(color: Color(0xFF4F5562)),
-  'punctuation': TextStyle(color: Color(0xFF4F5562)),
+  'operator': TextStyle(color: Color(0xFF5D5D5D)),
+  'punctuation': TextStyle(color: Color(0xFF5D5D5D)),
   'addition': TextStyle(color: Color(0xFF1F613C), backgroundColor: Color(0xFFDCF4E3)),
   'deletion': TextStyle(color: Color(0xFF923A37), backgroundColor: Color(0xFFFFE4E2)),
   'emphasis': TextStyle(fontStyle: FontStyle.italic),
@@ -94,7 +94,7 @@ const _light = <String, TextStyle>{
 };
 
 const _dark = <String, TextStyle>{
-  'root': TextStyle(color: Color(0xFFE6E9F0)),
+  'root': TextStyle(color: Color(0xFFECECEC)),
   'keyword': TextStyle(color: Color(0xFFC4ACF2)),
   'doctag': TextStyle(color: Color(0xFFC4ACF2)),
   'template-tag': TextStyle(color: Color(0xFFC4ACF2)),
@@ -108,8 +108,8 @@ const _dark = <String, TextStyle>{
   'literal': TextStyle(color: Color(0xFFF2BB8A)),
   'symbol': TextStyle(color: Color(0xFFF2BB8A)),
   'bullet': TextStyle(color: Color(0xFFF2BB8A)),
-  'comment': TextStyle(color: Color(0xFF868C97), fontStyle: FontStyle.italic),
-  'quote': TextStyle(color: Color(0xFF868C97), fontStyle: FontStyle.italic),
+  'comment': TextStyle(color: Color(0xFF8F8F8F), fontStyle: FontStyle.italic),
+  'quote': TextStyle(color: Color(0xFF8F8F8F), fontStyle: FontStyle.italic),
   'title': TextStyle(color: Color(0xFF95BDF8)),
   'title.function_': TextStyle(color: Color(0xFF95BDF8)),
   'function': TextStyle(color: Color(0xFF95BDF8)),
@@ -128,8 +128,8 @@ const _dark = <String, TextStyle>{
   'selector-pseudo': TextStyle(color: Color(0xFFECA4A9)),
   'meta': TextStyle(color: Color(0xFFBFAF95)),
   'meta keyword': TextStyle(color: Color(0xFFBFAF95)),
-  'operator': TextStyle(color: Color(0xFFB6BBC5)),
-  'punctuation': TextStyle(color: Color(0xFFB6BBC5)),
+  'operator': TextStyle(color: Color(0xFFAFAFAF)),
+  'punctuation': TextStyle(color: Color(0xFFAFAFAF)),
   'addition': TextStyle(color: Color(0xFF98D5AC), backgroundColor: Color(0xFF1C3424)),
   'deletion': TextStyle(color: Color(0xFFF2A7A1), backgroundColor: Color(0xFF422423)),
   'emphasis': TextStyle(fontStyle: FontStyle.italic),

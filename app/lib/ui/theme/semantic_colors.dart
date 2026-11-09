@@ -209,7 +209,7 @@ class DshColors extends ThemeExtension<DshColors> {
     lineNumberFg: Color(0xFF8F8F8F),
     // 浅色井底上的 ANSI:"白"必须映射成深灰,否则在浅底上看不见。
     ansi: [
-      Color(0xFF1E232E),
+      Color(0xFF0D0D0D),
       Color(0xFF903C39),
       Color(0xFF1B6C36),
       Color(0xFF775300),
@@ -300,7 +300,7 @@ class DshColors extends ThemeExtension<DshColors> {
     codeWellBorder: Color(0xFF2F2F2F),
     lineNumberFg: Color(0xFF777777),
     ansi: [
-      Color(0xFF7C8089),
+      Color(0xFF777777),
       Color(0xFFDE958E),
       Color(0xFF81BB8D),
       Color(0xFFC9A567),

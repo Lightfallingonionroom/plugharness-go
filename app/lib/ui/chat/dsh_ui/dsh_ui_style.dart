@@ -42,8 +42,8 @@ abstract final class DshUiMetrics {
 ///
 /// 两套都校验过（相邻色在色盲模拟下 ΔE ≥ 8.4，
 /// 正常视觉 ≥ 16，对卡片底色 ≥ 3:1）：
-/// - 浅色对 `#F8FAFE`（浅色卡片叠在晨雾上的实际颜色）；
-/// - 深色对 `#272A33`。
+/// - 浅色对 `#FFFFFF`（官方 surface）；
+/// - 深色对 `#212121`（官方 surface）。
 abstract final class DshUiPalette {
   static const light = [
     Color(0xFF3D6FD6), // 蓝
@@ -63,7 +63,7 @@ abstract final class DshUiPalette {
     Color(0xFF8A7DE0),
   ];
 
-  /// 环形图折叠出来的「其他」:中性灰,随配色换色调(雾蓝下就是这两个值)。
+  /// 环形图折叠出来的「其他」:中性灰,随配色换色调(石墨下就是这两个值)。
   static const otherLight = Color(0xFF9AA0AA);
   static const otherDark = Color(0xFF6B707A);
 
