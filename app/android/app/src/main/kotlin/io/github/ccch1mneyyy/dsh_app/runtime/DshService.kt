@@ -184,6 +184,13 @@ class DshService : Service() {
         const val ACTION_START = "io.github.lightfallingonionroom.dsh_app.START"
         const val ACTION_STOP = "io.github.lightfallingonionroom.dsh_app.STOP"
         const val ACTION_PHONE_STOP = "io.github.lightfallingonionroom.dsh_app.PHONE_STOP"
+        private const val PHONE_TASK_SCHEME = "dsh-phone-task"
+        private const val EXTRA_STOP_GENERATION = "stopGeneration"
+
+        /** 停止操作 for exactly [taskId]. The id is the intent's data, so every task gets its own
+         * PendingIntent: a newer task's button never rewrites the one still on screen. */
+        fun phoneStopIntent(context: Context, taskId: Long): Intent = Intent(context, DshService::class.java)
+            .setAction(ACTION_PHONE_STOP).setData(Uri.fromParts(PHONE_TASK_SCHEME, taskId.toString(), null))
 
         /** With [ACTION_INSTALL_DONE]: the unpack finished (true) or stopped. */
         const val EXTRA_INSTALL_OK = "ok"
