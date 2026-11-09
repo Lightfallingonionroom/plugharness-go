@@ -70,6 +70,9 @@ abstract final class AppIcons {
   static const files = DshGlyphs.cgPaperclip;
   static const addImage = DshGlyphs.cgPhotoOnTiltedSquare;
 
+  /// 「传文件到电脑」 (Remote workspace upload).
+  static const uploadToHost = DshGlyphs.boxArrowUp;
+
   // ── 消息操作 ────────────────────────────────────────────────
   static const copy = DshGlyphs.copy;
   static const quote = DshGlyphs.quotes;

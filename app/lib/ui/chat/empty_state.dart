@@ -7,15 +7,20 @@ import '../theme/app_icons.dart';
 import '../theme/theme.dart';
 import 'empty_actions.dart';
 
-/// 一条建议:一枚线性小图标 + 一行字,点了把 [prompt] 填进输入条。
+/// 一条建议:一枚带色底的线性小图标 + 标题 + 一行说明,点了把 [prompt] 填进输入条。
 class ChatSuggestion {
-  const ChatSuggestion(this.icon, String label, String prompt) : _label = label, _prompt = prompt, _defaultIndex = null;
+  const ChatSuggestion(this.icon, String label, String prompt, {this._detail, this.tint = SuggestionTint.blue})
+    : _label = label,
+      _prompt = prompt,
+      _defaultIndex = null;
 
-  const ChatSuggestion._default(this.icon, this._defaultIndex) : _label = null, _prompt = null;
+  const ChatSuggestion._default(this.icon, this._defaultIndex, this.tint) : _label = null, _prompt = null, _detail = null;
 
   final IconData icon;
+  final SuggestionTint tint;
   final String? _label;
   final String? _prompt;
+  final String? _detail;
   final int? _defaultIndex;
 
   String get label =>
@@ -26,6 +31,17 @@ class ChatSuggestion {
         2 => appL10n.viewSuggestNode,
         _ => appL10n.viewSuggestGit,
       };
+
+  /// One line under the title: what the suggestion will do.
+  String? get detail => _defaultIndex == null
+      ? _detail
+      : switch (_defaultIndex) {
+          0 => appL10n.viewSuggestWorkspaceHint,
+          1 => appL10n.viewSuggestWordCountHint,
+          2 => appL10n.viewSuggestNodeHint,
+          _ => appL10n.viewSuggestGitHint,
+        };
+
   String get prompt =>
       _prompt ??
       switch (_defaultIndex) {
@@ -37,10 +53,46 @@ class ChatSuggestion {
 }
 
 const defaultSuggestions = <ChatSuggestion>[
-  ChatSuggestion._default(AppIcons.folderOpen, 0),
-  ChatSuggestion._default(AppIcons.code, 1),
-  ChatSuggestion._default(AppIcons.terminal, 2),
-  ChatSuggestion._default(AppIcons.tip, 3),
+  ChatSuggestion._default(AppIcons.folderOpen, 0, SuggestionTint.teal),
+  ChatSuggestion._default(AppIcons.code, 1, SuggestionTint.violet),
+  ChatSuggestion._default(AppIcons.terminal, 2, SuggestionTint.amber),
+  ChatSuggestion._default(AppIcons.tip, 3, SuggestionTint.blue),
+];
+
+/// Tips about using DSH Go, one at a time under the suggestions. Each names
+/// a gesture or entry the app really has (see the handlers it describes).
+List<String> defaultTips() => [
+  appL10n.viewTipSteer,
+  appL10n.viewTipMidRun,
+  appL10n.viewTipSlash,
+  appL10n.viewTipMention,
+  appL10n.viewTipReplyMenu,
+  appL10n.viewTipEditResend,
+  appL10n.viewTipQuote,
+  appL10n.viewTipTitleDetails,
+  appL10n.viewTipContextRing,
+  appL10n.viewTipDrawerMenu,
+  appL10n.viewTipSearch,
+  appL10n.viewTipSettingsSearch,
+  appL10n.viewTipModelHere,
+  appL10n.viewTipQuickPanel,
+  appL10n.viewTipFolderNewChat,
+  appL10n.viewTipSwitchHost,
+  appL10n.viewTipPasteImage,
+  appL10n.viewTipLauncher,
+  appL10n.viewTipPetBubble,
+  appL10n.viewTipPetPlay,
+  appL10n.viewTipActivityStrip,
+  appL10n.viewTipImageZoom,
+  appL10n.viewTipQueuedRecall,
+  appL10n.viewTipKeyboard,
+  appL10n.viewTipShareIn,
+  appL10n.viewTipShareSelect,
+  appL10n.viewTipChartDrag,
+  appL10n.viewTipCopyPath,
+  appL10n.viewTipCompanion,
+  appL10n.viewTipAnswerInline,
+  appL10n.viewTipWallpaper,
 ];
 
 /// 当前时间的来源(测试里固定它,让问候语可复现)。
@@ -70,7 +122,7 @@ String greetingFor(DateTime now) {
 /// ```
 ///
 /// 左右与顶栏、输入条一样离屏幕 12,宽屏时与输入条同宽居中;第一次出现时
-/// 由上到下依次淡入。连不上引擎时建议收起,只留「重新连接」。
+/// 由上到下依次淡入。连不上引擎时建议、选项和小技巧都收起,只留「重新连接」。
 class ChatEmptyState extends StatelessWidget {
   const ChatEmptyState({
     super.key,
@@ -85,7 +137,9 @@ class ChatEmptyState extends StatelessWidget {
     this.suggestions = defaultSuggestions,
     this.workspace,
     this.onWorkspace,
-    this.folderPicker,
+    this.options,
+    this.tips,
+    this.tipStart,
   });
 
   final bool connected;
@@ -113,8 +167,15 @@ class ChatEmptyState extends StatelessWidget {
   /// Switches [workspace].
   final VoidCallback? onWorkspace;
 
-  /// Optional drawer-folder choice for the new conversation.
-  final Widget? folderPicker;
+  /// The new conversation's options (folder, preset, permissions), one row of
+  /// quiet chips under the workspace chip. Shown only while connected.
+  final Widget? options;
+
+  /// The tip line's tips; null = [defaultTips], empty = no tip line.
+  final List<String>? tips;
+
+  /// The first tip shown (tests); defaults to a random one.
+  final int? tipStart;
 
   /// 测试注入;默认取当前时间。
   final DateTime? now;
@@ -127,8 +188,14 @@ class ChatEmptyState extends StatelessWidget {
   /// Subtitle → the pill or chip under it.
   static const slotGap = 12.0;
 
-  /// The pill or chip → the suggestions.
-  static const suggestionsGap = 32.0;
+  /// The workspace chip → the options row.
+  static const optionsGap = 8.0;
+
+  /// The pill or chips → the suggestions.
+  static const suggestionsGap = 28.0;
+
+  /// The suggestions → the tip line.
+  static const tipGap = 6.0;
 
   @override
   Widget build(BuildContext context) {
@@ -182,6 +249,7 @@ class ChatEmptyState extends StatelessWidget {
               ),
             ),
           );
+    final tipList = tips ?? defaultTips();
 
     // One slot under the subtitle: the primary pill or the workspace chip,
     // the same height, swapped in place.
@@ -225,20 +293,34 @@ class ChatEmptyState extends StatelessWidget {
                   ),
                 ),
               ],
-              if (connected && folderPicker != null) ...[
-                const SizedBox(height: 8),
-                enter(Center(child: folderPicker!)),
+              if (connected && options != null) ...[
+                const SizedBox(height: optionsGap),
+                enter(Center(child: options!)),
               ],
-              if (suggestions.isNotEmpty)
+              if (suggestions.isNotEmpty || tipList.isNotEmpty)
                 ExpandReveal(
                   open: retry == null && idle == null,
                   child: Padding(
                     padding: const EdgeInsets.only(top: suggestionsGap),
-                    child: SuggestionChips(
-                      suggestions: suggestions,
-                      enabled: connected,
-                      onSuggestion: onSuggestion,
-                      firstIndex: order,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (suggestions.isNotEmpty)
+                          SuggestionCards(
+                            suggestions: suggestions,
+                            enabled: connected,
+                            onSuggestion: onSuggestion,
+                            firstIndex: order,
+                          ),
+                        if (connected && tipList.isNotEmpty) ...[
+                          const SizedBox(height: tipGap),
+                          FadeSlideIn(
+                            index: order + suggestions.length,
+                            child: TipLine(tips: tipList, start: tipStart),
+                          ),
+                        ],
+                      ],
                     ),
                   ),
                 ),
