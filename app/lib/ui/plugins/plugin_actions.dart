@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
-import '../../runtime/runtime_bridge.dart';
+import '../../runtime/runtime_state.dart';
 import '../../state/engine_control.dart';
 import '../../state/hosts_state.dart';
 import '../../state/plugin_compat.dart';
@@ -129,7 +129,7 @@ Future<bool> confirmPluginCompatibility(BuildContext context, MarketEntry entry)
         ],
       ),
       actions: report.blocked
-          ? [TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(l10n.commonOk))]
+          ? [TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(l10n.commonDone))]
           : [
               TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(l10n.commonCancel)),
               FilledButton(onPressed: () => Navigator.pop(dialog, true), child: Text(l10n.pluginsCompatInstallAnyway)),
@@ -155,7 +155,7 @@ Future<void> updateMarketEntry(BuildContext context, MarketEntry entry, {String?
     to: entry.plugin.latest.version,
   );
   // The new version's contract may differ from the one already installed.
-  final compatible = ok && await confirmPluginCompatibility(context, entry);
+  final compatible = ok && context.mounted && await confirmPluginCompatibility(context, entry);
   if (compatible && context.mounted && identical(container.read(pluginHostProvider), host)) {
     await runPluginInstall(context, marketInstallRequest(entry, replace: true));
   }

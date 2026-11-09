@@ -21,6 +21,21 @@ const base = join(resolve(process.env.DSH_PREFIX), 'node_modules/@deepseek-ai');
 // CI runs `node --test runtime/tests/*.test.mjs` from the repo root, so cwd is the repo.
 // Resolving from there keeps this working when DSH_PREFIX lives in a temp dir.
 const fixtures = join(resolve('runtime/tests/fixtures'));
+
+// `pluginManager.installBundle` shells out to `pnpm`. CI installs pnpm as a .mjs path in
+// PNPM_BIN rather than a binary on PATH (see the runtime job's env block), so put a thin
+// shim on PATH before any install runs. Without this the install fails with ENOENT before
+// it ever reaches the code under test.
+if (process.env.PNPM_BIN && !process.env.PNPM_SHIM_READY) {
+  const { mkdtempSync, writeFileSync, chmodSync } = await import('node:fs');
+  const { delimiter } = await import('node:path');
+  const dir = mkdtempSync(join(tmpdir(), 'pnpm-shim-'));
+  const shim = join(dir, 'pnpm');
+  writeFileSync(shim, `#!/bin/sh\nexec "${process.execPath}" "${process.env.PNPM_BIN}" "$@"\n`);
+  chmodSync(shim, 0o755);
+  process.env.PATH = `${dir}${delimiter}${process.env.PATH ?? ''}`;
+  process.env.PNPM_SHIM_READY = '1';
+}
 const { boot } = await import(pathToFileURL(join(base, 'dsh-app-boot/lib/index.js')));
 
 async function fixture(t, { packages = [] } = {}) {
@@ -48,7 +63,13 @@ async function fixture(t, { packages = [] } = {}) {
     const pkg = JSON.parse(await readFile(join(dest, 'package.json'), 'utf8'));
     pkg.dsh = { bundle: { patch: 'cordis.patch.yml' } };
     await writeFile(join(dest, 'package.json'), JSON.stringify(pkg));
-    await writeFile(join(dest, 'cordis.patch.yml'), '[]\n');
+    // The bundle patch is what Cordis actually evaluates: an empty `[]` would register
+    // nothing and `apply()` would never run, which is exactly the case this fixture is
+    // supposed to exercise. Insert the package itself as a plugin row.
+    await writeFile(
+      join(dest, 'cordis.patch.yml'),
+      JSON.stringify([{ insert: [{ id: pkg.name, name: pathToFileURL(join(dest, 'index.js')).href }] }]) + '\n',
+    );
     manifest.dependencies[pkg.name] = pkg.version;
   }
   const save = () => writeFile(manifestPath, JSON.stringify(manifest));
