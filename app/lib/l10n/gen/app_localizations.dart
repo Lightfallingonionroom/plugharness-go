@@ -24469,6 +24469,7 @@ abstract class L10n {
   /// In zh, this message translates to:
   /// **'请在这台主机上查看引擎日志。'**
   String get pluginsLoadRemoteLogs;
+
   /// No description provided for @pluginsCompatBlockedTitle.
   ///
   /// In zh, this message translates to:

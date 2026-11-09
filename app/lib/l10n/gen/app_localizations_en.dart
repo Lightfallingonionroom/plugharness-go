@@ -14022,10 +14022,13 @@ class L10nEn extends L10n {
 
   @override
   String get pluginsCompatBlockedTitle => 'This plugin does not fit this runtime';
+
   @override
   String get pluginsCompatUnverifiedTitle => 'Compatibility not verified';
+
   @override
   String get pluginsCompatRuntimeIs => 'this device';
+
   @override
   String get pluginsCompatInstallAnyway => 'Install anyway';
 

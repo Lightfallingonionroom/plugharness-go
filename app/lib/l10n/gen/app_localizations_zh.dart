@@ -13342,10 +13342,13 @@ class L10nZh extends L10n {
 
   @override
   String get pluginsCompatBlockedTitle => '这个插件和当前运行时不兼容';
+
   @override
   String get pluginsCompatUnverifiedTitle => '兼容性未验证';
+
   @override
   String get pluginsCompatRuntimeIs => '本机';
+
   @override
   String get pluginsCompatInstallAnyway => '仍然安装';
 
