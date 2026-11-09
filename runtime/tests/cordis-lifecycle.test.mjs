@@ -18,7 +18,9 @@ import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 const base = join(resolve(process.env.DSH_PREFIX), 'node_modules/@deepseek-ai');
-const fixtures = join(resolve(process.env.DSH_PREFIX), '..', '..', 'runtime', 'tests', 'fixtures');
+// CI runs `node --test runtime/tests/*.test.mjs` from the repo root, so cwd is the repo.
+// Resolving from there keeps this working when DSH_PREFIX lives in a temp dir.
+const fixtures = join(resolve('runtime/tests/fixtures'));
 const { boot } = await import(pathToFileURL(join(base, 'dsh-app-boot/lib/index.js')));
 
 async function fixture(t, { packages = [] } = {}) {

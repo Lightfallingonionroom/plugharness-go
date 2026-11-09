@@ -1,0 +1,76 @@
+--- a/node_modules/@deepseek-ai/dsh-llm/lib/index.js
++++ b/node_modules/@deepseek-ai/dsh-llm/lib/index.js
+@@ -1136,8 +1136,39 @@
+ function safeIndex(value, label) {
+ 	if (!Number.isSafeInteger(value) || value < 0 || Object.is(value, -0)) throw new TypeError(`${label} index must be a non-negative safe integer`);
+ 	return value;
+ }
++/**
++* Report one assistant-stream chunk that does not match the shape this accumulator
++* understands, without taking the host down (issue #1).
++*
++* A third-party Cordis plugin can emit an event whose `type` is unknown here, or whose
++* fields are the wrong type. Before this patch the `default:` branch called `assertNever`,
++* which threw inside `push()`; the throw escaped into the agent loop and killed DSH, taking
++* every unrelated conversation with it.
++*
++* Policy: drop the offending chunk, keep the rest of the stream and its order, record a
++* structured diagnostic (category / stage / declared type / field names) and never include
++* the chunk body, which can hold user text, API keys or cookies.
++*/
++function reportMalformedAssistantChunk(chunk, reason) {
++	const isObject = chunk !== null && typeof chunk === "object";
++	const diagnostic = {
++		kind: "assistant-stream/malformed-chunk",
++		reason,
++		stage: "AssistantStreamAccumulator.push",
++		declaredType: isObject && typeof chunk.type === "string" ? chunk.type : null,
++		fields: isObject ? Object.keys(chunk).sort().join(",") : typeof chunk
++	};
++	try {
++		const sink = globalThis[Symbol.for("dsh.assistantStreamDiagnostics")];
++		if (typeof sink === "function") sink(diagnostic);
++		else if (Array.isArray(sink)) sink.push(diagnostic);
++	} catch (_) {
++		// A sink that throws must not reintroduce the crash it exists to prevent.
++	}
++	return diagnostic;
++}
+ function snapshotChunk(chunk) {
+ 	const snapshot = snapshotJsonValue(chunk);
+ 	if (snapshot === void 0) throw new TypeError("Assistant stream chunk must be losslessly JSON-serializable");
+ 	return snapshot;
+@@ -1155,9 +1186,18 @@
+ 	* @returns a detached immutable copy for assembly and live publication.
+ 	*/
+ 	push(value) {
+ 		const time = safeTime(value.time);
+-		const chunk = snapshotChunk(value.chunk);
++		// A chunk the accumulator cannot snapshot (a circular object, a function, a
++		// BigInt) used to throw from here. Treat it as malformed instead: one bad frame
++		// must not end the process.
++		let chunk;
++		try {
++			chunk = snapshotChunk(value.chunk);
++		} catch (error) {
++			reportMalformedAssistantChunk(value.chunk, `not JSON-serializable: ${error?.message ?? String(error)}`);
++			return void 0;
++		}
+ 		const timed = deepFreeze({
+ 			time,
+ 			chunk
+ 		});
+@@ -1223,9 +1263,12 @@
+ 					time,
+ 					chunk
+ 				});
+ 				return timed;
+-			default: return assertNever(chunk, "AssistantStreamAccumulator.push");
++			default:
++				// Unknown `type`: isolate the chunk, keep the stream going (issue #1).
++				reportMalformedAssistantChunk(chunk, "unknown chunk type");
++				return void 0;
+ 		}
+ 	}
+ 	/**
+ 	* Return the current compact attempt stream.

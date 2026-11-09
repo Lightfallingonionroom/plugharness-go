@@ -1648,6 +1648,14 @@
         }
       }
     },
+    "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz-assistant-stream-shape.diff": {
+      "0.2.2-rc.1": {
+        "node_modules/@deepseek-ai/dsh-llm/lib/index.js": {
+          "before": "57b013af341a490b68573f934173c6ce2b1a2d3e1207b79fae5089b941846ba3",
+          "after": "143b2c18e7f23e4c02697830b43e975eb161452ddc3c92240c894bbdd4a04228"
+        }
+      }
+    },
     "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz-phone-run-end-live-retry.diff": {
       "0.2.2-rc.1": {
         "node_modules/@deepseek-ai/dsh-mcp-client/lib/index.js": {
