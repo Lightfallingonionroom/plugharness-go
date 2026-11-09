@@ -243,7 +243,7 @@ object CrashClassifier {
     /** True for Node's module-loader block, which names a package but not a running module. */
     fun isRequireFailure(tail: List<String>): Boolean = tail.any { NODE_REQUIRE_STACK.matches(it) }
 
-    fun redact(line: String): String = TOKEN.replace(line, "•••")
+    fun redact(line: String): String = TOKEN.replace(line, "token=•••")
 
     /**
      * [readyAt] and [now] share one monotonic clock (elapsedRealtime); [readyAt] is null when

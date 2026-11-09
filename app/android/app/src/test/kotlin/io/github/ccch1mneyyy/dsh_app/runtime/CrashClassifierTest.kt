@@ -63,7 +63,8 @@ class CrashClassifierTest {
     @Test fun anUncaughtThrowAfterReadyIsAnEarlyCrashNotAStartupFailure() {
         val failure = CrashClassifier.classify(1, 1L, 60_000L, 1L, nodeThrow, false)
         assertEquals(FailureKind.CRASHED_EARLY, failure.kind)
-        assertEquals(60L, failure.upSeconds)
+        // readyAt=1ms, now=60_000ms → 59_999ms up → 59 whole seconds (integer division).
+        assertEquals(59L, failure.upSeconds)
     }
 
     @Test fun aCaughtPluginErrorIsNotFatal() {
