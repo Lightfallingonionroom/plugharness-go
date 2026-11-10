@@ -20091,7 +20091,7 @@ class L10nEn extends L10n {
 
   @override
   String get viewSuggestPhonePrompt =>
-      'Open WeChat, check the latest messages, and reply to the top contact with "Got it, I\'ll handle it soon."';
+      'Open WeChat, check the latest messages, and reply to the top contact with \"Got it, I\'ll handle it soon.\"';
 
   @override
   String get viewSuggestPlugin => 'Install a plugin';
