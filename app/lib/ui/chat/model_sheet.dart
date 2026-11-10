@@ -15,6 +15,7 @@ import '../../state/models_state.dart';
 import '../../state/settings_state.dart';
 import '../common/app_sheet.dart';
 import '../common/empty_view.dart';
+import '../common/list_page_row.dart';
 import '../common/pressable.dart';
 import '../common/segmented_pill.dart';
 import '../common/sheet_title_bar.dart';
@@ -26,6 +27,8 @@ import '../providers/provider_form_page.dart';
 import '../providers/providers_page.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
+import 'control_icons.dart';
+import 'widgets/plus_panel.dart' show SessionPermissionPage;
 
 /// 模型名的短写:去掉 "DeepSeek-" 前缀,连字符换空格,首字母大写。
 /// `DeepSeek-V4-Pro` → `V4 Pro`。
@@ -56,6 +59,195 @@ String effortLabel(String id, [String? fallback]) => switch (id) {
   'max' => appL10n.viewModelThinkingMax,
   _ => fallback ?? id,
 };
+
+/// 输入条「控制面板」的内容：权限、模式、模型，自上而下三行。
+///
+/// 三行都复用已有的页面/弹层，不新造链路：
+///   - 权限 → `SessionPermissionPage`（走 `/permission`）
+///   - 模式 → 权限页里的 Agent Preset（同一页的上半部分）
+///   - 模型 → `showModelSheet`（走 `ModelSelection`）
+Future<void> showComposerControls(BuildContext context, {String? sessionId}) {
+  return showAppSheet<void>(
+    context,
+    isScrollControlled: true,
+    builder: (sheet) => SafeArea(
+      top: false,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SheetTitleBar(appL10n.chatComposerControls),
+            // 权限 + 模式：会话已有，用同一个权限页（它已经包含两者）。
+            if (sessionId != null)
+              SessionPermissionPage(sessionId: sessionId)
+            else
+              ListPageRow(
+                icon: AppIcons.permissions,
+                title: appL10n.nearbyPermissionTitle,
+                subtitle: appL10n.chatComposerControlsNewChat,
+                chevron: false,
+              ),
+            const SizedBox(height: 8),
+            // 模型：走现有模型弹层。
+            ListPageRow(
+              icon: AppIcons.providers,
+              title: appL10n.viewModelSelect,
+              onTap: () => showModelSheet(
+                context,
+                current: null,
+                onSelected: (_) {},
+              ),
+            ),
+            const SizedBox(height: 12),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+/// 输入条左端的「控制面板」键：官方「两半圆柱 + 齿轮」矢量，点开一个弹层，
+/// 里面是权限、模式、模型三行。
+///
+/// 为什么把这三样收在一处：它们都是「这条消息用什么条件发出去」，而输入条
+/// 本身是「发什么」。ChatGPT 把这类条件放在输入框左边的齿轮里，我们照做，
+/// 于是顶栏和输入条都不用再各挂一个胶囊。
+///
+/// 键本身不带状态：它只负责打开面板，选什么由面板里的行决定，走各自已有
+/// 的链路（权限 → `/permission`，模式 → Agent Preset，模型 →
+/// `ModelSelection`）。
+class ComposerControlsKey extends StatelessWidget {
+  const ComposerControlsKey({super.key, required this.sessionId, this.onOpen});
+
+  /// 打开面板；默认弹出一个底部弹层。测试可注入。
+  final String? sessionId;
+  final VoidCallback? onOpen;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final shell = ChatGptShellColors.of(context);
+    return Tooltip(
+      message: l10n.chatComposerControls,
+      child: Semantics(
+        button: true,
+        label: l10n.chatComposerControls,
+        onTap: onOpen ?? () => showComposerControls(context, sessionId: sessionId),
+        excludeSemantics: true,
+        child: Pressable(
+          child: SizedBox.square(
+            dimension: 40,
+            child: Center(
+              child: ChatGptStorageBadgeGearIcon(size: 20, color: shell.secondaryText),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 输入条右端的推理强度键：仪表图标，指针随档位转。
+///
+/// 档位来自 `model.efforts`（**不写死 low/high/max**）：DeepSeek 是 4 档，
+/// 别的模型可能不同。没有档位的模型不显示这个键。
+///
+/// 改档走 `onSelected(ModelSelection(provider, model, reasoningEffort: ...))`
+/// —— 和模型弹窗、引擎设置页完全同一条链路，不会变成「能选但没用」。
+class ComposerEffortKey extends ConsumerWidget {
+  const ComposerEffortKey({
+    super.key,
+    required this.selection,
+    required this.onSelected,
+  });
+
+  final ModelSelection? selection;
+  final ValueChanged<ModelSelection> onSelected;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final catalog = ref.watch(currentModelCatalogProvider);
+    final effective = selection ?? catalog?.defaultSelection;
+    final model = findModel(catalog, effective);
+    final efforts = model?.efforts ?? const <ReasoningEffort>[];
+    // 没有档位的模型不显示（例如纯对话模型）。
+    if (efforts.length < 2) return const SizedBox.shrink();
+    final current = effective?.reasoningEffort ?? model?.defaultEffort ?? efforts.first.id;
+    final index = efforts.indexWhere((e) => e.id == current).clamp(0, efforts.length - 1);
+    final progress = efforts.length == 1 ? 0.5 : index / (efforts.length - 1);
+    void open() => showEffortSheet(
+      context,
+      current: effective,
+      efforts: efforts,
+      onSelected: onSelected,
+    );
+    return Semantics(
+      button: true,
+      label: l10n.viewModelEffortLabel(effortLabel(current)),
+      onTap: open,
+      excludeSemantics: true,
+      child: Pressable(
+        onTap: open,
+        child: SizedBox.square(
+          dimension: 40,
+          child: Center(
+            child: ReasoningGaugeIcon(progress: progress, size: 22),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 推理强度的档位面板：一排胶囊，选了立刻生效并收起。
+Future<void> showEffortSheet(
+  BuildContext context, {
+  required ModelSelection? current,
+  required List<ReasoningEffort> efforts,
+  required ValueChanged<ModelSelection> onSelected,
+}) {
+  return showAppSheet<void>(
+    context,
+    isScrollControlled: true,
+    builder: (sheet) => SafeArea(
+      top: false,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SheetTitleBar(appL10n.viewModelEffort),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 20),
+              child: SegmentedPill<String>(
+                height: 40,
+                segments: [for (final e in efforts) PillSegment(e.id, effortLabel(e.id, e.name))],
+                selected: current?.reasoningEffort ?? efforts.first.id,
+                onChanged: (effort) {
+                  final selection = current;
+                  if (selection == null) {
+                    Navigator.of(sheet).pop();
+                    return;
+                  }
+                  onSelected(
+                    ModelSelection(
+                      provider: selection.provider,
+                      model: selection.model,
+                      reasoningEffort: effort,
+                    ),
+                  );
+                  Navigator.of(sheet).pop();
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
 
 /// The model in a phone's open composer: a plain pill beside the +, the same weight as
 /// it, saying what this message goes out with and a tap from changing it.

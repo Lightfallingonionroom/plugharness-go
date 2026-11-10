@@ -17,6 +17,7 @@ import '../../../state/appearance_state.dart';
 import '../../../state/settings_state.dart';
 import '../../common/expand_reveal.dart';
 import '../../common/pressable.dart';
+import '../../pets/pet_settings_page.dart';
 import '../../shell/page_frame.dart';
 import '../../theme/app_icons.dart';
 import '../../theme/theme.dart';
@@ -28,11 +29,15 @@ import 'launch_screen_section.dart';
 import 'tile_style_picker.dart';
 import 'wallpaper_section.dart';
 
-/// 设置首页「外观」组的第一行：点开就在这一页里展开明暗和配色。
+/// 设置首页「外观」组的三张卡片：**强调色**、**外观**、**更多设置**。
 ///
-/// 以前它是跳到一个独立的「主题」页（P3）。那一页把明暗、配色、功能图标、
-/// 桌面图标、启动页、壁纸全堆在一起，改个颜色要进出两趟。现在最常用的两样
-/// （明暗、配色）就在设置页上直接改，「更多外观」再去完整页改其余部分。
+/// 三框各自独立、点开就地展开（不是跳到别的页），这是用户定的结构：
+/// 最常用的两样（配色、明暗）就在首页改，其余外观项（功能图标、桌面图标、
+/// 启动页、壁纸、对话字号、完成后收起、宠物）收进第三张「更多设置」。
+///
+/// 拆成三框而不是一个可展开的大行，是因为上一版把配色 + 明暗 + 十色塞进
+/// 一个展开区，高度预算装不下，`ThemeModePicker` 被挤出视口
+/// （`appearance_page_test` 的「深色」找不到）。
 class AppearanceEntryTile extends ConsumerWidget {
   const AppearanceEntryTile({super.key, this.tint = 0});
 
@@ -41,93 +46,172 @@ class AppearanceEntryTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = context.l10n;
-    final accent = ref.watch(accentProvider);
-    final seed = accent.seedFor(Theme.of(context).brightness);
-    final mode = switch (ref.watch(settingsProvider.select((s) => s.themeMode))) {
-      ThemeMode.light => l10n.commonLight,
-      ThemeMode.dark => l10n.commonDark,
-      ThemeMode.system => l10n.commonFollowSystem,
-    };
-    return _ThemeRow(
-      icon: AppIcons.theme,
-      tint: tint,
-      title: l10n.pluginsTheme,
-      value: Row(
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _AccentCard(tint: tint),
+        const SizedBox(height: 8),
+        _ModeCard(tint: tint),
+        const SizedBox(height: 8),
+        const _MoreAppearanceCard(tint: tint),
+      ],
+    );
+  }
+}
+
+/// 一张可展开的卡片：收起时是一行（标题 + 当前值），展开后在下方就地显示内容。
+///
+/// 与旧 `_ThemeRow` 的区别：卡片自己带玻璃底和圆角（ChatGPT 设置里每一组
+/// 设置就是一张卡），收起/展开有 `ExpandReveal` 的高度过渡。
+class _AppearanceCard extends ConsumerStatefulWidget {
+  const _AppearanceCard({
+    required this.tint,
+    required this.title,
+    required this.value,
+    required this.keyId,
+    required this.child,
+  });
+
+  final int tint;
+  final String title;
+  final Widget value;
+
+  /// 测试与深链用的稳定键，例如 `appearance-card-accent`。
+  final String keyId;
+  final Widget child;
+
+  @override
+  ConsumerState<_AppearanceCard> createState() => _AppearanceCardState();
+}
+
+class _AppearanceCardState extends ConsumerState<_AppearanceCard> {
+  bool _open = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GlassSurface(
+      tier: GlassTier.card,
+      borderRadius: AppShape.radiusLg,
+      child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          AccentDot(color: seed, size: 10),
-          const SizedBox(width: 6),
-          Text('${accent.label} · $mode'),
+          SettingsTile(
+            key: ValueKey(widget.keyId),
+            icon: null,
+            tint: widget.tint,
+            tinted: false,
+            title: widget.title,
+            value: widget.value,
+            trailing: AnimatedRotation(
+              turns: _open ? 0.5 : 0,
+              duration: AppMotion.of(context, AppMotion.quick),
+              child: const Icon(AppIcons.expand, size: 16),
+            ),
+            onTap: () => setState(() => _open = !_open),
+          ),
+          ExpandReveal(
+            open: _open,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+              child: widget.child,
+            ),
+          ),
         ],
       ),
     );
   }
 }
 
-/// 可展开的一行：收起时是设置行，展开后在行下方就地显示明暗和配色。
-class _ThemeRow extends ConsumerStatefulWidget {
-  const _ThemeRow({required this.icon, required this.tint, required this.title, required this.value});
+/// 框 A：强调色。收起显示当前色点与名字，展开显示 6 预设 + 自定义。
+class _AccentCard extends ConsumerWidget {
+  const _AccentCard({required this.tint});
 
-  final IconData icon;
   final int tint;
-  final String title;
-  final Widget value;
 
   @override
-  ConsumerState<_ThemeRow> createState() => _ThemeRowState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final accent = ref.watch(accentProvider);
+    final seed = accent.seedFor(Theme.of(context).brightness);
+    return _AppearanceCard(
+      tint: tint,
+      keyId: 'appearance-card-accent',
+      title: l10n.pluginsColors,
+      value: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AccentDot(color: seed, size: 10),
+          const SizedBox(width: 6),
+          Text(accent.label),
+        ],
+      ),
+      child: const Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Divider(height: 1),
+          // 6 个预设 + 自定义，单行等距。官方十色是更细的一层，在「更多设置」
+          // 的完整页里选——11 个色点在 390 宽里每个只剩 21 px，点不中。
+          PalettePicker(),
+        ],
+      ),
+    );
+  }
 }
 
-class _ThemeRowState extends ConsumerState<_ThemeRow> {
-  bool _open = false;
+/// 框 B：外观（明暗）。收起显示当前模式，展开显示三个选项。
+class _ModeCard extends ConsumerWidget {
+  const _ModeCard({required this.tint});
+
+  final int tint;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final mode = switch (ref.watch(settingsProvider.select((s) => s.themeMode))) {
+      ThemeMode.light => l10n.commonLight,
+      ThemeMode.dark => l10n.commonDark,
+      ThemeMode.system => l10n.commonFollowSystem,
+    };
+    return _AppearanceCard(
+      tint: tint,
+      keyId: 'appearance-card-mode',
+      title: l10n.hubThemeLightDark,
+      value: Text(mode),
+      child: const Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Divider(height: 1),
+          Padding(
+            padding: EdgeInsets.fromLTRB(8, 12, 8, 4),
+            child: ThemeModePicker(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 框 C：更多设置。点开后跳完整外观页（其余外观项都在那里）。
+class _MoreAppearanceCard extends StatelessWidget {
+  const _MoreAppearanceCard({required this.tint});
+
+  final int tint;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SettingsTile(
-          icon: widget.icon,
-          tint: widget.tint,
-          title: widget.title,
-          value: widget.value,
-          trailing: AnimatedRotation(
-            turns: _open ? 0.5 : 0,
-            duration: AppMotion.of(context, AppMotion.quick),
-            child: const Icon(AppIcons.expand, size: 16),
-          ),
-          onTap: () => setState(() => _open = !_open),
-        ),
-        ExpandReveal(
-          open: _open,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Divider(height: 1),
-              // 明暗：三个选项就地切换。
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-                child: const ThemeModePicker(),
-              ),
-              // 配色：6 个预设 + 自定义，单行等距（设置页其它 picker 的几何契约）。
-              const PalettePicker(),
-              // 其余外观项（功能图标、桌面图标、启动页、壁纸）在完整页。
-              Padding(
-                padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-                child: TextButton.icon(
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(builder: (_) => const AppearancePage()),
-                  ),
-                  icon: const Icon(AppIcons.settings, size: 16),
-                  label: Text(l10n.pluginsAppearanceMore),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
+    return SettingsTile(
+      key: const ValueKey('appearance-card-more'),
+      tint: tint,
+      tinted: false,
+      title: l10n.pluginsAppearanceMore,
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute<void>(builder: (_) => const AppearancePage()),
+      ),
     );
   }
 }
@@ -193,12 +277,16 @@ class AppearancePage extends ConsumerWidget {
     final l10n = context.l10n;
     final appearance = ref.watch(appearanceProvider);
     final wallpaper = ref.watch(wallpaperAccentProvider).value;
+    final settings = ref.watch(settingsProvider);
+    final settingsController = ref.read(settingsProvider.notifier);
     return AppPage.list(
       title: l10n.pluginsTheme,
       children: [
         SettingsSection(
-          title: l10n.hubThemeLightDark,
-          children: [SpotAnchor(spot: Spots.darkMode, child: const ThemeModePicker())],
+          title: l10n.hubSettingsAppearance,
+          children: [
+            SpotAnchor(spot: Spots.darkMode, child: const ThemeModePicker()),
+          ],
         ),
         SettingsSection(
           title: l10n.pluginsColors,
@@ -208,6 +296,29 @@ class AppearancePage extends ConsumerWidget {
             const OfficialAccentGrid(),
             ExpandReveal(open: appearance.source == AccentSource.custom, child: const CustomAccentPanel()),
             if (wallpaper != null) _WallpaperRow(wallpaper: wallpaper, on: appearance.source == AccentSource.wallpaper),
+          ],
+        ),
+        // 其余外观项：对话字号、完成后收起、宠物。它们原来在设置首页，现在
+        // 和「更多设置」的其余项一起在这一页（设置首页只留配色与明暗）。
+        SettingsSection(
+          title: l10n.hubSettingsAppearance,
+          children: [
+            SettingsSegmentTile<double>(
+              icon: AppIcons.textSize,
+              tint: 0,
+              spot: Spots.chatTextSize,
+              segments: [for (final (scale, label) in chatTextScales) PillSegment(scale, label)],
+              selected: settings.chatTextScale,
+              onChanged: (scale) => unawaited(settingsController.setChatTextScale(scale)),
+            ),
+            SettingsSwitchTile(
+              icon: AppIcons.foldTurns,
+              tint: 0,
+              spot: Spots.foldTurns,
+              value: settings.foldCompletedTurns,
+              onChanged: (v) => unawaited(settingsController.setFoldCompletedTurns(v)),
+            ),
+            const PetEntryTile(tint: 0),
           ],
         ),
         SettingsSection(

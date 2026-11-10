@@ -206,23 +206,10 @@ class SettingsScreen extends ConsumerWidget {
         SettingsSection(
           title: l10n.hubSettingsAppearance,
           children: [
+            // 外观的三张卡片取代了这里原来的 4 个散行：配色、明暗各自一张
+            // 就地展开，其余外观项（字号、收起、宠物、官方十色）都在第三张
+            // 「更多设置」后面的完整页里。
             const AppearanceEntryTile(tint: SettingsHues.appearance),
-            SettingsSegmentTile<double>(
-              icon: AppIcons.textSize,
-              tint: SettingsHues.appearance,
-              spot: Spots.chatTextSize,
-              segments: [for (final (scale, label) in chatTextScales) PillSegment(scale, label)],
-              selected: settings.chatTextScale,
-              onChanged: (scale) => unawaited(notifier.setChatTextScale(scale)),
-            ),
-            SettingsSwitchTile(
-              icon: AppIcons.foldTurns,
-              tint: SettingsHues.appearance,
-              spot: Spots.foldTurns,
-              value: settings.foldCompletedTurns,
-              onChanged: (v) => unawaited(notifier.setFoldCompletedTurns(v)),
-            ),
-            const PetEntryTile(tint: SettingsHues.appearance),
           ],
         ),
         SettingsSection(

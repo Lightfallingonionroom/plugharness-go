@@ -733,5 +733,9 @@
         "type": "String"
       }
     }
-  }
+  },
+  "chatWorkProgressTooltip": "查看工作进展",
+  "chatWorkProgressHoldHint": "长按查看文件",
+  "chatComposerControls": "控制面板",
+  "chatComposerControlsNewChat": "新对话发出去后再设置"
 }

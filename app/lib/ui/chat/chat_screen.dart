@@ -79,6 +79,7 @@ import 'chat_header.dart';
 import 'chat_list.dart';
 import 'composer.dart';
 import 'composer_toast.dart';
+import 'control_icons.dart';
 import 'dock/chat_dock.dart';
 import 'dock/dock_stack.dart';
 import 'empty_state.dart';
@@ -1810,18 +1811,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                         onTitleTap: sessionId == null
                             ? null
                             : () => SessionDetailPage.open(context, sessionId, toggle: true),
-                        // A phone's conversation has no room for it beside its title: the
-                        // model is shown and picked at the composer's foot while typing.
-                        // A new chat's title is only 「新对话」, so the model takes the
-                        // header's right like on a wide window — picked before typing,
-                        // once there is an engine to send to.
-                        trailing: narrow && (sessionId != null || !connected)
-                            ? null
-                            : ModelChip(
-                                selection: sessionId == null ? pendingModel : chat?.model,
-                                onSelected: _modelTarget(),
-                                grouped: true,
-                              ),
+                        // 顶栏右上角不再是模型胶囊：模型在输入条的「控制面板」
+                        // 里选（和权限、模式同一处）。右上角留给「查看工作
+                        // 进展」——点按开终端、长按开文件，都是这个对话的
+                        // 实际进展，而不是它的配置。
+                        trailing: sessionId == null ? null : WorkProgressKey(sessionId: sessionId),
                       ),
                     ),
                   ),
@@ -2075,10 +2069,22 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                                     onContentInserted: connected ? _pasteContent : null,
                                     onStop: _stop,
                                     hasAttachments: _drafts.isNotEmpty,
-                                    leading: AttachButton(onPressed: connected ? _attach : null),
+                                    // 输入条左端是「控制面板」键（官方存储+齿轮
+                                    // 矢量）：权限、模式、模型都在这里选。＋ 附件
+                                    // 仍在它旁边。
+                                    leading: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        ComposerControlsKey(
+                                          sessionId: sessionId,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        AttachButton(onPressed: connected ? _attach : null),
+                                      ],
+                                    ),
                                     keyboardInset: MediaQuery.viewInsetsOf(context).bottom,
                                     footer: _composerOpens(context) && !isChild
-                                        ? ComposerModelPill(
+                                        ? ComposerEffortKey(
                                             selection: sessionId == null ? pendingModel : chat?.model,
                                             onSelected: _modelTarget(),
                                           )

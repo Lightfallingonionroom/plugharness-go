@@ -15,12 +15,14 @@ import '../agents/header_agents.dart';
 import '../common/fluid_bits.dart';
 import '../common/smooth_size.dart';
 import '../common/status_dot.dart';
+import '../files/files_page.dart';
 import '../shell/adaptive/adaptive_scaffold.dart' show AdaptiveChrome;
 import '../shell/adaptive/detail_panel_keys.dart';
+import '../terminal/terminal_page.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
+import 'control_icons.dart';
 import 'header_schedule.dart';
-import 'model_sheet.dart' show ModelChip;
 
 /// The flat header's own colours, read from the shell palette without making
 /// every dark/light decision here.
@@ -78,8 +80,8 @@ class ChatHeader extends ConsumerStatefulWidget {
   /// What follows the status under the title (a phone: the workspace). Shortens first.
   final String? detail;
 
-  /// 右侧件(模型胶囊 [ModelChip])。需要传 `grouped: true` 与顶栏共享一次
-  /// 背景采样。顶栏按它的固有宽度(带不带「· 高」)和标题胶囊分地方。
+  /// 右侧件（「查看工作进展」[WorkProgressKey]，或别的东西）。它是定宽的，
+  /// 所以顶栏只需要决定标题怎么分剩下的地方。
   /// Null: the title has the room.
   final Widget? trailing;
   final VoidCallback? onOpenDrawer;
@@ -470,7 +472,7 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
                   // takes the width this row gives it.
                   HeaderTrailingSlot(
                     trailing: switch (widget.trailing) {
-                      final trailing? => Flexible(child: _ChipSlot(child: trailing)),
+                      final trailing? => trailing,
                       null => null,
                     },
                   ),
@@ -542,6 +544,59 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
   }
 }
 
+/// 顶栏右上角的「查看工作进展」键：**点按开终端，长按开文件**。
+///
+/// 一个图标两种动作，是用户定的：终端是主操作（所以显示成终端），文件是
+/// 长按。两者都是**这个对话**的实际进展（终端跑的是它的工作区，文件列的是
+/// 它的目录），不是它的配置——模型、权限、模式都在输入条的「控制面板」里。
+class WorkProgressKey extends StatelessWidget {
+  const WorkProgressKey({super.key, required this.sessionId});
+
+  final String sessionId;
+
+  /// 键的可见尺寸与点击区，和顶栏其它圆键一致。
+  static const size = 44.0;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final colors = ChatHeaderColors.of(context);
+    return Tooltip(
+      message: l10n.chatWorkProgressTooltip,
+      child: Semantics(
+        button: true,
+        label: l10n.chatWorkProgressTooltip,
+        onLongPressHint: l10n.chatWorkProgressHoldHint,
+        onTap: () => _openTerminal(context),
+        onLongPress: () => _openFiles(context),
+        excludeSemantics: true,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => _openTerminal(context),
+          onLongPress: () => _openFiles(context),
+          child: GlassSurface(
+            tier: GlassTier.chrome,
+            circle: true,
+            grouped: true,
+            style: colors.flatChrome,
+            child: Center(
+              child: ChatGptTerminalIcon(size: 22, color: colors.primaryText),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _openTerminal(BuildContext context) {
+    Navigator.of(context).push(TerminalPage.route(sessionId));
+  }
+
+  void _openFiles(BuildContext context) {
+    Navigator.of(context).push(WorkspaceFilesPage.route(sessionId));
+  }
+}
+
 /// Marks the model chip inside the trailing pieces, so the bar can weigh its
 /// widths apart from the agents capsule beside it.
 class _ChipSlot extends SingleChildRenderObjectWidget {
@@ -554,19 +609,21 @@ class _ChipSlot extends SingleChildRenderObjectWidget {
 class _RenderChipSlot extends RenderProxyBox {}
 
 /// The bar's pieces on one line: the left key (≡ or the breadcrumb), the
-/// title block, the trailing pieces (agents capsule, model chip) and the
-/// 新对话 key.
-///
-/// 1. both whole when they fit;
-/// 2. else the chip drops its depth (「· 高」) first;
-/// 3. then the title shortens, down to [titleFloor] (with the schedule clock
-///    beside it, when the conversation has one);
-/// 4. then the chip shortens the model's name, down to ✦ ⌄;
-/// 5. then the schedule clock goes, [clockExtra] back to the title;
-/// 6. only then does the title go under its floor.
-///
-/// The pill's content ([_PillContent]) reads step 5 off the width it gets.
-///
+  /// title block, the trailing pieces (agents capsule, the 工作进展 key) and the
+  /// 新对话 key.
+  ///
+  /// The trailing pieces have a fixed width now (the 工作进展 key is a 44 circle,
+  /// the agents capsule is its own width), so the bar only has to decide how the
+  /// title shares what is left:
+  ///
+  /// 1. the title takes its whole width when that fits;
+  /// 2. else it shortens, down to [titleFloor] (with the schedule clock beside
+  ///    it, when the conversation has one);
+  /// 3. then the schedule clock goes, [clockExtra] back to the title;
+  /// 4. only then does the title go under its floor.
+  ///
+  /// The pill's content ([_PillContent]) reads step 3 off the width it gets.
+  ///
 /// The title pill sits 8 after the left key; the trailing pieces end at the
 /// 新对话 key (they carry their own 8s); everything centred on one line.
 class _HeaderRow extends MultiChildRenderObjectWidget {
@@ -620,23 +677,6 @@ class _RenderHeaderRow extends RenderBox
     }
   }
 
-  /// The model chip among the trailing pieces; null when there is none (a
-  /// subagent conversation).
-  static RenderBox? _chipIn(RenderObject trailing) {
-    RenderBox? found;
-    void visit(RenderObject node) {
-      if (found != null) return;
-      if (node is _RenderChipSlot) {
-        found = node;
-      } else {
-        node.visitChildren(visit);
-      }
-    }
-
-    trailing.visitChildren(visit);
-    return found;
-  }
-
   List<RenderBox> get _pieces => getChildrenAsList();
 
   @override
@@ -667,31 +707,21 @@ class _RenderHeaderRow extends RenderBox
     final loose = BoxConstraints(maxWidth: width, maxHeight: height);
     lead.layout(loose, parentUsesSize: true);
     fresh.layout(loose, parentUsesSize: true);
-    // What the title pill and the trailing pieces share.
+    trailing.layout(loose, parentUsesSize: true);
+    // What the title pill shares with the trailing pieces.
     // No gap after an empty left piece (≡ handed to the rail).
     final leadEnd = lead.size.width == 0 ? 0.0 : lead.size.width + _gap;
-    final room = math.max(0.0, width - leadEnd - fresh.size.width);
+    final room = math.max(0.0, width - leadEnd - fresh.size.width - trailing.size.width);
     final titleWhole = title.getMaxIntrinsicWidth(height);
-    var trailingMax = room;
-    if (_chipIn(trailing) case final chip?) {
-      final chipWhole = chip.getMaxIntrinsicWidth(height);
-      final others = trailing.getMaxIntrinsicWidth(height) - chipWhole;
-      final named = others + chip.getMinIntrinsicWidth(height);
-      final compact = others + ModelChip.compactWidth;
-      // The pill's intrinsic width counts the clock; its floor doesn't.
-      final plainWhole = titleWhole - _clockExtra;
-      final plainFloor = math.min(_titleFloor, plainWhole);
-      // Step 5: the clock stays while the title keeps its floor beside it
-      // with the chip down to ✦ ⌄.
-      final clock = _clockExtra > 0 && plainFloor + _clockExtra <= room - compact;
-      final whole = clock ? titleWhole : plainWhole;
-      final floor = clock ? plainFloor + _clockExtra : plainFloor;
-      final share = math.min(math.max(floor, math.min(whole, room - named)), math.max(0.0, room - compact));
-      trailingMax = room - share;
-    }
-    trailing.layout(BoxConstraints(maxWidth: math.max(0.0, trailingMax), maxHeight: height), parentUsesSize: true);
+    // The pill's intrinsic width counts the clock; its floor doesn't.
+    final plainWhole = titleWhole - _clockExtra;
+    final plainFloor = math.min(_titleFloor, plainWhole);
+    // Step 3: the clock stays while the title keeps its floor beside it.
+    final clock = _clockExtra > 0 && plainFloor + _clockExtra <= room;
+    final whole = clock ? titleWhole : plainWhole;
+    final floor = clock ? plainFloor + _clockExtra : plainFloor;
     title.layout(
-      BoxConstraints(maxWidth: math.max(0.0, room - trailing.size.width), maxHeight: height),
+      BoxConstraints(maxWidth: math.max(floor, math.min(whole, room)), maxHeight: height),
       parentUsesSize: true,
     );
     void place(RenderBox child, double x) =>

@@ -12,41 +12,35 @@ import '../../l10n/l10n.dart';
 import '../../runtime/runtime_bridge.dart';
 import '../../runtime/runtime_state.dart';
 import '../../state/cordis_state.dart';
-import '../../runtime/local_footprint.dart';
 import '../../state/bots_state.dart';
 import '../../state/connection_state.dart';
 import '../../state/engine_control.dart';
-import '../../state/hosts_state.dart';
 import '../../state/drawer_view_state.dart';
 import '../../state/session_attention_state.dart';
 import '../../state/session_deletion_state.dart';
 import '../../state/sessions_state.dart';
 import '../../state/read_list_identity.dart';
-import '../../state/quick_panel_state.dart';
 import '../../state/workspaces_state.dart';
 import '../bots/bots_page.dart' show BotsPage, UnreadBadge;
+import '../chat/control_icons.dart';
 import '../chat/media/media_format.dart' show chatTitleShown;
 import '../common/app_dialog.dart';
 import '../common/app_sheet.dart';
 import '../common/empty_view.dart';
+import '../common/expand_reveal.dart';
 import '../common/pressable.dart';
 import '../common/smooth_size.dart';
 import '../common/read_list_status.dart';
 import '../common/status_dot.dart';
 import '../onboarding/local_install.dart';
-import '../remote/host_status.dart';
-import '../remote/host_switcher.dart' show showHostSheet;
-import '../remote/network_details_sheet.dart' show showRemoteNetworkDetails;
 import '../safe_mode/engine_failure_card.dart';
 import '../safe_mode/safe_mode_banner.dart';
 import '../share/share_entry.dart';
-import '../theme/app_icons.dart';
 import '../engine/engine_screen.dart';
+import '../theme/app_icons.dart';
 import '../theme/theme.dart';
-import '../web/mode_home.dart';
 import '../workspace/workspace_switcher.dart';
 import '../workspace/workspaces_page.dart';
-import 'brand_mark.dart';
 import 'drawer/drawer_actions.dart';
 import 'drawer/drawer_destination.dart';
 import 'drawer/archive_notice.dart';
@@ -74,11 +68,19 @@ Color sessionSelectionColor(BuildContext context) {
   return shell.rowSelected;
 }
 
-/// The sessions drawer: brand and "新对话" on top, search, the workspace
-/// switcher with the list's options, the status filters, the active host's
-/// conversations (pinned, folders, then by day), and an identity bar at the
-/// bottom (the host, 网页版, 设置). In multi-select the brand row and the
-/// identity bar give way to the selection header and its action bar.
+/// The sessions drawer, laid out the way ChatGPT lays out its sidebar: the
+/// brand and the search key are pinned, and **one** scroll body below them
+/// carries the feature rows, the conversation heading, the workspace, the
+/// filters and the conversations themselves.
+///
+/// Why one body: the feature rows used to be fixed above a separate list, so
+/// on a phone they pushed the conversations off the screen. Folding the
+/// features into the same scroll means the whole column scrolls as a unit —
+/// the same gesture, no second scrollable to fight.
+///
+/// The bottom bar (新对话 + 设置) is pinned like the top. In multi-select the
+/// pinned brand row gives way to the selection header, and the bottom bar to
+/// the action bar, so 完成 lands exactly where 新对话 was.
 class SessionsDrawer extends ConsumerWidget {
   const SessionsDrawer({
     super.key,
@@ -143,9 +145,8 @@ class SessionsDrawer extends ConsumerWidget {
     }
     final quick = AppMotion.of(context, AppMotion.quick);
     final shell = ChatGptShellColors.of(context);
-    final quickItems = ref.watch(quickPanelProvider.select((p) => p.items));
-    // Pinned above the scroll body: the brand row and the search field. ChatGPT
-    // keeps exactly these two in place while everything below them scrolls.
+    // Pinned at the top: the brand word and the search key. ChatGPT keeps
+    // exactly these two in place while everything below them scrolls.
     final pinned = <Widget>[
       AnimatedSwitcher(
         duration: quick,
@@ -153,26 +154,31 @@ class SessionsDrawer extends ConsumerWidget {
             ? DrawerSelectionHeader(key: const ValueKey('selecting'), now: now)
             : Padding(
                 key: const ValueKey('brand'),
-                // The lockup on the rows' 20 line, the action ending on the
+                // The word on the rows' 20 line, the search key ending on the
                 // 10 line; the same 14 / 10 box as [DrawerSelectionHeader],
-                // so 完成 lands exactly where 新对话 was.
+                // so 完成 lands exactly where the word was.
                 padding: const EdgeInsets.fromLTRB(20, 14, 10, 10),
                 child: Row(
                   children: [
-                    // On a narrow drawer with large text the lockup gives
-                    // way a little rather than the keys.
+                    // Plain wordmark, no glyph: ChatGPT's sidebar is a word at
+                    // the top left, and the whale belongs to the empty state.
                     Expanded(
                       child: Align(
                         alignment: AlignmentDirectional.centerStart,
                         child: FittedBox(
                           fit: BoxFit.scaleDown,
-                          child: BrandLockup(height: 19, label: 'PlugHarness'),
+                          child: Semantics(
+                            header: true,
+                            child: Text(
+                              'PlugHarness',
+                              key: const ValueKey('drawer-wordmark'),
+                              style: AppType.wordmark(size: 19, color: shell.primaryText),
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                    const WebModeKey(tier: GlassTier.pill),
-                    const SizedBox(width: 8),
-                    NewChatButton(onTap: newChat),
+                    _DrawerSearchKey(onClose: onClose),
                   ],
                 ),
               ),
@@ -181,66 +187,68 @@ class SessionsDrawer extends ConsumerWidget {
         padding: const EdgeInsets.fromLTRB(10, 0, 10, 8),
         onDetails: () => onOpen(DrawerDestination.engine),
       ),
-      // PlugHarness 的产品身份：这台 Agent 现在能做什么。
-      // ChatGPT 的侧栏只有会话；我们的侧栏要先说清「谁在干活、有几样本事」。
-      const _AgentVitals(padding: EdgeInsets.fromLTRB(10, 0, 10, 6)),
-      SessionSearchBar(onClose: onClose),
     ];
-    // Scrolls with the conversations: the feature rows, their section labels
-    // and the filters. This is the part the one-scroll-body rule is about.
-    final top = <Widget>[
-      // ChatGPT splits its one column into labelled sections. Ours: the
-      // app's rooms first, then the conversations themselves.
-      _sectionLabel(context, l10n.searchFeatures),
-      // The quick panel's destinations live here now, where ChatGPT keeps
-      // them: one column that holds both the app's rooms and its
-      // conversations, instead of a second panel sliding in from the right.
-      // Same rows, same keys — only the place they are drawn.
-      if (quickItems.isNotEmpty)
-        Padding(
-          padding: const EdgeInsets.fromLTRB(10, 2, 10, 2),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              for (final destination in quickItems)
-                QuickPanelRow(destination: destination, onTap: () => onOpen(destination)),
-            ],
+    // One scroll body: the feature rows (the three that stay, then 更多), the
+    // conversation heading, the workspace, the filters, then the conversations.
+    // [DrawerConversationList] supplies the conversation part as a sliver, so
+    // its rows keep the lazy builder and the keyed index map.
+    final body = _EdgeFade(
+      child: CustomScrollView(
+        physics: AppMotion.scrollPhysics(context),
+        slivers: [
+          SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _sectionLabel(context, l10n.searchFeatures),
+                // 插件 / 自动化任务 / 网页版: the three that stay on the top
+                // level. 快捷入口's own picks are not repeated here — the
+                // drawer is their home now.
+                for (final destination in const [
+                  DrawerDestination.plugins,
+                  DrawerDestination.schedules,
+                  DrawerDestination.web,
+                ])
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: QuickPanelRow(destination: destination, onTap: () => onOpen(destination)),
+                  ),
+                _DrawerMoreRow(
+                  // 本机引擎 / 远程主机 / 全部功能: one level down, opened in
+                  // place rather than on another page.
+                  destinations: const [
+                    DrawerDestination.engine,
+                    DrawerDestination.remote,
+                    DrawerDestination.features,
+                  ],
+                  onOpen: onOpen,
+                ),
+                _sectionLabel(context, l10n.chatChat),
+                SmoothSize(
+                  duration: AppMotion.of(context, AppMotion.standard),
+                  curve: AppMotion.std,
+                  alignment: Alignment.topCenter,
+                  child: Row(
+                    children: [
+                      Expanded(child: WorkspaceSwitcher(onManage: manageWorkspaces)),
+                      _ViewOptionsKey(onClose: onClose),
+                    ],
+                  ),
+                ),
+                SmoothSize(
+                  duration: AppMotion.of(context, AppMotion.standard),
+                  curve: AppMotion.std,
+                  alignment: Alignment.topCenter,
+                  child: const DrawerFilterBar(),
+                ),
+              ],
+            ),
           ),
-        ),
-      // Rooms ChatGPT has but we route through pages we already own.
-      for (final destination in const [
-        DrawerDestination.web,
-        DrawerDestination.remote,
-        DrawerDestination.features,
-      ])
-        if (!quickItems.contains(destination))
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: QuickPanelRow(destination: destination, onTap: () => onOpen(destination)),
-          ),
-      _sectionLabel(context, l10n.chatChat),
-      // The workspace switcher (once the host's workspace list has
-      // arrived) and the list's options, then the status filters.
-      SmoothSize(
-        duration: AppMotion.of(context, AppMotion.standard),
-        curve: AppMotion.std,
-        alignment: Alignment.topCenter,
-        child: Row(
-          children: [
-            Expanded(child: WorkspaceSwitcher(onManage: manageWorkspaces)),
-            _ViewOptionsKey(onClose: onClose),
-          ],
-        ),
+          _DrawerConversationSliver(onClose: onClose, now: now),
+          // Room to scroll the last rows clear of the pinned bar.
+          const SliverToBoxAdapter(child: SizedBox(height: 12)),
+        ],
       ),
-      SmoothSize(
-        duration: AppMotion.of(context, AppMotion.standard),
-        curve: AppMotion.std,
-        alignment: Alignment.topCenter,
-        child: const DrawerFilterBar(),
-      ),
-    ];
-    final list = _EdgeFade(
-      child: _SessionList(onClose: onClose, now: now),
     );
 
     const radius = BorderRadius.only(topRight: Radius.circular(AppShape.xl), bottomRight: Radius.circular(AppShape.xl));
@@ -251,20 +259,15 @@ class SessionsDrawer extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Pinned: brand row + search. Stays put while the body scrolls.
+            // Pinned: brand + search. Stays put while the body scrolls.
             ...pinned,
-            // The app's rooms, then the conversations below them. The row list
-            // owns the scrolling; the feature entries stay put, which is the
-            // layout this drawer has always had and what the geometry tests
-            // measure.
-            ...top,
-            Expanded(child: list),
-            // No wide filled 新对话 pill down here: ChatGPT keeps a single round
-            // compose key in the brand row above, and the bottom of its sidebar
-            // is the account row. Two competing "new chat" affordances was one
-            // of the things that made this drawer read as a different product.
-            // The action bar lies exactly over the identity bar, which
-            // keeps its size while hidden: same height at any text size.
+            Expanded(child: body),
+            // The bar over the bottom edge: 新对话 at the left, the settings key
+            // at the right. The host pill is gone — ChatGPT's sidebar ends with
+            // its account key, and the engine's state has the header and the
+            // empty state to say it.
+            // The action bar lies exactly over this bar, which keeps its size
+            // while hidden: same height at any text size.
             _ReportHeight(
               height: identityBarHeight,
               child: Stack(
@@ -276,9 +279,8 @@ class SessionsDrawer extends ConsumerWidget {
                       ignoring: selecting,
                       child: ExcludeSemantics(
                         excluding: selecting,
-                        child: IdentityBar(
-                          onHost: () => showHostSheet(context, onManage: () => onOpen(DrawerDestination.remote)),
-                          onLocalDetails: () => onOpen(DrawerDestination.engine),
+                        child: DrawerBottomBar(
+                          onNewChat: newChat,
                           onSettings: () => onOpen(DrawerDestination.settings),
                           onSettingsHold: () => onOpen(DrawerDestination.settingsSearch),
                         ),
@@ -450,6 +452,123 @@ class _ViewOptionsKey extends ConsumerWidget {
   }
 }
 
+/// The drawer's pinned search key: a 36 circle like 新对话, opening the same
+/// conversation search the search field used to.
+class _DrawerSearchKey extends StatelessWidget {
+  const _DrawerSearchKey({required this.onClose});
+
+  final VoidCallback onClose;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final shell = ChatGptShellColors.of(context);
+    return Tooltip(
+      message: l10n.shellSearchChats,
+      child: Semantics(
+        button: true,
+        label: l10n.shellSearchChats,
+        onTap: () => unawaited(showSessionSearch(context)),
+        excludeSemantics: true,
+        child: Pressable(
+          child: Material(
+            color: Colors.transparent,
+            shape: const CircleBorder(),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: () => unawaited(showSessionSearch(context)),
+              child: SizedBox.square(
+                dimension: 36,
+                child: Icon(AppIcons.search, size: 20, color: shell.secondaryText),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The feature rows one level down: a 「更多 ▸」 row that opens in place.
+///
+/// In place, not another page: ChatGPT folds its extra rooms the same way, and
+/// a second page would mean a back press to get back to the list.
+class _DrawerMoreRow extends StatefulWidget {
+  const _DrawerMoreRow({required this.destinations, required this.onOpen});
+
+  final List<DrawerDestination> destinations;
+  final ValueChanged<DrawerDestination> onOpen;
+
+  @override
+  State<_DrawerMoreRow> createState() => _DrawerMoreRowState();
+}
+
+class _DrawerMoreRowState extends State<_DrawerMoreRow> {
+  bool _open = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final shell = ChatGptShellColors.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // The row itself: 「更多」+ a chevron that turns.
+        Semantics(
+          button: true,
+          expanded: _open,
+          label: l10n.commonMore,
+          onTap: () => setState(() => _open = !_open),
+          excludeSemantics: true,
+          child: InkWell(
+            key: const ValueKey('drawer-more'),
+            onTap: () => setState(() => _open = !_open),
+            customBorder: Squircle.border(AppShape.md),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 48),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                child: Row(
+                  children: [
+                    Icon(AppIcons.expand, size: 20, color: shell.secondaryText),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        l10n.commonMore,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 15, height: 1.4),
+                      ),
+                    ),
+                    AnimatedRotation(
+                      turns: _open ? 0.5 : 0,
+                      duration: AppMotion.of(context, AppMotion.quick),
+                      child: Icon(AppIcons.expand, size: 16, color: shell.tertiaryText),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        ExpandReveal(
+          open: _open,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (final destination in widget.destinations)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: QuickPanelRow(destination: destination, onTap: () => widget.onOpen(destination)),
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 /// Soft top and bottom edges on the list, so rows fade into the header and
 /// the identity bar instead of being cut. At rest nothing is under either fade
 /// (the list's own padding is deeper).
@@ -478,9 +597,12 @@ class _EdgeFade extends StatelessWidget {
     );
   }
 }
-
-class _SessionList extends ConsumerWidget {
-  const _SessionList({required this.onClose, this.now});
+/// The conversation part of the drawer's one scroll body.
+///
+/// The states that are not a list (loading, error, no scope yet, an empty
+/// host) become their own sliver; the rows come from [DrawerConversationList].
+class _DrawerConversationSliver extends ConsumerWidget {
+  const _DrawerConversationSliver({required this.onClose, this.now});
 
   final VoidCallback onClose;
   final DateTime? now;
@@ -495,27 +617,35 @@ class _SessionList extends ConsumerWidget {
     // arrived (rather than flash every conversation).
     final scope = ref.watch(drawerScopeProvider);
     if (scope == null) {
-      if (ref.watch(readListLiveConnectionProvider) == null && !sessions.isLoading) return const _EmptyState();
+      if (ref.watch(readListLiveConnectionProvider) == null && !sessions.isLoading) {
+        return SliverToBoxAdapter(child: _Centered(child: _EmptyState()));
+      }
       if (sessions.hasError) {
-        return _Centered(
-          child: EmptyView(
-            compact: true,
-            icon: AppIcons.offline,
-            title: l10n.shellChatsLoadFailed,
-            actionLabel: l10n.commonRetry,
-            onAction: () => ref.read(sessionsProvider.notifier).refresh(),
+        return SliverToBoxAdapter(
+          child: _Centered(
+            child: EmptyView(
+              compact: true,
+              icon: AppIcons.offline,
+              title: l10n.shellChatsLoadFailed,
+              actionLabel: l10n.commonRetry,
+              onAction: () => ref.read(sessionsProvider.notifier).refresh(),
+            ),
           ),
         );
       }
-      return const _SkeletonList();
+      return const SliverToBoxAdapter(child: _SkeletonList());
     }
     // DS Bot's conversations (its Bots' chats, groups, members' sessions)
     // fold into one row that opens the Bot pages.
     final botReady = ref.watch(dsBotProvider.select((s) => s.ready));
     final showBots = scope.bots.isNotEmpty || (workspace == null && botReady);
     if (scope.sessions.isEmpty && !showBots && ref.watch(drawerViewProvider).folders.isEmpty) {
-      if (scope.readOnly) return _Centered(child: Text(readListStatusText(scope.status)));
-      return workspace == null ? const _EmptyState() : const _WorkspaceEmptyState();
+      if (scope.readOnly) {
+        return SliverToBoxAdapter(child: _Centered(child: Text(readListStatusText(scope.status))));
+      }
+      return SliverToBoxAdapter(
+        child: workspace == null ? _Centered(child: _EmptyState()) : const _WorkspaceEmptyState(),
+      );
     }
     return DrawerConversationList(
       now: now,
@@ -559,6 +689,7 @@ class _SessionList extends ConsumerWidget {
       owner?.close();
     }
   }
+
 
   Future<void> _showOwnedActions(
     BuildContext context,
@@ -972,197 +1103,79 @@ class _RemoteEmptyState extends ConsumerWidget {
   }
 }
 
-/// The drawer's footer: the host icon opens its details; the name and dropdown
-/// switch hosts. 设置 follows as a round key.
-class IdentityBar extends ConsumerWidget {
-  const IdentityBar({
+/// The drawer's footer: 新对话 at the left, the settings key at the right.
+///
+/// ChatGPT's sidebar ends with two quiet keys rather than a host switcher, and
+/// the engine's state has a better home (the header and the empty state). The
+/// settings key is the official gear glyph; a long press goes straight to
+/// settings search.
+class DrawerBottomBar extends StatelessWidget {
+  const DrawerBottomBar({
     super.key,
-    required this.onHost,
+    required this.onNewChat,
     required this.onSettings,
     this.onSettingsHold,
-    this.onLocalDetails,
   });
-  final VoidCallback onHost;
-  /// Local hosts have engine details, not a remote network path.
-  final VoidCallback? onLocalDetails;
+
+  final VoidCallback onNewChat;
   final VoidCallback onSettings;
 
   /// ⚙ held down: straight to settings search.
   final VoidCallback? onSettingsHold;
 
-  /// The round keys, and the host pill's height beside them.
+  /// The round keys, and the bar's height beside them.
   static const keySize = 44.0;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final theme = Theme.of(context);
-    final colors = DshColors.of(context);
-    final host = ref.watch(activeHostProvider);
-    final name = ref.watch(hostNameProvider(host)) ?? (host.isLocal ? l10n.commonThisPhone : l10n.commonRemoteHost);
-    final view = watchHostStatus(ref, host);
-    final link = host.kind == HostKind.relay ? ref.watch(hostLinkStatusProvider(host)).value : null;
-    final path = link?.isConnected == true ? link?.network?.path ?? link?.path : null;
-    final statusLabel = path == null ? view.label : path.label;
-    final tint = hostKindTint(host.kind);
+    final shell = ChatGptShellColors.of(context);
     return Padding(
-      // Same 10 / 20 grid as the rows above: the highlight's edge at 10, the
-      // avatar on the 20 text line, the last button's edge at 10. The host
-      // pill is as tall as the round keys beside it (44; taller only for
-      // large text).
-      padding: const EdgeInsets.fromLTRB(10, 9, 10, 13),
+      // Same 10 / 20 grid as the rows above: the new-chat key on the 10 line,
+      // the settings key ending on the 10 line.
+      padding: const EdgeInsets.fromLTRB(10, 6, 10, 10),
       child: Row(
         children: [
           Expanded(
-            child: Row(
-              key: const ValueKey('identity-host-controls'),
-              children: [
-                const SizedBox(width: 6),
-                IconButton(
-                  key: const ValueKey('identity-host-details'),
-                  tooltip: host.isLocal ? l10n.phoneEngineTitle : l10n.remoteNetworkDetails,
-                  onPressed: host.isLocal ? onLocalDetails : () => showRemoteNetworkDetails(context, host),
-                  padding: const EdgeInsets.all(4),
-                  constraints: const BoxConstraints.tightFor(width: keySize, height: keySize),
-                  style: IconButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-                  icon: DecoratedBox(
-                    decoration: ShapeDecoration(color: colors.identity[tint], shape: const CircleBorder()),
-                    child: SizedBox.square(
-                      dimension: 36,
-                      child: Icon(hostKindIcon(host.kind), size: 19, color: colors.onIdentity[tint]),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Semantics(
-                    button: true,
-                    label: l10n.shellCurrentHostLabel(name, statusLabel),
-                    onTap: onHost,
-                    excludeSemantics: true,
-                    child: InkWell(
-                      key: const ValueKey('identity-host-switcher'),
-                      onTap: onHost,
-                      customBorder: Squircle.border(AppShape.md),
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(minHeight: IdentityBar.keySize),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          child: Row(
-                            children: [
-                              Flexible(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      name,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: theme.textTheme.titleSmall,
-                                    ),
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        StatusDot(tone: view.tone, size: 6),
-                                        const SizedBox(width: 6),
-                                        Flexible(
-                                          child: AnimatedSwitcher(
-                                            duration: AppMotion.of(context, AppMotion.quick),
-                                            layoutBuilder: (current, previous) => Stack(
-                                              alignment: Alignment.centerLeft,
-                                              children: [...previous, ?current],
-                                            ),
-                                            child: Text(
-                                              statusLabel,
-                                              key: ValueKey(statusLabel),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: AppType.tabular(
-                                                theme.textTheme.bodySmall!.copyWith(color: colors.textTertiary),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 4),
-                              Icon(AppIcons.dropdown, size: 18, color: colors.textTertiary),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              // The round compose key, exactly as ChatGPT draws it: a solid
+              // primary circle holding the glyph, with the words in the label.
+              child: NewChatButton(onTap: onNewChat),
             ),
           ),
           const SizedBox(width: 8),
-          // Account avatar: the way into settings. ChatGPT's sidebar ends with
-          // a round account picture, not a gear; a settings placeholder stands
-          // in until the app has real avatars (the user asked for exactly this).
-          // Single-colour line glyph on a hairline ring — no tinted disc, which
-          // is what made the old footer read as a different product.
-          _DrawerAvatar(
+          // The official gear, so the app's own settings glyph stays out of the
+          // drawer's chrome (it is what every other entry here uses).
+          Semantics(
+            button: true,
+            label: l10n.commonSettings,
             onTap: onSettings,
             onLongPress: onSettingsHold,
-            tooltip: l10n.commonSettings,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// The drawer's account entry: a 44dp tap target holding a 32dp circle with a
-/// hairline ring and the `circle_person` glyph. No colour: the identity hues
-/// belong to host kinds, not to the account.
-class _DrawerAvatar extends StatelessWidget {
-  const _DrawerAvatar({required this.onTap, required this.tooltip, this.onLongPress});
-
-  final VoidCallback onTap;
-  final VoidCallback? onLongPress;
-  final String tooltip;
-
-  static const _ring = 32.0;
-
-  @override
-  Widget build(BuildContext context) {
-    final shell = ChatGptShellColors.of(context);
-    // No [Tooltip] wrapper: the avatar's Semantics already carries the label,
-    // and a Tooltip would add a second node with the same text (widget tests
-    // and screen readers would both see two "设置" targets).
-    return Semantics(
-      button: true,
-      label: tooltip,
-      onTap: onTap,
-      excludeSemantics: true,
-      child: InkResponse(
-        onTap: onTap,
-        onLongPress: onLongPress,
-        radius: IdentityBar.keySize / 2,
-        child: SizedBox.square(
-          dimension: IdentityBar.keySize,
-          child: Center(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: shell.composerBorder, width: 1),
-              ),
+            excludeSemantics: true,
+            child: InkResponse(
+              key: const ValueKey('drawer-settings'),
+              onTap: onSettings,
+              onLongPress: onSettingsHold,
+              radius: keySize / 2,
               child: SizedBox.square(
-                dimension: _ring,
-                child: Icon(
-                  AppIcons.avatar,
-                  size: 20,
-                  color: shell.secondaryText,
+                dimension: keySize,
+                child: Center(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: shell.composerBorder, width: 1),
+                    ),
+                    child: SizedBox.square(
+                      dimension: 32,
+                      child: ChatGptGearIcon(size: 19, color: shell.secondaryText),
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -1179,6 +1192,11 @@ class _DrawerAvatar extends StatelessWidget {
 /// - **没有信息就不占位**：断线、未安装、插件清单未就绪时整条收起，不留空壳；
 /// - **一行说完**：最多两个分段（引擎 / 插件），再多就换行而不是挤；
 /// - **可点即去**：点它打开引擎页，与 `SafeModeBanner` 的落点一致。
+///
+/// **这一条现在没有接线**：2026-11 的侧栏改版把它从固定区挪走后没有再放回
+/// 滚动体，所以它当前不被任何地方构造。保留是因为「引擎起没起」在窄屏侧栏
+/// 仍然有信息价值，但**不要以为它在侧栏上看得见** —— 要恢复就得把它放进
+/// `_DrawerConversationSliver` 上方的 sliver 里（并配几何测试）。
 class _AgentVitals extends ConsumerWidget {
   const _AgentVitals({required this.padding});
 

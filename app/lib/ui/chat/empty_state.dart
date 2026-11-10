@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 
 import '../../l10n/l10n.dart';
-import '../common/expand_reveal.dart';
 import '../common/fade_in.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
-import 'empty_actions.dart';
 import 'widgets/whale_tail.dart';
 
+// 建议卡（`ChatSuggestion` / `defaultSuggestions`）与底部小技巧
+// （`defaultTips`）的定义仍在本文件里，但**空态已经不再画它们**（2026-11 按
+// 用户要求删除）。保留定义是因为：
+//   - `defaultTips()` 的文案键还在 l10n 里，删文案要同步删 ARB；
+//   - 有几条测试仍在断言这些文案本身。
+// 要彻底移除需要一轮「删定义 + 删 ARB + 删测试」，不在本次 UI 改版范围内。
 /// 一条建议:一枚带色底的线性小图标 + 标题 + 一行说明,点了把 [prompt] 填进输入条。
 ///
 /// 默认的四条是 PlugHarness 自己的能力入口(手机操控 / 插件 / 工作区 / 日程),
@@ -120,13 +124,14 @@ String greetingFor(DateTime now) {
 ///                你想做点什么？
 ///
 ///          ( ▢ 在「dsh-app」中 ⌄ )
-///
-///   ( ▢ 看看工作区 ) ( </> 词频统计脚本 )
-///   ( >_ 新建 Node 项目 ) ( ◌ rebase 或 merge )
 /// ```
 ///
 /// 左右与顶栏、输入条一样离屏幕 12,宽屏时与输入条同宽居中;第一次出现时
 /// 由上到下依次淡入。连不上引擎时建议、选项和小技巧都收起,只留「重新连接」。
+///
+/// **建议卡和小技巧已按用户要求删除**（2026-11）：空态只留鲸尾 + 时段问候
+/// + 模式/权限两行。它们是 2026-10 加的，和 ChatGPT 的空态结构（一句大标题
+/// + 输入框）不是一家；留着一屏反而更像「套壳的另一个产品」。
 class ChatEmptyState extends StatelessWidget {
   const ChatEmptyState({
     super.key,
@@ -138,12 +143,10 @@ class ChatEmptyState extends StatelessWidget {
     this.onReconnect,
     this.idle,
     this.now,
-    this.suggestions = defaultSuggestions,
     this.workspace,
     this.onWorkspace,
     this.options,
     this.tips,
-    this.tipStart,
   });
 
   final bool connected;
@@ -175,15 +178,8 @@ class ChatEmptyState extends StatelessWidget {
   /// quiet chips under the workspace chip. Shown only while connected.
   final Widget? options;
 
-  /// The tip line's tips; null = [defaultTips], empty = no tip line.
-  final List<String>? tips;
-
-  /// The first tip shown (tests); defaults to a random one.
-  final int? tipStart;
-
   /// 测试注入;默认取当前时间。
   final DateTime? now;
-  final List<ChatSuggestion> suggestions;
 
   /// Same side margin and width cap as the header pills and the composer.
   static const sideMargin = AppSpace.floatInset;
@@ -260,7 +256,6 @@ class ChatEmptyState extends StatelessWidget {
               ),
             ),
           );
-    final tipList = tips ?? defaultTips();
 
     // One slot under the subtitle: the primary pill or the workspace chip,
     // the same height, swapped in place.
@@ -308,33 +303,6 @@ class ChatEmptyState extends StatelessWidget {
                 const SizedBox(height: optionsGap),
                 enter(Center(child: options!)),
               ],
-              if (suggestions.isNotEmpty || tipList.isNotEmpty)
-                ExpandReveal(
-                  open: retry == null && idle == null,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: suggestionsGap),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        if (suggestions.isNotEmpty)
-                          SuggestionCards(
-                            suggestions: suggestions,
-                            enabled: connected,
-                            onSuggestion: onSuggestion,
-                            firstIndex: order,
-                          ),
-                        if (connected && tipList.isNotEmpty) ...[
-                          const SizedBox(height: tipGap),
-                          FadeSlideIn(
-                            index: order + suggestions.length,
-                            child: TipLine(tips: tipList, start: tipStart),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ),
             ],
           ),
         ),

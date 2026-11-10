@@ -2,6 +2,9 @@
 // DS Bot's row, 置顶, the folders (opening and closing in place), then the
 // rest by day; or, under a status filter, just the matches. Loading, error
 // and empty-host states stay with the drawer (sessions_drawer.dart).
+//
+// The rows are a **sliver**: the drawer puts them in one scroll body beside
+// the feature rows, rather than nesting a second scrollable under them.
 
 import 'package:dsh_client/dsh_client.dart' show SessionSummary;
 import 'package:flutter/material.dart';
@@ -15,12 +18,16 @@ import '../../../state/sessions_state.dart';
 import '../../../state/workspaces_state.dart';
 import '../../common/empty_view.dart';
 import '../../theme/app_icons.dart';
-import '../../theme/motion.dart';
 import '../sessions_drawer.dart' show sessionTitle;
 import 'drawer_actions.dart';
 import 'folder_header.dart';
 import 'session_tile.dart';
 
+/// The drawer's conversation rows, as a sliver of the drawer's one scroll body.
+///
+/// Rows are built lazily: only what is near the viewport is prepared, which is
+/// what [SliverChildBuilderDelegate] buys us and why the list is a sliver
+/// rather than a `Column`.
 class DrawerConversationList extends ConsumerWidget {
   const DrawerConversationList({
     super.key,
@@ -55,7 +62,9 @@ class DrawerConversationList extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final blocks = watchDrawerBlocks(ref, now: now);
-    if (blocks == null) return const SizedBox.shrink();
+    // Null while the blocks are still being worked out (no scope yet): an empty
+    // sliver, so the drawer's other rows still lay out.
+    if (blocks == null) return const SliverToBoxAdapter(child: SizedBox.shrink());
     final selection = ref.watch(drawerSelectionProvider);
     final selecting = !readOnly && selection != null;
     final filter = ref.watch(drawerFilterProvider);
@@ -161,13 +170,15 @@ class DrawerConversationList extends ConsumerWidget {
     // Preserve keyed row/folder state when pinning, sorting or hiding the
     // leading row changes indices. A new filter still starts at the top.
     final indices = {for (var i = 0; i < rows.length; i++) rows[i].key: i};
-    return ListView.builder(
-      key: ValueKey(filter),
-      physics: AppMotion.scrollPhysics(context),
+    return SliverPadding(
       padding: padding,
-      itemCount: rows.length,
-      itemBuilder: (context, index) => rows[index].builder(context),
-      findChildIndexCallback: (key) => indices[key],
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) => rows[index].builder(context),
+          childCount: rows.length,
+          findChildIndexCallback: (key) => indices[key],
+        ),
+      ),
     );
   }
 }

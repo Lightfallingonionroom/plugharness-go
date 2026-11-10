@@ -8,10 +8,32 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
 import '../../state/quick_panel_state.dart';
+import '../chat/control_icons.dart';
 import '../session/conversation_panel.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
 import 'drawer/drawer_destination.dart';
+
+/// A destination's glyph as a row draws it.
+///
+/// 自动化任务 uses ChatGPT's own vector mark (`ChatGptScheduledTaskIcon`) so
+/// the three feature rows read as one family; the rest keep the app's material
+/// glyphs. One widget, so the drawer, 快捷入口 and 设置 › 界面 draw the same
+/// thing at the same size.
+class DrawerDestinationGlyph extends StatelessWidget {
+  const DrawerDestinationGlyph({super.key, required this.destination, this.size = 20});
+
+  final DrawerDestination destination;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    if (destination == DrawerDestination.schedules) {
+      return ChatGptScheduledTaskIcon(size: size, color: IconTheme.of(context).color);
+    }
+    return Icon(destination.icon, size: size, color: IconTheme.of(context).color);
+  }
+}
 
 /// A destination as 快捷入口 and its settings show it, by the name and the
 /// glyph its other ways in use.
@@ -24,6 +46,10 @@ extension DrawerDestinationLook on DrawerDestination {
     DrawerDestination.settings => AppIcons.settings,
     DrawerDestination.settingsSearch => AppIcons.search,
     DrawerDestination.features => AppIcons.allFeatures,
+    // The automation row in the drawer draws the ChatGPT vector glyph
+    // (see [_DrawerDestinationGlyph]); everywhere else the app's own
+    // calendar glyph is the one this destination has always used.
+    DrawerDestination.schedules => AppIcons.automation,
   };
 
   String label(L10n l10n) => switch (this) {
@@ -34,6 +60,7 @@ extension DrawerDestinationLook on DrawerDestination {
     DrawerDestination.settings => l10n.commonSettings,
     DrawerDestination.settingsSearch => l10n.searchSettingsHint,
     DrawerDestination.features => l10n.hubSettingsAllFeatures,
+    DrawerDestination.schedules => l10n.featuresSchedules,
   };
 }
 
@@ -135,7 +162,7 @@ class QuickPanelRow extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             child: Row(
               children: [
-                Icon(destination.icon, size: 20, color: theme.colorScheme.onSurfaceVariant),
+                DrawerDestinationGlyph(destination: destination, size: 20),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(

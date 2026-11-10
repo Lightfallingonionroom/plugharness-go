@@ -312,5 +312,9 @@
   "chatGoalStateSemantics": "Goal, {objective}, {state}",
   "chatTodoItemSemantics": "{content}, {state}",
   "chatMentionSemantics": "{kind}: {label}",
-  "chatArtifactSemantics": "{name}, {description}"
+  "chatArtifactSemantics": "{name}, {description}",
+  "chatWorkProgressTooltip": "View progress",
+  "chatWorkProgressHoldHint": "Hold for files",
+  "chatComposerControls": "Controls",
+  "chatComposerControlsNewChat": "Set after this chat starts"
 }
