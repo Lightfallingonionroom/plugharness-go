@@ -243,11 +243,12 @@ PluginRuntimeDiagnostic? classifyPluginRuntimeError(
   // `tool-subagent: toolFilter is no longer supported; configure ... in an
   // Agent Preset and select it with agentPreset (spawn only)`
   for (final removed in RemovedPluginFields.all) {
-    if (!text.contains('$removed.field is no longer supported')) continue;
+    // Braces required: `.field` is a property read, not part of the identifier.
+    if (!text.contains('${removed.field} is no longer supported')) continue;
     return PluginRuntimeDiagnostic(
       plugin: plugin,
       fault: PluginRuntimeFault.removedConfigField,
-      message: '${plugin} 用了 ${removed.plugin} 已经移除的配置项 ${removed.field}。'
+      message: '$plugin 用了 ${removed.plugin} 已经移除的配置项 ${removed.field}。'
           '当前运行时会直接拒绝启动；请把这项配置改成 ${removed.replacement}。',
       path: path,
       pluginVersion: pluginVersion,

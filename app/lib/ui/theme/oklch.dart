@@ -118,14 +118,20 @@ Color retint(
 }) {
   if (hueShift == 0 && chromaScale == 1) return color;
   final o = Oklch.fromColor(color);
+  if (chromaScale <= 0) return color;
   // A grey has no hue to rotate and no chroma to scale; give it the accent's.
   final isGrey = o.c < 0.001;
-  if (chromaScale <= 0) return color;
   // 0.014: enough that #F9F9F9 becomes #F1FBFF for blue and #FFF8F0 for lime —
   // the sidebar reads cool or warm at a glance — while staying far below the
   // ~0.02 where a surface starts to look painted rather than tinted.
   const neutralFloor = 0.014;
   final chroma = math.max(o.c * chromaScale, neutralFloor * chromaScale);
   final hue = isGrey && absoluteHue != null ? absoluteHue % 360 : (o.h + hueShift) % 360;
-  return o.copyWith(c: chroma, h: hue).toColor(alpha: color.a);
+  final next = o.copyWith(c: chroma, h: hue).toColor(alpha: color.a);
+  // Round-tripping through OKLCH can land on the exact same ARGB. Returning the
+  // original object then keeps `Color.toString()` stable (`#181818`, not
+  // `#FF181818`), which matters because the plugin-view diagnostics compare
+  // their messages verbatim.
+  if (next.toARGB32() == color.toARGB32()) return color;
+  return next;
 }
