@@ -36,6 +36,7 @@ class RuntimeController private constructor(private val app: Context) : DshProce
     private val main = Handler(Looper.getMainLooper())
     private val worker = Executors.newSingleThreadExecutor { r -> Thread(r, "dsh-runtime") }
     private val sinks = LinkedHashSet<EventSink>()
+    private val statusPublishLock = Any()
     private val logDir = File(app.filesDir, "runtime/logs")
     private val runtimeLogs = RuntimeLogs(
         File(logDir, "dsh.log"), SystemClock::elapsedRealtime,
@@ -205,17 +206,24 @@ class RuntimeController private constructor(private val app: Context) : DshProce
     }
 
     /** [dropKept]: give up what a reset kept but cannot be put back (see [KeepFailed]). */
-    fun install(dropKept: Boolean = false, onDone: (Throwable?) -> Unit) {
+    @Synchronized fun install(dropKept: Boolean = false, onDone: (Throwable?) -> Unit) {
         if (phase == Phase.INSTALLING) return onDone(null)
-        if (installer.isCurrent() && phase != Phase.ERROR) {
+        if (installer.isCurrent() && phase != Phase.ERROR && !resetting) {
             if (phase == Phase.NOT_INSTALLED) setPhase(Phase.INSTALLED)
             return onDone(null)
+        }
+        if (process != null || resetting || phase in setOf(Phase.STARTING, Phase.RUNNING, Phase.STOPPING)) {
+            return onDone(RuntimeUpgradeBlocked("running"))
         }
         setPhase(Phase.INSTALLING)
         worker.execute {
             try {
                 log("[dsh-app] unpacking runtime ${manifest.runtimeVersion} (${manifest.abi})", "system")
                 val started = System.currentTimeMillis()
+                if (installer.rootfs.exists() &&
+                    !DshProcess(app, manifest, installer.rootfs, this).killStrays()) {
+                    throw RuntimeUpgradeBlocked("running")
+                }
                 if (dropKept) log("[dsh-app] installing without what could not be kept", "system")
                 installer.install(dropKept) { done, total ->
                     emit(mapOf("type" to "progress", "step" to "extract", "done" to done, "total" to total))
@@ -490,7 +498,22 @@ class RuntimeController private constructor(private val app: Context) : DshProce
                 // process prevents another start from advancing the generation underneath it.
                 val p = synchronized(this@RuntimeController) {
                     if (stopGen >= gen || gen != runGen) null
-                    else DshProcess(app, manifest, installer.rootfs, this).also {
+                    else DshProcess(
+                        app, manifest, installer.rootfs,
+                        object : DshProcess.Listener by this@RuntimeController {
+                            override fun onLog(line: String, stream: String) {
+                                if (stream != "system") {
+                                    synchronized(runTail) {
+                                        if (gen == runGen) {
+                                            runTail.addLast(line)
+                                            while (runTail.size > CrashClassifier.TAIL_LINES) runTail.removeFirst()
+                                        }
+                                    }
+                                }
+                                this@RuntimeController.onLog(line, stream)
+                            }
+                        },
+                    ).also {
                         launched = it
                         lastLaunch = it.launchDiagnostics
                         process = it
@@ -916,12 +939,6 @@ class RuntimeController private constructor(private val app: Context) : DshProce
     // DshProcess.Listener
 
     override fun onLog(line: String, stream: String) {
-        if (stream != "system") {
-            synchronized(runTail) {
-                runTail.addLast(line)
-                while (runTail.size > CrashClassifier.TAIL_LINES) runTail.removeFirst()
-            }
-        }
         log(line, stream)
     }
 
@@ -1091,7 +1108,9 @@ class RuntimeController private constructor(private val app: Context) : DshProce
         DshService.updateNotification(app)
     }
 
-    private fun emitStatus() = emit(mapOf("type" to "status", "status" to status()))
+    private fun emitStatus() = synchronized(statusPublishLock) {
+        emit(mapOf("type" to "status", "status" to status()))
+    }
 
     private fun emit(event: Map<String, Any?>) {
         val targets = synchronized(sinks) { sinks.toList() }
