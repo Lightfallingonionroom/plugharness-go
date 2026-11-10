@@ -162,6 +162,53 @@ ModelSelection.reasoningEffort  →  走现有链路进请求
    - 右：`ReasoningGaugeIcon`（档位由 `model.efforts` 决定，无档位不显示）
 4. **思考配置页面** + 扇形接进输入条（复用 `ModelSelection.reasoningEffort`）
 
+## 四点五、右上角「查看工作进展」+ 侧边栏「自动化任务」（追加需求）
+
+用户看过 P1（终端）、P2（文件）、P3（自动化任务）三个页面后追加：
+
+### 右上角按钮：一个图标，两种动作
+
+顶栏右上角**保留一个图标按钮**（不再是模型选择）：
+
+| 动作 | 打开 | 组件 | 官方来源 |
+|---|---|---|---|
+| **点按** | 终端页 | `ChatGptTerminalIcon` | `ds_terminal_regular_24.xml` |
+| **长按** | 文件页 | `ChatGptFolderIcon` | `ds_folder_regular_24.xml` |
+
+图标本身显示成终端（因为点按是主操作），长按进文件。
+
+对接的页面类（已核实存在）：
+
+| 目标 | 类 | 文件 |
+|---|---|---|
+| 终端 | `TerminalPage`（需 `sessionId`） | `app/lib/ui/terminal/terminal_page.dart:35` |
+| 文件 | `WorkspaceFilesPage`（需 `sessionId`） | `app/lib/ui/files/files_page.dart:27` |
+
+### 侧边栏功能入口：三行
+
+```
+功能
+  插件          → PluginsScreen
+  自动化任务     → 自动化任务页（新增）
+  网页版        → LocalWebScreen
+  更多 ▸        → 本机引擎 / 远程主机 / 全部功能
+```
+
+「自动化任务」插在**插件和网页版中间**，用 `ChatGptScheduledTaskIcon`
+（官方「闹钟 + 打勾」，到点自动的语义）。
+
+**新增这个入口需要改 4 处**（照现有 `DrawerDestination` 的模式）：
+
+| 位置 | 改什么 |
+|---|---|
+| `ui/shell/drawer/drawer_destination.dart:5` | 枚举加一个值（如 `scheduledTasks`） |
+| `ui/shell/quick_panel.dart:11-19` | `icon` switch 加一项 → `ChatGptScheduledTaskIcon` |
+| `ui/shell/quick_panel.dart:21-29` | `label` switch 加一项 → 新 l10n key |
+| `ui/shell/home_shell.dart:234-242` | `_openDestination` switch 加一项 → 页面 |
+
+注意 `DrawerDestination` 按 `Enum.name` 存储偏好（见
+`quick_panel_state.dart` 注释），**改名会让已存偏好失效，只能新增不能改**。
+
 ## 五、两条硬提醒
 
 1. **几何测试会红**：新布局下 600 高测试屏里会话行被功能区推出可视区。
