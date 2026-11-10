@@ -371,6 +371,9 @@ class NeutralTones {
 
   /// 转到 [tintHue]、彩度乘 [tintChroma] 的整条中性色。结果按参数缓存。
   static NeutralTones of({required double tintHue, required double tintChroma}) {
+    // Graphite: zero chroma means "do not tint at all", and the ramp must stay
+    // the very same object the rest of the app compares against.
+    if (tintChroma <= 0) return defaults;
     if (tintHue == baseHue && tintChroma == 1) return defaults;
     return _cache.putIfAbsent((tintHue, tintChroma), () {
       if (_cache.length > 32) _cache.clear();

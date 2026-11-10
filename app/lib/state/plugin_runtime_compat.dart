@@ -243,7 +243,7 @@ PluginRuntimeDiagnostic? classifyPluginRuntimeError(
   // `tool-subagent: toolFilter is no longer supported; configure ... in an
   // Agent Preset and select it with agentPreset (spawn only)`
   for (final removed in RemovedPluginFields.all) {
-    if (!text.contains('${removed.field} is no longer supported')) continue;
+    if (!text.contains('$removed.field is no longer supported')) continue;
     return PluginRuntimeDiagnostic(
       plugin: plugin,
       fault: PluginRuntimeFault.removedConfigField,
