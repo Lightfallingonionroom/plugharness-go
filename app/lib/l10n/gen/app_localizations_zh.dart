@@ -19017,6 +19017,33 @@ class L10nZh extends L10n {
   String get viewUiMultiple => '可多选';
 
   @override
+  String get viewSuggestPhone => '操控手机';
+
+  @override
+  String get viewSuggestPhonePrompt => '打开微信，看看最新消息，然后给最上面那个联系人回一句「收到，稍后处理」。';
+
+  @override
+  String get viewSuggestPlugin => '装个插件';
+
+  @override
+  String get viewSuggestPluginPrompt => '看看插件市场里有什么值得装的插件，挑一个能力最实用的介绍给我。';
+
+  @override
+  String get viewSuggestSchedule => '排个日程';
+
+  @override
+  String get viewSuggestSchedulePrompt => '明天上午 10 点提醒我开项目周会，提前 10 分钟再提醒一次。';
+
+  @override
+  String get viewSuggestPhoneHint => '让 Agent 替你点点';
+
+  @override
+  String get viewSuggestPluginHint => '给 Agent 加本事';
+
+  @override
+  String get viewSuggestScheduleHint => '到点提醒你';
+
+  @override
   String get viewSuggestWorkspace => '看看工作区';
 
   @override

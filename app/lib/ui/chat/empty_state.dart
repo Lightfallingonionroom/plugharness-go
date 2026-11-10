@@ -6,8 +6,12 @@ import '../common/fade_in.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
 import 'empty_actions.dart';
+import 'widgets/whale_tail.dart';
 
 /// 一条建议:一枚带色底的线性小图标 + 标题 + 一行说明,点了把 [prompt] 填进输入条。
+///
+/// 默认的四条是 PlugHarness 自己的能力入口(手机操控 / 插件 / 工作区 / 日程),
+/// 不是通用开发任务——新对话页应当先说清「这个 App 能替你做什么」。
 class ChatSuggestion {
   const ChatSuggestion(this.icon, String label, String prompt, {this._detail, this.tint = SuggestionTint.blue})
     : _label = label,
@@ -26,37 +30,37 @@ class ChatSuggestion {
   String get label =>
       _label ??
       switch (_defaultIndex) {
-        0 => appL10n.viewSuggestWorkspace,
-        1 => appL10n.viewSuggestWordCount,
-        2 => appL10n.viewSuggestNode,
-        _ => appL10n.viewSuggestGit,
+        0 => appL10n.viewSuggestPhone,
+        1 => appL10n.viewSuggestPlugin,
+        2 => appL10n.viewSuggestWorkspace,
+        _ => appL10n.viewSuggestSchedule,
       };
 
   /// One line under the title: what the suggestion will do.
   String? get detail => _defaultIndex == null
       ? _detail
       : switch (_defaultIndex) {
-          0 => appL10n.viewSuggestWorkspaceHint,
-          1 => appL10n.viewSuggestWordCountHint,
-          2 => appL10n.viewSuggestNodeHint,
-          _ => appL10n.viewSuggestGitHint,
+          0 => appL10n.viewSuggestPhoneHint,
+          1 => appL10n.viewSuggestPluginHint,
+          2 => appL10n.viewSuggestWorkspaceHint,
+          _ => appL10n.viewSuggestScheduleHint,
         };
 
   String get prompt =>
       _prompt ??
       switch (_defaultIndex) {
-        0 => appL10n.viewSuggestWorkspacePrompt,
-        1 => appL10n.viewSuggestWordCountPrompt,
-        2 => appL10n.viewSuggestNodePrompt,
-        _ => appL10n.viewSuggestGitPrompt,
+        0 => appL10n.viewSuggestPhonePrompt,
+        1 => appL10n.viewSuggestPluginPrompt,
+        2 => appL10n.viewSuggestWorkspacePrompt,
+        _ => appL10n.viewSuggestSchedulePrompt,
       };
 }
 
 const defaultSuggestions = <ChatSuggestion>[
-  ChatSuggestion._default(AppIcons.folderOpen, 0, SuggestionTint.teal),
-  ChatSuggestion._default(AppIcons.code, 1, SuggestionTint.violet),
-  ChatSuggestion._default(AppIcons.terminal, 2, SuggestionTint.amber),
-  ChatSuggestion._default(AppIcons.tip, 3, SuggestionTint.blue),
+  ChatSuggestion._default(AppIcons.phoneControl, 0, SuggestionTint.teal),
+  ChatSuggestion._default(AppIcons.plugin, 1, SuggestionTint.violet),
+  ChatSuggestion._default(AppIcons.folderOpen, 2, SuggestionTint.amber),
+  ChatSuggestion._default(AppIcons.scheduled, 3, SuggestionTint.blue),
 ];
 
 /// Tips about using DSH Go, one at a time under the suggestions. Each names
@@ -222,9 +226,16 @@ class ChatEmptyState extends StatelessWidget {
     // the connection, and a counter would shift every later fade-in with it.
     var order = 0;
     Widget enter(Widget child) => FadeSlideIn(index: order++, child: child);
+
+    // 品牌形 + 时段问候。设计规范 page-design.md §3 要求「鲸尾品牌形 +
+    // 按时段的问候」，此处恢复——上一轮照抄 ChatGPT 时连品牌一起抹掉了。
+    // 鲸尾用静止帧（still），不带计时器：这一屏不该有一只在动的东西和输入框抢注意力。
+    final whaleFade = enter(
+      _EmptyWhale(connected: connected),
+    );
     final titleFade = enter(
       Text(
-        l10n.viewEmptyTitle,
+        connected ? greetingFor(chatClock()) : l10n.viewEmptyTitle,
         textAlign: TextAlign.center,
         style: theme.textTheme.headlineMedium?.copyWith(
           fontSize: 28,
@@ -280,9 +291,9 @@ class ChatEmptyState extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // ChatGPT's new-chat screen is a single question. No mascot, no
-              // greeting by the hour: the composer below is the one thing to
-              // look at, and a fixed line does not go stale at 3 a.m.
+              // 顶部是品牌形 + 时段问候:一屏只说一件事,输入框仍是唯一的主角。
+              whaleFade,
+              const SizedBox(height: 16),
               titleFade,
               if (subtitleFade != null) ...[const SizedBox(height: 8), subtitleFade],
               if (slot != null) ...[
@@ -339,4 +350,38 @@ class ChatIdleAction {
   final String message;
   final String label;
   final VoidCallback onTap;
+}
+
+/// 空态顶部的品牌形:一尾静止的鲸,很淡。
+///
+/// 三条克制规则,避免它变成一屏插画:
+/// - **静止帧**([WhaleTail.still]):不跑计时器,不与输入框抢注意力;
+/// - **半透明**(0.5):它是水印,不是主体;
+/// - **矮横屏不出现**:高 < 480 时纵向本来就不够,让位给建议卡。
+class _EmptyWhale extends StatelessWidget {
+  const _EmptyWhale({required this.connected});
+
+  /// 连不上引擎时品牌形也收起来:那一屏只该有「重新连接」。
+  final bool connected;
+
+  /// 鲸尾帧的 5:4 比例,宽由高推出来。
+  static const height = 48.0;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!connected) return const SizedBox.shrink();
+    // 矮横屏(手机横放,915×412 这类)纵向空间紧张:品牌形让位。
+    final compactHeight = MediaQuery.sizeOf(context).height < 480;
+    if (compactHeight) return const SizedBox.shrink();
+    return Center(
+      child: Opacity(
+        opacity: 0.5,
+        child: WhaleTail(
+          color: whaleColorFor(Theme.of(context).brightness),
+          height: height,
+          still: true,
+        ),
+      ),
+    );
+  }
 }

@@ -34562,6 +34562,69 @@ abstract class L10n {
   /// **'可多选'**
   String get viewUiMultiple;
 
+  /// No description provided for @viewSuggestPhone.
+  ///
+  /// In zh, this message translates to:
+  /// **'viewSuggestPhone'**
+
+  String get viewSuggestPhone;
+
+  /// No description provided for @viewSuggestPhonePrompt.
+  ///
+  /// In zh, this message translates to:
+  /// **'viewSuggestPhonePrompt'**
+
+  String get viewSuggestPhonePrompt;
+
+  /// No description provided for @viewSuggestPlugin.
+  ///
+  /// In zh, this message translates to:
+  /// **'viewSuggestPlugin'**
+
+  String get viewSuggestPlugin;
+
+  /// No description provided for @viewSuggestPluginPrompt.
+  ///
+  /// In zh, this message translates to:
+  /// **'viewSuggestPluginPrompt'**
+
+  String get viewSuggestPluginPrompt;
+
+  /// No description provided for @viewSuggestSchedule.
+  ///
+  /// In zh, this message translates to:
+  /// **'viewSuggestSchedule'**
+
+  String get viewSuggestSchedule;
+
+  /// No description provided for @viewSuggestSchedulePrompt.
+  ///
+  /// In zh, this message translates to:
+  /// **'viewSuggestSchedulePrompt'**
+
+  String get viewSuggestSchedulePrompt;
+
+  /// No description provided for @viewSuggestPhoneHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'viewSuggestPhoneHint'**
+
+  String get viewSuggestPhoneHint;
+
+  /// No description provided for @viewSuggestPluginHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'viewSuggestPluginHint'**
+
+  String get viewSuggestPluginHint;
+
+  /// No description provided for @viewSuggestScheduleHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'viewSuggestScheduleHint'**
+
+  String get viewSuggestScheduleHint;
+
   /// No description provided for @viewSuggestWorkspace.
   ///
   /// In zh, this message translates to:
