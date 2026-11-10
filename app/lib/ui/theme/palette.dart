@@ -362,8 +362,12 @@ class NeutralTones {
 
   /// 把一个按雾蓝调出来的中性色换到 [accent] 的色调上(零散的灰,比如图表
   /// 里的「其他」)。
-  static Color tint(Color mistNeutral, AppAccent accent) =>
-      retint(mistNeutral, hueShift: accent.tintHue - baseHue, chromaScale: accent.tintChroma);
+  static Color tint(Color mistNeutral, AppAccent accent) => retint(
+    mistNeutral,
+    hueShift: accent.tintHue - baseHue,
+    chromaScale: accent.tintChroma,
+    absoluteHue: accent.tintHue,
+  );
 
   /// 转到 [tintHue]、彩度乘 [tintChroma] 的整条中性色。结果按参数缓存。
   static NeutralTones of({required double tintHue, required double tintChroma}) {
