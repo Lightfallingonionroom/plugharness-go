@@ -197,17 +197,30 @@ ModelSelection.reasoningEffort  →  走现有链路进请求
 「自动化任务」插在**插件和网页版中间**，用 `ChatGptScheduledTaskIcon`
 （官方「闹钟 + 打勾」，到点自动的语义）。
 
+**页面已经存在，不需要新建**：`SchedulesPage`
+（`app/lib/ui/features/schedules_page.dart:38`），全套文案也都在
+（`featuresSchedules` = 「自动化任务」等 40+ 条）。
+
 **新增这个入口需要改 4 处**（照现有 `DrawerDestination` 的模式）：
 
 | 位置 | 改什么 |
 |---|---|
-| `ui/shell/drawer/drawer_destination.dart:5` | 枚举加一个值（如 `scheduledTasks`） |
+| `ui/shell/drawer/drawer_destination.dart:5` | 枚举加一个值（如 `schedules`） |
 | `ui/shell/quick_panel.dart:11-19` | `icon` switch 加一项 → `ChatGptScheduledTaskIcon` |
-| `ui/shell/quick_panel.dart:21-29` | `label` switch 加一项 → 新 l10n key |
-| `ui/shell/home_shell.dart:234-242` | `_openDestination` switch 加一项 → 页面 |
+| `ui/shell/quick_panel.dart:21-29` | `label` switch 加一项 → 直接用 `l10n.featuresSchedules`（文案已存在） |
+| `ui/shell/home_shell.dart:234-242` | `_openDestination` switch 加一项 → `const SchedulesPage()` |
 
 注意 `DrawerDestination` 按 `Enum.name` 存储偏好（见
 `quick_panel_state.dart` 注释），**改名会让已存偏好失效，只能新增不能改**。
+
+### 现有页面类一览（已核实，flash 直接对接）
+
+| 目标 | 类 | 文件 | 需要的参数 |
+|---|---|---|---|
+| 终端 | `TerminalPage` | `ui/terminal/terminal_page.dart:35` | `sessionId` |
+| 文件 | `WorkspaceFilesPage` | `ui/files/files_page.dart:27` | `sessionId`, `initialPath?` |
+| 自动化任务 | `SchedulesPage` | `ui/features/schedules_page.dart:38` | 无（可选 `now` 供测试） |
+| 全部功能 | `AllFeaturesPage` | `ui/features/all_features_page.dart:47` | 无 |
 
 ## 五、两条硬提醒
 
