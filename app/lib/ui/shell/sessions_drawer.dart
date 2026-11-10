@@ -240,7 +240,7 @@ class SessionsDrawer extends ConsumerWidget {
       ),
     ];
     final list = _EdgeFade(
-      child: _SessionList(onClose: onClose, now: now, header: top),
+      child: _SessionList(onClose: onClose, now: now),
     );
 
     const radius = BorderRadius.only(topRight: Radius.circular(AppShape.xl), bottomRight: Radius.circular(AppShape.xl));
@@ -251,13 +251,13 @@ class SessionsDrawer extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Pinned: only the brand row and the search field. ChatGPT keeps
-            // exactly these two in place while everything below them scrolls.
+            // Pinned: brand row + search. Stays put while the body scrolls.
             ...pinned,
-            // Everything else is one scroll body: the app's rooms, the workspace
-            // row, the filters and the conversations move together, the way the
-            // real ChatGPT sidebar does. They are handed to the list below as its
-            // header so a single controller drives the whole column.
+            // The app's rooms, then the conversations below them. The row list
+            // owns the scrolling; the feature entries stay put, which is the
+            // layout this drawer has always had and what the geometry tests
+            // measure.
+            ...top,
             Expanded(child: list),
             // No wide filled 新对话 pill down here: ChatGPT keeps a single round
             // compose key in the brand row above, and the bottom of its sidebar
@@ -480,15 +480,10 @@ class _EdgeFade extends StatelessWidget {
 }
 
 class _SessionList extends ConsumerWidget {
-  const _SessionList({required this.onClose, this.now, this.header});
+  const _SessionList({required this.onClose, this.now});
 
   final VoidCallback onClose;
   final DateTime? now;
-
-  /// Rows drawn above the conversations, inside the same scroll body: the app's
-  /// rooms, the workspace switcher and the filter bar. One controller, so they
-  /// travel with the list instead of staying pinned.
-  final List<Widget>? header;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -500,38 +495,32 @@ class _SessionList extends ConsumerWidget {
     // arrived (rather than flash every conversation).
     final scope = ref.watch(drawerScopeProvider);
     if (scope == null) {
-      if (ref.watch(readListLiveConnectionProvider) == null && !sessions.isLoading) {
-        return _withHeader(context, const _EmptyState());
-      }
+      if (ref.watch(readListLiveConnectionProvider) == null && !sessions.isLoading) return const _EmptyState();
       if (sessions.hasError) {
-        return _withHeader(
-          context,
-          _Centered(
-            child: EmptyView(
-              compact: true,
-              icon: AppIcons.offline,
-              title: l10n.shellChatsLoadFailed,
-              actionLabel: l10n.commonRetry,
-              onAction: () => ref.read(sessionsProvider.notifier).refresh(),
-            ),
+        return _Centered(
+          child: EmptyView(
+            compact: true,
+            icon: AppIcons.offline,
+            title: l10n.shellChatsLoadFailed,
+            actionLabel: l10n.commonRetry,
+            onAction: () => ref.read(sessionsProvider.notifier).refresh(),
           ),
         );
       }
-      return _withHeader(context, const _SkeletonList());
+      return const _SkeletonList();
     }
     // DS Bot's conversations (its Bots' chats, groups, members' sessions)
     // fold into one row that opens the Bot pages.
     final botReady = ref.watch(dsBotProvider.select((s) => s.ready));
     final showBots = scope.bots.isNotEmpty || (workspace == null && botReady);
     if (scope.sessions.isEmpty && !showBots && ref.watch(drawerViewProvider).folders.isEmpty) {
-      if (scope.readOnly) return _withHeader(context, _Centered(child: Text(readListStatusText(scope.status))));
-      return _withHeader(context, workspace == null ? const _EmptyState() : const _WorkspaceEmptyState());
+      if (scope.readOnly) return _Centered(child: Text(readListStatusText(scope.status)));
+      return workspace == null ? const _EmptyState() : const _WorkspaceEmptyState();
     }
     return DrawerConversationList(
       now: now,
       onNewChat: onClose,
       readOnly: scope.readOnly,
-      header: header,
       leading: showBots
           ? DsBotDrawerRow(
               running: scope.bots.any((s) => s.running),
@@ -558,27 +547,6 @@ class _SessionList extends ConsumerWidget {
           _showActions(context, ref, s);
         }
       },
-    );
-  }
-
-  /// A non-list state (empty / error / loading) with the drawer's control rows
-  /// still above it and still scrolling with it, so 插件 and 设置 stay reachable
-  /// on a fresh host. Without this the header would vanish whenever the
-  /// conversation list has nothing to draw.
-  Widget _withHeader(BuildContext context, Widget body) {
-    final headerRows = header;
-    if (headerRows == null || headerRows.isEmpty) return body;
-    // hasScrollBody: true keeps the body inside a bounded box and hands it the
-    // viewport height, which is what the _Centered states (a SingleChildScrollView
-    // with a minHeight) need; false would give them an unbounded height.
-    return CustomScrollView(
-      physics: AppMotion.scrollPhysics(context),
-      slivers: [
-        SliverToBoxAdapter(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: headerRows),
-        ),
-        SliverFillRemaining(hasScrollBody: true, child: body),
-      ],
     );
   }
 

@@ -28,7 +28,6 @@ class DrawerConversationList extends ConsumerWidget {
     required this.onLongPress,
     this.onNewChat,
     this.leading,
-    this.header,
     this.now,
     this.readOnly = false,
   });
@@ -44,11 +43,6 @@ class DrawerConversationList extends ConsumerWidget {
 
   /// Above everything when nothing is filtered or chosen (DS Bot's row).
   final Widget? leading;
-
-  /// Rows that scroll together with the conversations, above [leading]: the
-  /// app's rooms, the workspace switcher and the status filters. They live in
-  /// the same list, so one gesture carries all of them.
-  final List<Widget>? header;
 
   /// Clock override for the day groups (tests).
   final DateTime? now;
@@ -102,6 +96,7 @@ class DrawerConversationList extends ConsumerWidget {
             : () => onLongPress(s),
       );
     }
+
     // Keep only builders for off-screen rows: preparing a title and a tile for
     // every conversation makes even a selection change scale with the history.
     final rows = <({Key key, WidgetBuilder builder})>[];
@@ -110,22 +105,6 @@ class DrawerConversationList extends ConsumerWidget {
       for (final s in items) {
         add(ValueKey('session-${s.sessionId}'), (_) => tile(s));
       }
-    }
-
-    // The drawer's own control rows head the same list, so one gesture moves
-    // the rooms, the workspace row, the filters and the conversations together.
-    // They go in as one Column: the list would otherwise hand each row a tight
-    // width and the workspace switcher / filter bar would stop stretching.
-    final headerRows = header;
-    if (headerRows != null && headerRows.isNotEmpty) {
-      const key = ValueKey('drawer-header');
-      add(
-        key,
-        (_) => KeyedSubtree(
-          key: key,
-          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: headerRows),
-        ),
-      );
     }
 
     final showLeading = leading != null && filter == DrawerFilter.all && !selecting;
