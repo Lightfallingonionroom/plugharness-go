@@ -216,3 +216,59 @@ run `42887202240`（2026-11-10）：
 3. **补「思考配置规则页」**（提示词二·B）。
 4. **补 `@` 提及输入框**（用户提的次要需求）。
 5. **补 Issue #5 的 UI 接线**（独立一轮）。
+
+---
+
+## 七、CI 失败分析（本轮新增，2026-11-11）
+
+本机跑不了 `flutter test`，但能拉 main 上 CI 的日志做交叉分析。
+run `42887202240` 的 Flutter 1 job（id `130081469204`）实测：
+**3651 passed / 272 failed / 148 skipped**。
+
+### 7.1 272 条失败的构成
+
+| 类别 | 条数 | 说明 |
+|---|---|---|
+| golden 基准图 | 112 | 主题与布局都变了，基准图必然对不上（提示词方案 C：不重拍） |
+| palette 对比度 | 80 | `palette_contrast_test` 78 + `wallpaper_contrast_test` 2，真实可访问性缺陷 |
+| 其他 | 70 | 分散在 40+ 文件 |
+| 空态 | 5 | `chat_shell_test` / `empty_state_brand_test` |
+| 侧栏 | 4 | `drawer_golden_test` / `drawer_flows_test` |
+| 输入条/模型面板 | 1 | `provider_model_test` |
+
+### 7.2 与本批改动的交叉（关键）
+
+把「main 上已红的文件」和「本批 `main..HEAD` 改过的文件」求交集：
+
+**我改过、main 上已经红的**（既存失败，我改了不会更糟）：
+
+| 文件 | main 失败数 |
+|---|---|
+| `chat_shell_test.dart` | 4 |
+| `chat_screen_test.dart` | 2 |
+| `empty_state_brand_test.dart` | 2 |
+| `drawer_notice_geometry_test.dart` | 1 |
+
+**我改过、main 上没红的**（真正的风险点，CI 一跑就知道）：
+
+| 文件 | 静态核查结果 |
+|---|---|
+| `empty_actions_test.dart` | 语法 OK / 符号 0 缺失 / 部件存在 |
+| `drawer_geometry_test.dart` | 语法 OK / 符号 0 缺失 / 部件存在 |
+| `shell_geometry_test.dart` | 语法 OK / 符号 0 缺失 / 部件存在 |
+| `drawer_archive_test.dart` | 语法 OK / 符号 0 缺失 / 部件存在 |
+
+### 7.3 这批分析解决了什么
+
+1. **分清了「既存失败」和「本批引入」**——不再用一句「既有失败」带过。
+2. **把风险面收敛到 4 个文件**——它们是 main 上绿、本批改过的，
+   一旦改错就是新增红。已对这 4 个做了定向静态核查，全过。
+3. **确认 analyze 的 6 个错误已修**——那是 main 上唯一的 analyze 红，
+   本批已清（§1.7）。
+
+### 7.4 仍然不确定的
+
+- 这 4 个风险文件只做了**静态**核查（语法、符号存在性、部件存在性），
+  **没有真跑过**。几何断言（像素级）本机无法验证。
+- golden 基准图按方案 C 不重拍，但这意味着合并后 CI 仍会因 golden 红。
+  需要决定是「接受 golden 长期红」还是「找时间统一重拍」。
