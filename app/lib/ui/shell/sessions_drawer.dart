@@ -501,11 +501,10 @@ class _SessionList extends ConsumerWidget {
     final scope = ref.watch(drawerScopeProvider);
     if (scope == null) {
       if (ref.watch(readListLiveConnectionProvider) == null && !sessions.isLoading) {
-        return _withHeader(context, const _EmptyState());
+        return _withHeader(const _EmptyState());
       }
       if (sessions.hasError) {
         return _withHeader(
-          context,
           _Centered(
             child: EmptyView(
               compact: true,
@@ -517,15 +516,15 @@ class _SessionList extends ConsumerWidget {
           ),
         );
       }
-      return _withHeader(context, const _SkeletonList());
+      return _withHeader(const _SkeletonList());
     }
     // DS Bot's conversations (its Bots' chats, groups, members' sessions)
     // fold into one row that opens the Bot pages.
     final botReady = ref.watch(dsBotProvider.select((s) => s.ready));
     final showBots = scope.bots.isNotEmpty || (workspace == null && botReady);
     if (scope.sessions.isEmpty && !showBots && ref.watch(drawerViewProvider).folders.isEmpty) {
-      if (scope.readOnly) return _withHeader(context, _Centered(child: Text(readListStatusText(scope.status))));
-      return _withHeader(context, workspace == null ? const _EmptyState() : const _WorkspaceEmptyState());
+      if (scope.readOnly) return _withHeader(_Centered(child: Text(readListStatusText(scope.status))));
+      return _withHeader(workspace == null ? const _EmptyState() : const _WorkspaceEmptyState());
     }
     return DrawerConversationList(
       now: now,
@@ -562,22 +561,21 @@ class _SessionList extends ConsumerWidget {
   }
 
   /// A non-list state (empty / error / loading) with the drawer's control rows
-  /// still above it and still scrolling with it, so 插件 and 设置 stay reachable
-  /// on a fresh host. Without this the header would vanish whenever the
-  /// conversation list has nothing to draw.
-  Widget _withHeader(BuildContext context, Widget body) {
+  /// above it, so 插件 and 设置 stay reachable on a fresh host instead of
+  /// disappearing with the conversation list.
+  ///
+  /// Deliberately a plain Column and not a sliver list: these states already
+  /// own their own scrolling/centring, and the header is short. Putting them in
+  /// one CustomScrollView (an earlier attempt) gave `_Centered` a second
+  /// scrollable inside the first and the workspace empty state rendered blank.
+  Widget _withHeader(Widget body) {
     final headerRows = header;
     if (headerRows == null || headerRows.isEmpty) return body;
-    // hasScrollBody: true keeps the body inside a bounded box and hands it the
-    // viewport height, which is what the _Centered states (a SingleChildScrollView
-    // with a minHeight) need; false would give them an unbounded height.
-    return CustomScrollView(
-      physics: AppMotion.scrollPhysics(context),
-      slivers: [
-        SliverToBoxAdapter(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: headerRows),
-        ),
-        SliverFillRemaining(hasScrollBody: true, child: body),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ...headerRows,
+        Expanded(child: body),
       ],
     );
   }
