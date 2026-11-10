@@ -330,8 +330,9 @@ class _Swatch extends StatelessWidget {
 
 /// What a card looks like on the page (the glass over the backdrop).
 Color _cardColor(BuildContext context) {
+  // v1.0.15 的 retheme 把 DshSurfaces.card 去掉了，卡片填充色就是 `fill`。
   final s = DshSurfaces.of(context);
-  return Color.alphaBlend(s.card.fill, Color.lerp(s.backdropTop, s.backdropBottom, 0.5)!);
+  return Color.alphaBlend(s.fill, Color.lerp(s.backdropTop, s.backdropBottom, 0.5)!);
 }
 
 class _SwatchPainter extends CustomPainter {
