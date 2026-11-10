@@ -29840,7 +29840,7 @@ abstract class L10n {
   /// **'引擎出错'**
   String get shellVitalsEngineError;
 
-  /// No description provided for @shellVitalsPlugins.
+  /// 抽屉顶部体征条里的插件数量。
   ///
   /// In zh, this message translates to:
   /// **'{count} 个插件'**
