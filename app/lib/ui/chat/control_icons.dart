@@ -182,6 +182,14 @@ final _vectorToken = RegExp(r'[MLHVCZmlhvcz]|[-+]?(?:\d*\.\d+|\d+)(?:[eE][-+]?\d
 List<String> _tokenize(String data) =>
     [for (final m in _vectorToken.allMatches(data)) m.group(0)!];
 
+/// 图标的默认着色。
+///
+/// `IconTheme.of(context).color` 在新版 Flutter 里是 `Color?`（主题可以不给
+/// 颜色），而 `_VectorGlyphPainter` 需要确定的 `Color`。这里兜一个中性色，
+/// 避免把可空值传给不可空参数。
+Color _defaultIconColor(BuildContext context) =>
+    IconTheme.of(context).color ?? const Color(0xFF000000);
+
 /// 官方「存储 + 齿轮」图标，输入条左侧控制面板按钮用。
 class ChatGptStorageBadgeGearIcon extends StatelessWidget {
   const ChatGptStorageBadgeGearIcon({super.key, this.size = 20, this.color});
@@ -191,7 +199,7 @@ class ChatGptStorageBadgeGearIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tint = color ?? IconTheme.of(context).color;
+    final tint = color ?? _defaultIconColor(context);
     return SizedBox.square(
       dimension: size,
       child: CustomPaint(
@@ -210,7 +218,7 @@ class ChatGptGearIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tint = color ?? IconTheme.of(context).color;
+    final tint = color ?? _defaultIconColor(context);
     return SizedBox.square(
       dimension: size,
       child: CustomPaint(painter: _VectorGlyphPainter(ChatGptGearPath.all, tint)),
@@ -227,7 +235,7 @@ class ChatGptTerminalIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tint = color ?? IconTheme.of(context).color;
+    final tint = color ?? _defaultIconColor(context);
     return SizedBox.square(
       dimension: size,
       child: CustomPaint(painter: _VectorGlyphPainter(ChatGptTerminalPath.all, tint)),
@@ -244,7 +252,7 @@ class ChatGptFolderIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tint = color ?? IconTheme.of(context).color;
+    final tint = color ?? _defaultIconColor(context);
     return SizedBox.square(
       dimension: size,
       child: CustomPaint(painter: _VectorGlyphPainter(ChatGptFolderPath.all, tint)),
@@ -261,7 +269,7 @@ class ChatGptScheduledTaskIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tint = color ?? IconTheme.of(context).color;
+    final tint = color ?? _defaultIconColor(context);
     return SizedBox.square(
       dimension: size,
       child: CustomPaint(painter: _VectorGlyphPainter(ChatGptScheduledTaskPath.all, tint)),
@@ -287,7 +295,11 @@ class _VectorGlyphPainter extends CustomPainter {
       ..isAntiAlias = true;
     for (final data in paths) {
       // evenOdd：官方图标的内孔（齿轮中心、圆柱分层）靠填充规则挖空。
-      canvas.drawPath(parseVectorPath(data), paint..fillType = PathFillType.evenOdd);
+      // fillType 是 Path 的属性，不是 Paint 的——画之前设在路径上。
+      canvas.drawPath(
+        parseVectorPath(data)..fillType = PathFillType.evenOdd,
+        paint,
+      );
     }
     canvas.restore();
   }
