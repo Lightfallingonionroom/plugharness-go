@@ -34565,64 +34565,55 @@ abstract class L10n {
   /// No description provided for @viewSuggestPhone.
   ///
   /// In zh, this message translates to:
-  /// **'viewSuggestPhone'**
-
+  /// **'操控手机'**
   String get viewSuggestPhone;
 
   /// No description provided for @viewSuggestPhonePrompt.
   ///
   /// In zh, this message translates to:
-  /// **'viewSuggestPhonePrompt'**
-
+  /// **'打开微信，看看最新消息，然后给最上面那个联系人回一句「收到，稍后处理」。'**
   String get viewSuggestPhonePrompt;
 
   /// No description provided for @viewSuggestPlugin.
   ///
   /// In zh, this message translates to:
-  /// **'viewSuggestPlugin'**
-
+  /// **'装个插件'**
   String get viewSuggestPlugin;
 
   /// No description provided for @viewSuggestPluginPrompt.
   ///
   /// In zh, this message translates to:
-  /// **'viewSuggestPluginPrompt'**
-
+  /// **'看看插件市场里有什么值得装的插件，挑一个能力最实用的介绍给我。'**
   String get viewSuggestPluginPrompt;
 
   /// No description provided for @viewSuggestSchedule.
   ///
   /// In zh, this message translates to:
-  /// **'viewSuggestSchedule'**
-
+  /// **'排个日程'**
   String get viewSuggestSchedule;
 
   /// No description provided for @viewSuggestSchedulePrompt.
   ///
   /// In zh, this message translates to:
-  /// **'viewSuggestSchedulePrompt'**
-
+  /// **'明天上午 10 点提醒我开项目周会，提前 10 分钟再提醒一次。'**
   String get viewSuggestSchedulePrompt;
 
   /// No description provided for @viewSuggestPhoneHint.
   ///
   /// In zh, this message translates to:
-  /// **'viewSuggestPhoneHint'**
-
+  /// **'让 Agent 替你点点'**
   String get viewSuggestPhoneHint;
 
   /// No description provided for @viewSuggestPluginHint.
   ///
   /// In zh, this message translates to:
-  /// **'viewSuggestPluginHint'**
-
+  /// **'给 Agent 加本事'**
   String get viewSuggestPluginHint;
 
   /// No description provided for @viewSuggestScheduleHint.
   ///
   /// In zh, this message translates to:
-  /// **'viewSuggestScheduleHint'**
-
+  /// **'到点提醒你'**
   String get viewSuggestScheduleHint;
 
   /// No description provided for @viewSuggestWorkspace.

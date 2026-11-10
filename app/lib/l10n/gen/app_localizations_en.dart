@@ -20090,19 +20090,22 @@ class L10nEn extends L10n {
   String get viewSuggestPhone => 'Control my phone';
 
   @override
-  String get viewSuggestPhonePrompt => 'Open WeChat, check the latest messages, and reply to the top contact with "Got it, I will handle it soon."';
+  String get viewSuggestPhonePrompt =>
+      'Open WeChat, check the latest messages, and reply to the top contact with "Got it, I\'ll handle it soon."';
 
   @override
   String get viewSuggestPlugin => 'Install a plugin';
 
   @override
-  String get viewSuggestPluginPrompt => 'Look through the plugin market and recommend the most genuinely useful one, explaining what it can do.';
+  String get viewSuggestPluginPrompt =>
+      'Look through the plugin market and recommend the most genuinely useful one, explaining what it can do.';
 
   @override
   String get viewSuggestSchedule => 'Schedule something';
 
   @override
-  String get viewSuggestSchedulePrompt => 'Remind me about the project weekly meeting tomorrow at 10am, and again 10 minutes before.';
+  String get viewSuggestSchedulePrompt =>
+      'Remind me about the project weekly meeting tomorrow at 10am, and again 10 minutes before.';
 
   @override
   String get viewSuggestPhoneHint => 'Let the agent tap for you';
