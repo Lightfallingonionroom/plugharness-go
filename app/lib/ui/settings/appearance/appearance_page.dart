@@ -312,7 +312,6 @@ class _AccentSwatch extends StatelessWidget {
                 Text(
                   label,
                   maxLines: 2,
-                  minLines: 1,
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.labelSmall?.copyWith(
