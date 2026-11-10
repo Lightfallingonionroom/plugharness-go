@@ -111,8 +111,11 @@ class _ThemeRowState extends ConsumerState<_ThemeRow> {
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
                 child: const ThemeModePicker(),
               ),
-              // 配色：官方十色 + 自定义，直接摊开。
+              // 配色：6 个预设 + 自定义，单行等距（设置页其它 picker 的几何契约）。
               const PalettePicker(),
+              // 官方十色：更细的一层，网格排布。放在这里而不是塞进上面那一行，
+              // 是因为十一个色点在 390 宽里会挤到点不中；网格没有单行约束。
+              const OfficialAccentGrid(),
               // 其余外观项（功能图标、桌面图标、启动页、壁纸）在完整页。
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
@@ -128,6 +131,54 @@ class _ThemeRowState extends ConsumerState<_ThemeRow> {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// 官方十色：一排网格，比 [PalettePicker] 的预设更细。
+///
+/// 上面那一行是「默认给的六个选择」（单行、等距、几何契约固定）；这里是
+/// 「想再挑一挑」的十色。分开的原因很实际：十一个色点在 390 宽里每个只剩
+/// 21 px，点不中；网格可以折行，每个色点都能保住 30 px 的圆。
+class OfficialAccentGrid extends ConsumerWidget {
+  const OfficialAccentGrid({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final appearance = ref.watch(appearanceProvider);
+    final notifier = ref.read(appearanceProvider.notifier);
+    final brightness = Theme.of(context).brightness;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(PickerGrid.inset, 4, PickerGrid.inset, PickerGrid.inset),
+      child: Wrap(
+        spacing: PickerGrid.gap,
+        runSpacing: PickerGrid.gap,
+        children: [
+          for (final p in AppAccent.official)
+            Semantics(
+              button: true,
+              selected: appearance.source == AccentSource.preset && appearance.presetId == p.id,
+              label: l10n.pluginsColorLabel(p.label),
+              excludeSemantics: true,
+              child: Pressable(
+                onTap: () => unawaited(notifier.selectPreset(p.id)),
+                child: SizedBox.square(
+                  dimension: PalettePicker.disc + 2 * (PalettePicker.ringGap + PalettePicker.ringWidth),
+                  child: CustomPaint(
+                    painter: _SwatchPainter(
+                      color: p.seedFor(brightness),
+                      ring: appearance.source == AccentSource.preset && appearance.presetId == p.id ? 1 : 0,
+                      wheel: null,
+                      hole: _cardColor(context),
+                      edge: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
@@ -280,10 +331,11 @@ class PalettePicker extends ConsumerWidget {
     final customAccent = AppAccent.derive(Color(appearance.customColor));
     bool chosen(AppAccent p) => appearance.source == AccentSource.preset && appearance.presetId == p.id;
 
-    // 官方十色 + 自定义，同一行。十一个槽位在手机宽度下放不下，所以这一行
-    // 横向滚动；仍然是一行、中心等距，与设置页其它 picker 的几何契约一致。
+    // 设置页这一行放的是 6 个预设 + 自定义（7 个），和设置页其它 picker
+    // 一样：单行、等距、全部在视口内可点。官方十色是更细的一层，在
+    // 「更多外观」的完整页里选——把 11 个色点塞进 390 宽会挤到点不中。
     final items = [
-      for (final p in AppAccent.official)
+      for (final p in AppAccent.presets)
         _Swatch(
           label: p.label,
           selected: chosen(p),
@@ -301,27 +353,29 @@ class PalettePicker extends ConsumerWidget {
     ];
 
     // Rings 16 from the card's edges, centres evenly spaced; each slot is as
-    // wide as the spacing allows (up to [slot]) so the names have room.
+    // wide as the spacing allows (up to [slot]) so the names have room. The
+    // gaps are part of the budget: eleven swatches have to fit 390 without
+    // scrolling, or the last ones sit off-screen and cannot be tapped.
     return LayoutBuilder(
       builder: (context, constraints) {
         const ringSide = disc + 2 * (ringGap + ringWidth);
-        final step = (constraints.maxWidth - 2 * PickerGrid.inset - ringSide) / (items.length - 1);
-        final width = math.max(ringSide, math.min(slot, step));
-        final side = PickerGrid.inset - (width - ringSide) / 2;
+        final gaps = PickerGrid.gap * (items.length - 1);
+        final usable = constraints.maxWidth - 2 * PickerGrid.inset - gaps;
+        final step = usable / items.length;
+        // Never wider than the design slot, and never so narrow that the disc
+        // stops fitting: the ring is the floor, the name shrinks instead.
+        final width = math.min(slot, math.max(ringSide, step));
         return Padding(
-          padding: EdgeInsets.fromLTRB(side, PickerGrid.inset, side, PickerGrid.inset),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                for (var i = 0; i < items.length; i++) ...[
-                  if (i > 0) const SizedBox(width: PickerGrid.gap),
-                  SizedBox(width: width, child: items[i]),
-                ],
+          padding: const EdgeInsets.symmetric(vertical: PickerGrid.inset),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (var i = 0; i < items.length; i++) ...[
+                if (i > 0) const SizedBox(width: PickerGrid.gap),
+                SizedBox(width: width, child: items[i]),
               ],
-            ),
+            ],
           ),
         );
       },
