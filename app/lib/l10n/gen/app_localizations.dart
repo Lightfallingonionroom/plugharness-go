@@ -23732,6 +23732,12 @@ abstract class L10n {
   /// **'主题'**
   String get pluginsTheme;
 
+  /// No description provided for @pluginsAppearanceMore.
+  ///
+  /// In zh, this message translates to:
+  /// **'更多外观（图标、启动页、壁纸）'**
+  String get pluginsAppearanceMore;
+
   /// No description provided for @pluginsAppearance.
   ///
   /// In zh, this message translates to:

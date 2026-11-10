@@ -403,6 +403,7 @@
   "pluginsIconChanged": "桌面图标已选择，回到桌面后更新",
   "pluginsIconChangeFailed": "没能更换，稍后再试",
   "pluginsTheme": "主题",
+  "pluginsAppearanceMore": "更多外观（图标、启动页、壁纸）",
   "pluginsAppearance": "外观",
   "pluginsColors": "配色",
   "pluginsFeatureIcons": "功能图标",

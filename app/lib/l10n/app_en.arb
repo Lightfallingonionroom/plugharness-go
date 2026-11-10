@@ -3940,6 +3940,7 @@
   "pluginsIconChanged": "Icon selected. Return to your home screen to see the change.",
   "pluginsIconChangeFailed": "Couldn’t change the icon. Try again later.",
   "pluginsTheme": "Theme",
+  "pluginsAppearanceMore": "More appearance (icons, launch screen, wallpaper)",
   "pluginsAppearance": "Appearance",
   "pluginsColors": "Colors",
   "pluginsFeatureIcons": "Feature icons",

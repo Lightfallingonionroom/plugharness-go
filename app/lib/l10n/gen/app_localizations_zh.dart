@@ -12909,6 +12909,9 @@ class L10nZh extends L10n {
   String get pluginsTheme => '主题';
 
   @override
+  String get pluginsAppearanceMore => '更多外观（图标、启动页、壁纸）';
+
+  @override
   String get pluginsAppearance => '外观';
 
   @override

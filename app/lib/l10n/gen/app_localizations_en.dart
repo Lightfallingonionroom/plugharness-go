@@ -13568,6 +13568,10 @@ class L10nEn extends L10n {
   String get pluginsTheme => 'Theme';
 
   @override
+  String get pluginsAppearanceMore =>
+      'More appearance (icons, launch screen, wallpaper)';
+
+  @override
   String get pluginsAppearance => 'Appearance';
 
   @override

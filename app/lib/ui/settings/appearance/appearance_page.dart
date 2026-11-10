@@ -29,7 +29,11 @@ import 'launch_screen_section.dart';
 import 'tile_style_picker.dart';
 import 'wallpaper_section.dart';
 
-/// 设置首页「外观」组的第一行:当前配色的色点 + 名字 · 明暗,点开 [AppearancePage]。
+/// 设置首页「外观」组的第一行：点开就在这一页里展开明暗和配色。
+///
+/// 以前它是跳到一个独立的「主题」页（P3）。那一页把明暗、配色、功能图标、
+/// 桌面图标、启动页、壁纸全堆在一起，改个颜色要进出两趟。现在最常用的两样
+/// （明暗、配色）就在设置页上直接改，「更多外观」再去完整页改其余部分。
 class AppearanceEntryTile extends ConsumerWidget {
   const AppearanceEntryTile({super.key, this.tint = 0});
 
@@ -46,10 +50,10 @@ class AppearanceEntryTile extends ConsumerWidget {
       ThemeMode.dark => l10n.commonDark,
       ThemeMode.system => l10n.commonFollowSystem,
     };
-    return SettingsTile(
+    return _ThemeRow(
       icon: AppIcons.theme,
       tint: tint,
-      spot: SettingsIndex.entry(SettingsPageId.appearance),
+      title: l10n.pluginsTheme,
       value: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -58,7 +62,73 @@ class AppearanceEntryTile extends ConsumerWidget {
           Text('${accent.label} · $mode'),
         ],
       ),
-      onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const AppearancePage())),
+    );
+  }
+}
+
+/// 可展开的一行：收起时是设置行，展开后在行下方就地显示明暗和配色。
+class _ThemeRow extends ConsumerStatefulWidget {
+  const _ThemeRow({required this.icon, required this.tint, required this.title, required this.value});
+
+  final IconData icon;
+  final int tint;
+  final String title;
+  final Widget value;
+
+  @override
+  ConsumerState<_ThemeRow> createState() => _ThemeRowState();
+}
+
+class _ThemeRowState extends ConsumerState<_ThemeRow> {
+  bool _open = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SettingsTile(
+          icon: widget.icon,
+          tint: widget.tint,
+          title: widget.title,
+          value: widget.value,
+          trailing: AnimatedRotation(
+            turns: _open ? 0.5 : 0,
+            duration: AppMotion.of(context, AppMotion.quick),
+            child: const Icon(AppIcons.expand, size: 16),
+          ),
+          onTap: () => setState(() => _open = !_open),
+        ),
+        ExpandReveal(
+          open: _open,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Divider(height: 1),
+              // 明暗：三个选项就地切换。
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+                child: const ThemeModePicker(),
+              ),
+              // 配色：官方十色 + 自定义，直接摊开。
+              const PalettePicker(),
+              // 其余外观项（功能图标、桌面图标、启动页、壁纸）在完整页。
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+                child: TextButton.icon(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(builder: (_) => const AppearancePage()),
+                  ),
+                  icon: const Icon(AppIcons.settings, size: 16),
+                  label: Text(l10n.pluginsAppearanceMore),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -330,9 +400,10 @@ class _Swatch extends StatelessWidget {
 
 /// What a card looks like on the page (the glass over the backdrop).
 Color _cardColor(BuildContext context) {
-  // v1.0.15 的 retheme 把 DshSurfaces.card 去掉了，卡片填充色就是 `fill`。
+  // DshSurfaces.card 是 GlassStyle；卡片填充色是它的 .fill，
+  // 和 chat/dsh_ui、plugins/market_tab 等调用点一致。
   final s = DshSurfaces.of(context);
-  return Color.alphaBlend(s.fill, Color.lerp(s.backdropTop, s.backdropBottom, 0.5)!);
+  return Color.alphaBlend(s.card.fill, Color.lerp(s.backdropTop, s.backdropBottom, 0.5)!);
 }
 
 class _SwatchPainter extends CustomPainter {
