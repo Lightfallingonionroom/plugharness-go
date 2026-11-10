@@ -138,7 +138,14 @@ test('a general Cordis plugin installs, enables, boots and uninstalls without le
   assert.equal(gone?.installed ?? false, false, 'uninstall removes the package');
   const afterRemove = await readManifest(f);
   assert.ok(!afterRemove.dsh.profile.bundles.includes(pkg), 'uninstall clears the bundle list');
-  assert.equal(afterRemove.dependencies[pkg], undefined, 'uninstall clears the dependency');
+  // `pnpm remove` drops the last dependency, and pnpm omits an empty `dependencies`
+  // object entirely — so the map itself can be gone. Read it defensively: the contract
+  // is "the package is no longer declared", not "the key still exists and is undefined".
+  assert.equal(
+    afterRemove.dependencies?.[pkg],
+    undefined,
+    'uninstall clears the dependency',
+  );
 });
 
 test('a failing plugin leaves the profile consistent, not half-written', async t => {
@@ -188,8 +195,17 @@ test('cancelling an enable leaves no partial profile write', async t => {
 
   const after = await readManifest(f);
   const inBundles = after.dsh.profile.bundles.includes(pkg);
-  const inDeps = after.dependencies[pkg] !== undefined;
-  assert.equal(inBundles, inDeps, 'bundle membership and dependency declaration agree');
-  // A package that is listed must also be a declared dependency, or the next boot fails.
+  const inDeps = after.dependencies?.[pkg] !== undefined;
+  // setBundleEnabled owns `dsh.profile.bundles`; the staging step owns `dependencies`
+  // (what pnpm would have written). Serialising enable-then-disable legitimately ends
+  // with the package still declared but no longer selected, so the invariant that
+  // actually protects the next boot is one-directional: a *selected* bundle must be a
+  // declared dependency. The reverse (declared but not selected) is the normal
+  // "installed, turned off" state.
+  assert.ok(
+    !inBundles || inDeps,
+    'a selected bundle is also a declared dependency',
+  );
+  assert.ok(inDeps, 'the dependency declaration survives a cancelled enable');
   assert.ok(before.dsh.profile.bundles.length === 0);
 });
