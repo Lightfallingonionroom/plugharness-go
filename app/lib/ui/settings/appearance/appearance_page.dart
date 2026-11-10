@@ -19,6 +19,7 @@ import '../../common/expand_reveal.dart';
 import '../../common/pressable.dart';
 import '../../shell/page_frame.dart';
 import '../../theme/app_icons.dart';
+import '../../theme/motion.dart';
 import '../../theme/theme.dart';
 import '../app_menu.dart';
 import '../settings_widgets.dart';
@@ -186,13 +187,20 @@ class PalettePicker extends ConsumerWidget {
   /// The last slot, an entry to a colour of one's own.
   final bool custom;
 
-  /// 一格色板：色点 + 名字，选中的外面一圈环。
-  ///
-  /// 尺寸取 4 的倍数、和设置页其它网格一致；名字在色点下面 6，最多两行
-  /// （中文名都是两三个字，英文 "Magenta" 这类也放得下）。
-  static const _dot = 28.0;
-  static const _cellGap = 8.0;
-  static const _nameGap = 6.0;
+  /// How tall the row is at this text size. It lays out with a
+  /// [LayoutBuilder], which a column measuring intrinsic heights (the
+  /// first-run pages) cannot ask: such a column gives it this height.
+  static double heightFor(BuildContext context) {
+    final label = PickerGrid.labelStyle(context, selected: true);
+    final line = MediaQuery.textScalerOf(context).scale(label.fontSize!) * (label.height ?? 1.35);
+    return 2 * PickerGrid.inset + disc + 2 * (ringGap + ringWidth) + PickerGrid.labelGap + line;
+  }
+
+  /// Swatch disc, its ring, and the widest a slot (disc + name) gets.
+  static const disc = 30.0;
+  static const ringGap = 2.5;
+  static const ringWidth = 2.0;
+  static const slot = 52.0;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -200,135 +208,188 @@ class PalettePicker extends ConsumerWidget {
     final appearance = ref.watch(appearanceProvider);
     final notifier = ref.read(appearanceProvider.notifier);
     final brightness = Theme.of(context).brightness;
-    final accent = ref.watch(accentProvider);
+    final customAccent = AppAccent.derive(Color(appearance.customColor));
     bool chosen(AppAccent p) => appearance.source == AccentSource.preset && appearance.presetId == p.id;
 
-    // 直接铺开：十个色板 + 自定义，排成自适应网格。
-    // 这一页是"挑颜色"的地方，把色板藏在一次点击后面只会多一步；
-    // ChatGPT 自己的设置页也是把色点直接摊在页面上。
-    return Padding(
-      key: const ValueKey('accent-menu'),
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          // 每格至少 56 宽，放不下就换行——窄屏（320）上会自然变成 4 列。
-          const minCell = 56.0;
-          final columns = math.max(2, (constraints.maxWidth / (minCell + _cellGap)).floor());
-          final items = [
-            for (final p in AppAccent.official) (accent: p, custom: false),
-            if (custom) (accent: accent, custom: true),
-          ];
-          return Wrap(
-            spacing: _cellGap,
-            runSpacing: _cellGap,
-            children: [
-              for (final item in items)
-                SizedBox(
-                  width: (constraints.maxWidth - _cellGap * (columns - 1)) / columns,
-                  child: _AccentSwatch(
-                    accent: item.accent,
-                    label: item.custom ? l10n.pluginsCustomColor : item.accent.label,
-                    color: item.custom ? accent.seedFor(brightness) : item.accent.seedFor(brightness),
-                    selected: item.custom ? appearance.source == AccentSource.custom : chosen(item.accent),
-                    dot: _dot,
-                    nameGap: _nameGap,
-                    onTap: () {
-                      if (item.custom) {
-                        unawaited(notifier.selectCustom());
-                      } else {
-                        unawaited(notifier.selectPreset(item.accent.id));
-                      }
-                    },
-                  ),
-                ),
-            ],
-          );
-        },
-      ),
+    // 官方十色 + 自定义，同一行。十一个槽位在手机宽度下放不下，所以这一行
+    // 横向滚动；仍然是一行、中心等距，与设置页其它 picker 的几何契约一致。
+    final items = [
+      for (final p in AppAccent.official)
+        _Swatch(
+          label: p.label,
+          selected: chosen(p),
+          color: p.seedFor(brightness),
+          onTap: () => unawaited(notifier.selectPreset(p.id)),
+        ),
+      if (custom)
+        _Swatch(
+          label: l10n.pluginsCustomColor,
+          selected: appearance.source == AccentSource.custom,
+          color: customAccent.seedFor(brightness),
+          wheel: true,
+          onTap: () => unawaited(notifier.selectCustom()),
+        ),
+    ];
+
+    // Rings 16 from the card's edges, centres evenly spaced; each slot is as
+    // wide as the spacing allows (up to [slot]) so the names have room.
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const ringSide = disc + 2 * (ringGap + ringWidth);
+        final step = (constraints.maxWidth - 2 * PickerGrid.inset - ringSide) / (items.length - 1);
+        final width = math.max(ringSide, math.min(slot, step));
+        final side = PickerGrid.inset - (width - ringSide) / 2;
+        return Padding(
+          padding: EdgeInsets.fromLTRB(side, PickerGrid.inset, side, PickerGrid.inset),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for (var i = 0; i < items.length; i++) ...[
+                  if (i > 0) const SizedBox(width: PickerGrid.gap),
+                  SizedBox(width: width, child: items[i]),
+                ],
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
 
-/// 一格色板：色点 + 名字。选中的色点外面一圈主色环。
-class _AccentSwatch extends StatelessWidget {
-  const _AccentSwatch({
-    required this.accent,
+/// 一格色点：实心圆 + 名字，选中的外面一圈环。
+class _Swatch extends StatelessWidget {
+  const _Swatch({
     required this.label,
-    required this.color,
     required this.selected,
-    required this.dot,
-    required this.nameGap,
+    required this.color,
     required this.onTap,
+    this.wheel = false,
   });
 
-  final AppAccent accent;
   final String label;
-  final Color color;
   final bool selected;
-  final double dot;
-  final double nameGap;
+  final Color color;
   final VoidCallback onTap;
+
+  /// The custom slot: a hue wheel around the chosen colour.
+  final bool wheel;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final quick = AppMotion.of(context, AppMotion.quick);
+    const size = PalettePicker.disc + 2 * (PalettePicker.ringGap + PalettePicker.ringWidth);
     return Semantics(
       button: true,
       selected: selected,
-      label: label,
+      label: l10n.pluginsColorLabel(label),
       excludeSemantics: true,
       child: Pressable(
         onTap: onTap,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 6),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: dot + 8,
-                  height: dot + 8,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: selected ? theme.colorScheme.primary : Colors.transparent,
-                      width: 2,
-                    ),
-                  ),
-                  child: Center(
-                    child: Container(
-                      width: dot,
-                      height: dot,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: color,
-                        border: Border.all(color: theme.colorScheme.outlineVariant, width: 0.5),
-                      ),
-                    ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox.square(
+              dimension: size,
+              child: TweenAnimationBuilder<double>(
+                tween: Tween(end: selected ? 1 : 0),
+                duration: quick,
+                curve: AppMotion.std,
+                builder: (context, t, _) => CustomPaint(
+                  painter: _SwatchPainter(
+                    color: color,
+                    ring: t,
+                    wheel: wheel ? _wheelColors(theme.brightness) : null,
+                    hole: _cardColor(context),
+                    edge: scheme.onSurface.withValues(alpha: 0.08),
                   ),
                 ),
-                SizedBox(height: nameGap),
-                Text(
-                  label,
-                  maxLines: 2,
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: selected ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant,
-                    fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
+            const SizedBox(height: PickerGrid.labelGap),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: AnimatedDefaultTextStyle(
+                duration: quick,
+                style: PickerGrid.labelStyle(context, selected: selected),
+                child: Text(label, maxLines: 1),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
+/// What a card looks like on the page (the glass over the backdrop).
+Color _cardColor(BuildContext context) {
+  final s = DshSurfaces.of(context);
+  return Color.alphaBlend(s.card.fill, Color.lerp(s.backdropTop, s.backdropBottom, 0.5)!);
+}
+
+class _SwatchPainter extends CustomPainter {
+  _SwatchPainter({required this.color, required this.ring, required this.hole, required this.edge, this.wheel});
+
+  final Color color;
+
+  /// 0–1: how far the selection ring has drawn in.
+  final double ring;
+  final Color hole;
+  final Color edge;
+  final List<Color>? wheel;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final c = size.center(Offset.zero);
+    const r = PalettePicker.disc / 2;
+    if (ring > 0) {
+      canvas.drawCircle(
+        c,
+        r + PalettePicker.ringGap + PalettePicker.ringWidth / 2,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = PalettePicker.ringWidth
+          ..color = color.withValues(alpha: ring),
+      );
+    }
+    if (wheel != null) {
+      final paint = Paint()..style = PaintingStyle.fill;
+      for (var i = 0; i < wheel!.length; i++) {
+        paint.color = wheel![i];
+        final start = i * 2 * math.pi / wheel!.length - math.pi / 2;
+        canvas.drawArc(
+          Rect.fromCircle(center: c, radius: r),
+          start,
+          2 * math.pi / wheel!.length,
+          true,
+          paint,
+        );
+      }
+      canvas.drawCircle(c, r * 0.3, Paint()..color = hole);
+      return;
+    }
+    canvas.drawCircle(c, r, Paint()..color = color);
+    canvas.drawCircle(
+      c,
+      r,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.5
+        ..color = edge,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_SwatchPainter old) =>
+      old.color != color || old.ring != ring || old.wheel != wheel || old.hole != hole || old.edge != edge;
+}
 
 /// What a card looks like on the page (the glass over the backdrop).
 
