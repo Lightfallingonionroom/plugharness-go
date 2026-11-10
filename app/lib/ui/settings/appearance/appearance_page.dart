@@ -207,6 +207,7 @@ class PalettePicker extends ConsumerWidget {
     // 这一页是"挑颜色"的地方，把色板藏在一次点击后面只会多一步；
     // ChatGPT 自己的设置页也是把色点直接摊在页面上。
     return Padding(
+      key: const ValueKey('accent-menu'),
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
       child: LayoutBuilder(
         builder: (context, constraints) {
