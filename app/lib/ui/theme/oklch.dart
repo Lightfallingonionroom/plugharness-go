@@ -102,8 +102,30 @@ class Oklch {
 ///
 /// 中性色(页面、文字、玻璃)跟着配色走就靠它:雾蓝的整条中性色阶原样
 /// 转到别的色相上,明度一点不动,各级文字的对比度也就跟着不动。
-Color retint(Color color, {required double hueShift, required double chromaScale}) {
+///
+/// **纯灰必须显式给一点彩度。** 官方灰阶是 R==G==B,`Oklch.c` 是 0,乘任何
+/// 系数都还是 0 —— 于是换了强调色,页面、侧边栏、文字黑度全都不动,用户
+/// 看到的就是「能选但不对」。
+///
+/// 纯灰的色相也是无意义的(atan2(0,0) == 0),所以它的色相不能靠旋转:
+/// 传了 [absoluteHue] 就用它,没传才 `o.h + hueShift`。整条中性色阶都靠
+/// 这个参数落到 accent 的真实色相上。
+Color retint(
+  Color color, {
+  required double hueShift,
+  required double chromaScale,
+  double? absoluteHue,
+}) {
   if (hueShift == 0 && chromaScale == 1) return color;
   final o = Oklch.fromColor(color);
-  return o.copyWith(c: o.c * chromaScale, h: (o.h + hueShift) % 360).toColor(alpha: color.a);
+  // A grey has no hue to rotate and no chroma to scale; give it the accent's.
+  final isGrey = o.c < 0.001;
+  if (chromaScale <= 0) return color;
+  // 0.014: enough that #F9F9F9 becomes #F1FBFF for blue and #FFF8F0 for lime —
+  // the sidebar reads cool or warm at a glance — while staying far below the
+  // ~0.02 where a surface starts to look painted rather than tinted.
+  const neutralFloor = 0.014;
+  final chroma = math.max(o.c * chromaScale, neutralFloor * chromaScale);
+  final hue = isGrey && absoluteHue != null ? absoluteHue % 360 : (o.h + hueShift) % 360;
+  return o.copyWith(c: chroma, h: hue).toColor(alpha: color.a);
 }

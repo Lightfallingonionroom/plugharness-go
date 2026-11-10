@@ -19,7 +19,6 @@ import '../../common/expand_reveal.dart';
 import '../../common/pressable.dart';
 import '../../shell/page_frame.dart';
 import '../../theme/app_icons.dart';
-import '../../theme/motion.dart';
 import '../../theme/theme.dart';
 import '../app_menu.dart';
 import '../settings_widgets.dart';

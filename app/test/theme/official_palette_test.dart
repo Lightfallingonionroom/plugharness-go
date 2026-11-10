@@ -122,6 +122,29 @@ void main() {
     expect(dark.extension<DshColors>()!.textTertiary, shellDark.tertiaryText);
   });
 
+  test('picking an accent actually repaints the shell, and both halves stay in step', () {
+    // The bug this pins: the neutral scale is R==G==B, so `c * chromaScale` was
+    // still 0 and every accent produced the exact same page, sidebar and text.
+    // Picking a colour changed the buttons and nothing else.
+    final graphite = ChatGptShellColors.light(AppAccent.graphite);
+    final blue = ChatGptShellColors.light(AppAccent.preset('official_blue'));
+    final orange = ChatGptShellColors.light(AppAccent.preset('official_orange'));
+    expect(blue.page, isNot(graphite.page), reason: 'blue must move the page off plain white');
+    expect(orange.page, isNot(graphite.page), reason: 'orange must move the page too');
+    expect(blue.page, isNot(orange.page), reason: 'blue and orange must not land on one colour');
+
+    // And the accent must reach the secondary pages the same way, or the chat
+    // screen and 设置 read as two different apps.
+    for (final accent in [...AppAccent.presets, ...AppAccent.official]) {
+      final surfaces = DshSurfaces.light(accent);
+      final shell = ChatGptShellColors.light(accent);
+      final darkSurfaces = DshSurfaces.dark(accent);
+      final shellDarkForAccent = ChatGptShellColors.dark(accent);
+      expect(surfaces.backdropTop, shell.page, reason: 'light page agrees for ${accent.id}');
+      expect(darkSurfaces.backdropTop, shellDarkForAccent.page, reason: 'dark page agrees for ${accent.id}');
+    }
+  });
+
   test('the official palette test itself: contrast still holds on the grey ramp', () {
     for (final brightness in Brightness.values) {
       final dark = brightness == Brightness.dark;

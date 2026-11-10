@@ -103,48 +103,62 @@ class ChatGptShellColors extends ThemeExtension<ChatGptShellColors> {
   /// surface #ffffff, surface-secondary #f9f9f9, text #0d0d0d / #5d5d5d / #8f8f8f.
   /// The primary action is a near-black solid, not a coloured fill: OpenAI keeps
   /// blue for the focus ring and links only (--color-ring / --link-primary).
-  /// [accent] is kept for the caller's convenience and deliberately unused.
-  factory ChatGptShellColors.light(AppAccent accent) => ChatGptShellColors(
-    page: const Color(0xFFFCFCFC),
-    sidebar: const Color(0xFFF4F4F4),
-    composer: const Color(0xFFFFFFFF),
-    composerBorder: const Color(0xFFDCDCDC),
-    rowHover: const Color(0xFFECECEC),
-    rowSelected: const Color(0xFFE8E8E8),
-    divider: const Color(0xFFE5E5E5),
-    primaryText: const Color(0xFF0D0D0D),
-    secondaryText: const Color(0xFF5D5D5D),
-    tertiaryText: const Color(0xFF8F8F8F),
-    // --color-background-primary-solid (light) = gray-900.
-    primaryAction: const Color(0xFF181818),
-    onPrimaryAction: const Color(0xFFFFFFFF),
-    // --user-message-background-color: alpha 5% over the surface, not a fill colour.
-    userBubble: const Color(0x0D0D0D0D),
-    onUserBubble: const Color(0xFF0D0D0D),
-  );
+  ///
+  /// [accent] **is used now**: `page` and `sidebar` come from the accent's own
+  /// neutral ramp ([NeutralTones]), the same ramp `DshSurfaces` paints the
+  /// secondary pages with. That is what makes picking 琥珀色 change the whole
+  /// app and not just the buttons. Graphite's ramp is exactly the official grey
+  /// above, so the default look is unchanged.
+  factory ChatGptShellColors.light(AppAccent accent) {
+    final n = NeutralTones.forAccent(accent);
+    return ChatGptShellColors(
+      page: n.mistTop,
+      sidebar: n.mistLow,
+      composer: const Color(0xFFFFFFFF),
+      composerBorder: const Color(0xFFDCDCDC),
+      rowHover: const Color(0xFFECECEC),
+      rowSelected: const Color(0xFFE8E8E8),
+      divider: const Color(0xFFE5E5E5),
+      primaryText: const Color(0xFF0D0D0D),
+      secondaryText: const Color(0xFF5D5D5D),
+      tertiaryText: const Color(0xFF8F8F8F),
+      // --color-background-primary-solid (light) = gray-900.
+      primaryAction: const Color(0xFF181818),
+      onPrimaryAction: const Color(0xFFFFFFFF),
+      // --user-message-background-color: alpha 5% over the surface, not a fill colour.
+      userBubble: const Color(0x0D0D0D0D),
+      onUserBubble: const Color(0xFF0D0D0D),
+    );
+  }
 
   /// Dark: page #212121 (SDK gray-200 / MUI's measured `bg`), sidebar #171717,
   /// composer and row fills #2f2f2f, borders #424242 — the values the official
   /// ChatGPT-style layout uses. See docs/openai-sdk-ui-spec.md and
   /// docs/external-refs-summary.md §2.
-  factory ChatGptShellColors.dark(AppAccent accent) => ChatGptShellColors(
-    page: const Color(0xFF212121),
-    sidebar: const Color(0xFF171717),
-    composer: const Color(0xFF2F2F2F),
-    composerBorder: const Color(0xFF424242),
-    rowHover: const Color(0xFF2F2F2F),
-    rowSelected: const Color(0xFF2F2F2F),
-    divider: const Color(0xFF2F2F2F),
-    primaryText: const Color(0xFFECECEC),
-    secondaryText: const Color(0xFFB4B4B4),
-    tertiaryText: const Color(0xFF8E8E8E),
-    // --color-background-primary-solid (dark) = gray-950: near-white.
-    primaryAction: const Color(0xFFF3F3F3),
-    onPrimaryAction: const Color(0xFF0D0D0D),
-    // alpha 8% white over the page, the official user-message fill.
-    userBubble: const Color(0x14FFFFFF),
-    onUserBubble: const Color(0xFFECECEC),
-  );
+  ///
+  /// As in [light], `page` and `sidebar` follow [accent]'s neutral ramp so the
+  /// chat shell and the secondary pages are one surface.
+  factory ChatGptShellColors.dark(AppAccent accent) {
+    final n = NeutralTones.forAccent(accent);
+    return ChatGptShellColors(
+      page: n.nightTop,
+      sidebar: n.nightLowest,
+      composer: const Color(0xFF2F2F2F),
+      composerBorder: const Color(0xFF424242),
+      rowHover: const Color(0xFF2F2F2F),
+      rowSelected: const Color(0xFF2F2F2F),
+      divider: const Color(0xFF2F2F2F),
+      primaryText: const Color(0xFFECECEC),
+      secondaryText: const Color(0xFFB4B4B4),
+      tertiaryText: const Color(0xFF8E8E8E),
+      // --color-background-primary-solid (dark) = gray-950: near-white.
+      primaryAction: const Color(0xFFF3F3F3),
+      onPrimaryAction: const Color(0xFF0D0D0D),
+      // alpha 8% white over the page, the official user-message fill.
+      userBubble: const Color(0x14FFFFFF),
+      onUserBubble: const Color(0xFFECECEC),
+    );
+  }
 
   @override
   ChatGptShellColors copyWith({

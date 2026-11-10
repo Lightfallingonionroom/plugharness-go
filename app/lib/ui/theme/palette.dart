@@ -371,7 +371,10 @@ class NeutralTones {
     return _cache.putIfAbsent((tintHue, tintChroma), () {
       if (_cache.length > 32) _cache.clear();
       final shift = tintHue - baseHue;
-      Color t(Color c) => retint(c, hueShift: shift, chromaScale: tintChroma);
+      // The whole ramp is grey, so every entry lands on [tintHue] itself. Passing
+      // it as the absolute hue is what keeps 蓝色 blue: rotating a grey's
+      // meaningless 0° hue would put it wherever atan2(0,0) happens to sit.
+      Color t(Color c) => retint(c, hueShift: shift, chromaScale: tintChroma, absoluteHue: tintHue);
       const m = defaults;
       return NeutralTones(
         mistTop: t(m.mistTop),

@@ -8,27 +8,29 @@ import 'package:flutter/material.dart';
 import 'backdrop_frame.dart';
 import 'surfaces.dart';
 
-/// 全屏页面背景:**竖向雾蓝渐变 + 两团极淡的光**。
+/// 全屏页面背景:**一色到底的纯色**。
 ///
-/// - 底层:`backdropTop → backdropBottom` 竖向渐变(浅色彩度 ≤ 0.019)。
-/// - 右上:主色光晕(跟随 accent)。左下:暮紫光晕。透明度都在 0.25–0.42,
-///   画在大半径径向渐变里,肉眼只觉得"有点透亮",看不出是两个圆。
-/// - 光晕的作用是给玻璃一点可"透"的颜色;纯平背景上的玻璃看起来只是白块。
+/// 这版之前是「竖向渐变 + 两团极淡的光」;实机上那层光晕读起来就是一条
+/// 从右上压到左下的渐变,和侧边栏、对话页的平涂底色不是一路。现在整页
+/// 平涂 [DshSurfaces.backdropTop](它和 backdropBottom 本来就是同一个值),
+/// 二级页、对话页、侧边栏终于是一个底色。
+///
+/// 玻璃仍然采样它当底:平色上的玻璃靠细线和高光分层,不再靠渐变。
 ///
 /// **同一主题内所有页共用同一张背景**,
 /// 切 tab 时背景不动,只有前景内容在变 —— 切换顺滑的关键。
 ///
 /// 内部自带一个透明 `Material`:子树里的 `InkWell` 水波画在背景**之上**。
-/// (若水波宿主是背景下面的 Scaffold,不透明的渐变会把水波整个盖住。)
 ///
 /// 给了 [picture](自定义壁纸,lib/ui/wallpaper/wallpaper_backdrop.dart)就画那张
-/// 预先烘好的图,不画渐变;子树里的 [BackdropVeil] 跟着画同一张图。
+/// 预先烘好的图,不画底色;子树里的 [BackdropVeil] 跟着画同一张图。
 class AppBackdrop extends StatelessWidget {
-  const AppBackdrop({super.key, required this.child, this.glow = true, this.picture});
+  const AppBackdrop({super.key, required this.child, this.glow = false, this.picture});
 
   final Widget child;
 
-  /// 是否画光晕。全屏 WebView、安装页等自带背景的场景可以关掉。
+  /// 是否画光晕。**默认关**:页面的产品观感是纯色。个别需要氛围的
+  /// 场景(壁纸预览等)可以显式打开。
   final bool glow;
 
   /// A picture in place of the gradient; null: the gradient.
@@ -109,11 +111,11 @@ class _BackdropScope extends InheritedWidget {
 /// 整页、和页面左上角对齐。分栏布局里的一栏(宽屏的聊天栏、详情栏)由
 /// [BackdropFrame] 告知它在整张背景里的位置,照样对得上。
 class BackdropVeil extends StatelessWidget {
-  const BackdropVeil({super.key, required this.solidHeight, this.feather = 14, this.glow = true}) : fromTop = false;
+  const BackdropVeil({super.key, required this.solidHeight, this.feather = 14, this.glow = false}) : fromTop = false;
 
   /// 顶部版:从顶边往下 [height] 实心,再往下 [feather] 缓缓淡出(页面顶栏
   /// 后面)。同样要铺满整页、和页面左上角对齐。
-  BackdropVeil.top({super.key, required double height, this.feather = 14, this.glow = true})
+  BackdropVeil.top({super.key, required double height, this.feather = 14, this.glow = false})
     : solidHeight = _FixedHeight(height),
       fromTop = true;
 
@@ -300,17 +302,25 @@ class _BackdropPainter extends CustomPainter {
     canvas.drawImageRect(image, src, Offset.zero & size, Paint()..filterQuality = FilterQuality.medium);
   }
 
+  /// The page's fill. A solid rectangle when the two stops are the same colour
+  /// (which is every theme we ship: mistTop == mistBottom, nightTop ==
+  /// nightBottom), so there is no gradient on screen at all. Kept able to draw
+  /// a real ramp for a theme that asks for one.
   void _gradient(Canvas canvas, Size size) {
     final rect = Offset.zero & size;
-    canvas.drawRect(
-      rect,
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [top, bottom],
-        ).createShader(rect),
-    );
+    if (top == bottom) {
+      canvas.drawRect(rect, Paint()..color = top);
+    } else {
+      canvas.drawRect(
+        rect,
+        Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [top, bottom],
+          ).createShader(rect),
+      );
+    }
     final longest = size.longestSide;
     if (glowPrimary case final color?) {
       _glow(canvas, Offset(size.width * 0.92, 0), longest * 0.62, color);
