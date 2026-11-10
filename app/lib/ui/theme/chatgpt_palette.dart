@@ -10,6 +10,7 @@
 import 'package:flutter/material.dart';
 
 import 'accent.dart';
+import 'palette.dart';
 import 'surfaces.dart';
 
 /// Flat surfaces and quiet fills for the shell.
