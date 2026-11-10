@@ -146,7 +146,6 @@ class ChatEmptyState extends StatelessWidget {
     this.workspace,
     this.onWorkspace,
     this.options,
-    this.tips,
   });
 
   final bool connected;
@@ -190,12 +189,6 @@ class ChatEmptyState extends StatelessWidget {
 
   /// The workspace chip → the options row.
   static const optionsGap = 8.0;
-
-  /// The pill or chips → the suggestions.
-  static const suggestionsGap = 28.0;
-
-  /// The suggestions → the tip line.
-  static const tipGap = 6.0;
 
   @override
   Widget build(BuildContext context) {

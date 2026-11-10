@@ -4603,6 +4603,18 @@ class L10nZh extends L10n {
   }
 
   @override
+  String get chatWorkProgressTooltip => '查看工作进展';
+
+  @override
+  String get chatWorkProgressHoldHint => '长按查看文件';
+
+  @override
+  String get chatComposerControls => '控制面板';
+
+  @override
+  String get chatComposerControlsNewChat => '新对话发出去后再设置';
+
+  @override
   String get commonCancel => '取消';
 
   @override

@@ -128,8 +128,10 @@ void main() {
       find.byType(NewChatButton),
       find.widgetWithText(SessionTile, '归档测试'),
       // 全部功能 is gone: every destination it opened is a row in the column.
+      // The host switcher is gone too (2026-11): the drawer's bottom bar is
+      // 新对话 + 设置, and the top is a wordmark + a round search key.
       find.bySemanticsLabel('设置'),
-      find.bySemanticsLabel(RegExp('当前主机：.*')),
+      find.bySemanticsLabel('搜索对话'),
     ]) {
       final data = tester.getSemantics(finder).getSemanticsData();
       expect(data.flagsCollection.isButton, isTrue);

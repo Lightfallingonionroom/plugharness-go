@@ -98,7 +98,7 @@ void _expectInDrawer(WidgetTester tester, Rect bar, {double inset = 0}) {
   expect(left, moreOrLessEquals(_edge, epsilon: 0.5), reason: 'left margin $left');
   expect(right, moreOrLessEquals(left, epsilon: 0.5), reason: 'margins $left / $right');
   expect(notice.right, lessThanOrEqualTo(drawer.right));
-  // The identity bar's own content (its host pill and keys) sits the same 10 in.
+  // The bottom bar's own content (its keys) sits the same 10 in.
   expect(bar.left + _edge, moreOrLessEquals(notice.left, epsilon: 0.5));
   expect(bar.right - _edge, moreOrLessEquals(notice.right, epsilon: 0.5));
   expect(bar.top - notice.bottom, moreOrLessEquals(composerToastGap, epsilon: 0.5));
@@ -108,14 +108,14 @@ void _expectInDrawer(WidgetTester tester, Rect bar, {double inset = 0}) {
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
-  testWidgets('open drawer: 已归档 stands inside it, above the identity bar', (tester) async {
+  testWidgets('open drawer: 已归档 stands inside it, above the bottom bar', (tester) async {
     usePhoneSurface(tester);
     await _pump(tester);
     await _archiveFromMenu(tester);
-    _expectInDrawer(tester, tester.getRect(find.byType(IdentityBar)));
+    _expectInDrawer(tester, tester.getRect(find.byType(DrawerBottomBar)));
   });
 
-  testWidgets('multi-select: above the action bar that lies over the identity bar', (tester) async {
+  testWidgets('multi-select: above the action bar that lies over the bottom bar', (tester) async {
     usePhoneSurface(tester);
     final container = await _pump(tester);
     container.read(drawerSelectionProvider.notifier)
@@ -123,19 +123,19 @@ void main() {
       ..toggle('s4');
     await _settle(tester);
     final bar = tester.getRect(find.byType(SelectionActionBar));
-    expect(bar, tester.getRect(find.byType(IdentityBar)));
+    expect(bar, tester.getRect(find.byType(DrawerBottomBar)));
     await tester.tap(find.text('归档'));
     await _settle(tester);
     expect(find.text('已归档 2 个对话'), findsOneWidget);
     _expectInDrawer(tester, bar);
   });
 
-  testWidgets('large text: still above the taller identity bar', (tester) async {
+  testWidgets('large text: still above the taller bottom bar', (tester) async {
     usePhoneSurface(tester);
     tester.platformDispatcher.textScaleFactorTestValue = 1.6;
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     await _pump(tester);
-    final bar = tester.getRect(find.byType(IdentityBar));
+    final bar = tester.getRect(find.byType(DrawerBottomBar));
     expect(bar.height, greaterThan(66));
     await _archiveFromMenu(tester);
     _expectInDrawer(tester, bar);
@@ -152,7 +152,7 @@ void main() {
     // Few rows show on a phone on its side: any notice, not one row's.
     final messenger = _showNotice(tester);
     await _settle(tester);
-    _expectInDrawer(tester, tester.getRect(find.byType(IdentityBar)), inset: 32);
+    _expectInDrawer(tester, tester.getRect(find.byType(DrawerBottomBar)), inset: 32);
     messenger.clearSnackBars();
     await _settle(tester);
   });
@@ -175,7 +175,7 @@ void main() {
     final before = closed();
     _openDrawer!();
     await _settle(tester);
-    _expectInDrawer(tester, tester.getRect(find.byType(IdentityBar)));
+    _expectInDrawer(tester, tester.getRect(find.byType(DrawerBottomBar)));
     // A tap on the scrim pushes the drawer back.
     await tester.tapAt(Offset(view.width - 20, view.height / 2));
     await _settle(tester);

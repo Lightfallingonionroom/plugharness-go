@@ -1,14 +1,14 @@
-// 聊天空态的品牌改版（2026-11-10）。
+// 聊天空态的品牌改版（2026-11-10，2026-11-11 精简）。
 //
-// 这一组是**独立的**新基准，不复用 `empty_actions_test.dart` 的 golden：
-// 空态从「一句大标题」改成「鲸尾 + 时段问候 + 四张能力卡」是产品决定，不是回归。
-// 旧 golden 保持原样，它测的是 SuggestionCards 的几何，仍然有效。
+// 空态的结构变过两次：
+//   1. 2026-10：一句大标题 + 四张能力卡 + 小技巧；
+//   2. 2026-11-10：鲸尾 + 时段问候 + 同样的卡片；
+//   3. 2026-11-11：**卡片和小技巧删掉**（用户要求 ChatGPT 式的一屏一句标题）。
 //
-// 守住四件事：
+// 这一组现在只守住三件事：
 //   1. 品牌形与问候语真的出现，且鲸尾是静帧；
-//   2. 四张能力卡是 PlugHarness 的能力入口，不是通用开发任务；
-//   3. 320 窄屏 / 915×412 矮横屏 / 1.3× 字号下不溢出；
-//   4. 连不上引擎时品牌形和卡片都收起。
+//   2. 320 窄屏 / 915×412 矮横屏 / 1.3× 字号下不溢出；
+//   3. 连不上引擎时品牌形收起。
 import 'package:dsh_app/l10n/l10n.dart';
 import 'package:dsh_app/ui/chat/empty_state.dart';
 import 'package:dsh_app/ui/chat/widgets/whale_tail.dart';
@@ -73,24 +73,7 @@ void main() {
         reason: '连接正常时不该再显示固定的「有什么可以帮你？」');
   });
 
-  testWidgets('the four suggestions are PlugHarness capabilities', (tester) async {
-    await tester.pumpWidget(_host(_empty()));
-    await tester.pumpAndSettle();
-
-    expect(defaultSuggestions.map((s) => s.label), [
-      appL10n.viewSuggestPhone,
-      appL10n.viewSuggestPlugin,
-      appL10n.viewSuggestWorkspace,
-      appL10n.viewSuggestSchedule,
-    ]);
-    for (final s in defaultSuggestions) {
-      expect(find.text(s.label), findsOneWidget);
-      expect(s.prompt, isNotEmpty, reason: '${s.label} 点了要能填进输入框');
-      expect(s.detail, isNotNull, reason: '${s.label} 要说明它替你做什么');
-    }
-  });
-
-  testWidgets('disconnected hides the whale and folds the suggestions away', (tester) async {
+  testWidgets('disconnected hides the whale', (tester) async {
     await tester.pumpWidget(_host(_empty(connected: false)));
     await tester.pumpAndSettle();
 
@@ -98,37 +81,27 @@ void main() {
     expect(find.text(appL10n.viewEmptyTitle), findsOneWidget, reason: '连不上时说清是什么状态');
   });
 
-  testWidgets('a 320dp phone keeps every card on screen', (tester) async {
+  testWidgets('a 320dp phone keeps the screen usable', (tester) async {
     await tester.pumpWidget(_host(_empty(), size: const Size(320, 568)));
     await tester.pumpAndSettle();
-
     expect(tester.takeException(), isNull);
-    for (final s in defaultSuggestions) {
-      expect(find.text(s.label), findsOneWidget);
-    }
   });
 
-  testWidgets('a landscape phone (915x412) drops the whale to keep the cards', (tester) async {
+  testWidgets('a landscape phone (915x412) drops the whale', (tester) async {
     await tester.pumpWidget(_host(_empty(), size: const Size(915, 412)));
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
-    expect(find.byType(WhaleTail), findsNothing, reason: '矮横屏纵向不够，品牌形让位给建议卡');
-    expect(find.text(defaultSuggestions.first.label), findsOneWidget);
+    expect(find.byType(WhaleTail), findsNothing, reason: '矮横屏纵向不够，品牌形让位');
   });
 
   testWidgets('1.3x text does not overflow', (tester) async {
     await tester.pumpWidget(_host(_empty(), textScale: 1.3));
     await tester.pumpAndSettle();
-
     expect(tester.takeException(), isNull);
-    for (final s in defaultSuggestions) {
-      expect(find.text(s.label), findsOneWidget);
-    }
   });
 
   // 新的 golden 基准：浅色 + 深色各一张，390×844。
-  // 与旧 golden 无关——删掉旧基准不影响这组，反之亦然。
   for (final brightness in Brightness.values) {
     testWidgets('golden: new-chat brand screen (${brightness.name})', (tester) async {
       await tester.pumpWidget(_host(_empty(), brightness: brightness));

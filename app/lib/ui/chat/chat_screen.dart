@@ -1399,7 +1399,18 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     }
   }
 
-  void _onSuggestion(ChatSuggestion suggestion) {
+  /// 当前模型有没有推理档位。
+///
+/// 没有档位的模型（纯对话模型）不该显示强度键；而 Composer 用
+/// `footer == null` 判断走一行还是两行布局，所以这里必须返回 bool
+/// 让调用点决定给 null 还是给部件。
+bool _hasEfforts(ModelSelection? selection) {
+  final catalog = ref.read(currentModelCatalogProvider);
+  final model = findModel(catalog, selection ?? catalog?.defaultSelection);
+  return (model?.efforts.length ?? 0) >= 2;
+}
+
+void _onSuggestion(ChatSuggestion suggestion) {
     // The suggest-to-composer contract: a tap puts the prompt in the field,
     // focused, for the person to word in their own way. ChatGPT sends on the
     // tap instead — a behaviour change for the product owner to call, not a
@@ -2083,7 +2094,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                                       ],
                                     ),
                                     keyboardInset: MediaQuery.viewInsetsOf(context).bottom,
-                                    footer: _composerOpens(context) && !isChild
+                                    // 没有档位的模型不显示强度键 —— 而且要给 null，
+                                    // 不是空部件：Composer 用 `footer == null` 判断
+                                    // 是否走两行布局，空部件会让它开一行空白。
+                                    footer: _composerOpens(context) &&
+                                            !isChild &&
+                                            _hasEfforts(sessionId == null ? pendingModel : chat?.model)
                                         ? ComposerEffortKey(
                                             selection: sessionId == null ? pendingModel : chat?.model,
                                             onSelected: _modelTarget(),

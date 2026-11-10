@@ -171,6 +171,7 @@ void main() {
     testWidgets('完成 takes 新对话’s place; 全选 on the 20 line; count centred', (tester) async {
       final container = await _pump(tester);
       final drawer = _rect(tester, find.byType(SessionsDrawer));
+      // 新对话 moved to the bottom bar in 2026-11: 完成 lands where it is.
       final newChat = _rect(tester, find.byType(NewChatButton));
       container.read(drawerSelectionProvider.notifier).start('s2');
       await tester.pump();
@@ -199,16 +200,16 @@ void main() {
       expect(memberTitle.left - drawer.left, _near(20 + SessionTile.folderIndent + SessionTile.checkSlot));
     });
 
-    testWidgets('the action bar is as tall as the identity bar; four equal keys on the 10 lines', (tester) async {
+    testWidgets('the action bar is as tall as the bottom bar; four equal keys on the 10 lines', (tester) async {
       final container = await _pump(tester);
       final drawer = _rect(tester, find.byType(SessionsDrawer));
-      final identity = _rect(tester, find.byType(IdentityBar));
+      final bottom = _rect(tester, find.byType(DrawerBottomBar));
       container.read(drawerSelectionProvider.notifier).start('s2');
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 600));
       final bar = _rect(tester, find.byType(SelectionActionBar));
-      expect(bar.height, _near(identity.height));
-      expect(bar.bottom, _near(identity.bottom));
+      expect(bar.height, _near(bottom.height));
+      expect(bar.bottom, _near(bottom.bottom));
       final keys = [
         for (final label in ['移到文件夹', '置顶', '归档', '删除'])
           _rect(tester, find.ancestor(of: find.text(label), matching: find.byType(InkWell)).first),
@@ -222,32 +223,17 @@ void main() {
     });
   });
 
-  group('identity bar', () {
-    testWidgets('设置: the account avatar is the settings entry, 10 from the edge', (tester) async {
+  group('bottom bar', () {
+    testWidgets('新对话 and 设置: 44 keys on the 10 lines', (tester) async {
       await _pump(tester);
       final drawer = _rect(tester, find.byType(SessionsDrawer));
-      final bar = find.byType(IdentityBar);
-      // The footer's settings entry is now the account avatar (circle_person on
-      // a hairline ring), not a gear glass circle. Its tap target is 44 and its
-      // right edge sits on the drawer's 10 line.
-      final avatar = _rect(
-        tester,
-        find.descendant(of: bar, matching: find.byTooltip('设置')).first,
-      );
-      final pill = _rect(
-        tester,
-        find.descendant(of: bar, matching: find.byKey(const ValueKey('identity-host-controls'))),
-      );
-      // 全部功能 moved into the drawer's destination column: no second key. Its
-      // glyph is shared with openWith, so assert on the semantics label rather
-      // than the icon.
-      expect(find.bySemanticsLabel('全部功能'), findsNothing);
-      expect(avatar.width, _near(44));
-      expect(avatar.height, _near(44));
-      expect(pill.left - drawer.left, _near(10));
-      expect(drawer.right - avatar.right, _near(10));
-      expect(pill.height, _near(avatar.height));
-      expect(pill.center.dy, _near(avatar.center.dy));
+      final bar = find.byType(DrawerBottomBar);
+      final newChat = _rect(tester, find.descendant(of: bar, matching: find.byType(NewChatButton)));
+      final settings = _rect(tester, find.descendant(of: bar, matching: find.byKey(const ValueKey('drawer-settings'))));
+      expect(newChat.left - drawer.left, _near(10));
+      expect(drawer.right - settings.right, _near(10));
+      expect(newChat.height, _near(settings.height));
+      expect(newChat.center.dy, _near(settings.center.dy));
     });
   });
 

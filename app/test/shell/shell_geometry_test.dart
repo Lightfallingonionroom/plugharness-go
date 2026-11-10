@@ -11,7 +11,6 @@ import 'package:dsh_app/state/settings_state.dart';
 import 'package:dsh_app/ui/common/app_sheet.dart';
 import 'package:dsh_app/ui/onboarding/onboarding_scaffold.dart';
 import 'package:dsh_app/ui/onboarding/runtime_setup_page.dart';
-import 'package:dsh_app/ui/shell/brand_mark.dart';
 import 'package:dsh_app/ui/shell/home_shell.dart';
 import 'package:dsh_app/ui/shell/page_frame.dart';
 import 'package:dsh_app/ui/shell/session_search_page.dart';
@@ -21,7 +20,6 @@ import 'package:dsh_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'brand_support.dart';
 import 'golden_harness.dart';
 
 const _eps = 0.01;
@@ -50,50 +48,34 @@ Future<void> _pumpDrawer(WidgetTester tester) async {
 
 void main() {
   group('drawer', () {
-    testWidgets('text on the 20 line, edges on the 10 line', (tester) async {
+    testWidgets('the wordmark on the 20 line, the search key ending on the 10 line', (tester) async {
       await _pumpDrawer(tester);
       final drawer = tester.getRect(find.byType(SessionsDrawer));
-      final lockup = tester.getRect(find.byType(BrandLockup));
-      final newChat = tester.getRect(find.byType(NewChatButton));
-      // The search bar is a flat stadium now (no glass tier): measure the
-      // Material that carries it, which is what the 10 line is about.
-      final search = tester.getRect(
-        find.descendant(of: find.byType(SessionSearchBar), matching: find.byType(Material)).first,
-      );
+      final wordmark = tester.getRect(find.byKey(const ValueKey('drawer-wordmark')));
+      final search = tester.getRect(find.byKey(const ValueKey('drawer-search')));
       final tile = tester.getRect(find.byType(SessionTile).first);
       final title = tester.getRect(find.text('修复登录按钮重复提交'));
 
-      expect(lockup.left - drawer.left, _near(20));
+      // 2026-11: the drawer's top is a plain wordmark (no glyph lockup) and a
+      // round search key, not the old lockup + search field.
+      expect(wordmark.left - drawer.left, _near(20));
       expect(title.left - drawer.left, _near(20));
       expect(tile.left - drawer.left, _near(10));
       expect(drawer.right - tile.right, _near(10));
-      expect(search.left - drawer.left, _near(10));
       expect(drawer.right - search.right, _near(10));
-      expect(drawer.right - newChat.right, _near(10));
-      // The pill and the lockup share a centre line.
-      expect(newChat.center.dy, _near(lockup.center.dy));
-      expect(newChat.height, _near(36));
-      // The lockup itself: glyph centred on the word's cap height, sized and spaced by it.
-      await expectBrandLockup(tester, find.byType(BrandLockup));
+      expect(search.height, _near(36));
     });
 
-    testWidgets('identity bar: host on the 20 line, the account avatar ends on the 10 line', (tester) async {
+    testWidgets('bottom bar: 新对话 on the 10 line, 设置 ends on the 10 line', (tester) async {
       await _pumpDrawer(tester);
       final drawer = tester.getRect(find.byType(SessionsDrawer));
-      final bar = find.byType(IdentityBar);
-      // The host chip still shows thisPhone; the settings entry is the account
-      // avatar (circle_person). The old 全部功能 key is gone — its destinations
-      // are rows in the column above now.
-      final chip = tester.getRect(
-        find.ancestor(of: find.byIcon(AppIcons.thisPhone), matching: find.byType(DecoratedBox)).first,
-      );
-      final avatar = tester.getRect(find.descendant(of: bar, matching: find.byTooltip('设置')));
-      expect(chip.left - drawer.left, _near(20));
-      expect(avatar.width, _near(44));
-      expect(avatar.height, _near(44));
-      expect(drawer.right - avatar.right, _near(10));
-      // One centre line through the host chip and the avatar.
-      expect(avatar.center.dy, _near(chip.center.dy));
+      final bar = find.byType(DrawerBottomBar);
+      final newChat = tester.getRect(find.descendant(of: bar, matching: find.byType(NewChatButton)));
+      final settings = tester.getRect(find.descendant(of: bar, matching: find.byKey(const ValueKey('drawer-settings'))));
+      expect(newChat.left - drawer.left, _near(10));
+      expect(drawer.right - settings.right, _near(10));
+      // One centre line through the two keys.
+      expect(settings.center.dy, _near(newChat.center.dy));
     });
   });
 

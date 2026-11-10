@@ -8462,6 +8462,30 @@ abstract class L10n {
   /// **'{name}，{description}'**
   String chatArtifactSemantics(String name, String description);
 
+  /// No description provided for @chatWorkProgressTooltip.
+  ///
+  /// In zh, this message translates to:
+  /// **'查看工作进展'**
+  String get chatWorkProgressTooltip;
+
+  /// No description provided for @chatWorkProgressHoldHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'长按查看文件'**
+  String get chatWorkProgressHoldHint;
+
+  /// No description provided for @chatComposerControls.
+  ///
+  /// In zh, this message translates to:
+  /// **'控制面板'**
+  String get chatComposerControls;
+
+  /// No description provided for @chatComposerControlsNewChat.
+  ///
+  /// In zh, this message translates to:
+  /// **'新对话发出去后再设置'**
+  String get chatComposerControlsNewChat;
+
   /// No description provided for @commonCancel.
   ///
   /// In zh, this message translates to:

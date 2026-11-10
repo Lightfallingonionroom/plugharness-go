@@ -316,3 +316,7 @@ aapt2 dump badging app-arm64-release.apk | grep -E "^package:|application-label:
 - [ ] `docs/FLASH_EXECUTION_REPORT.md` 落盘并推送
 
 有任何一项做不到，在报告里写清楚**为什么**，不要假装做到了。
+
+> 夜间补记（2026-11-11）：第一批实现已提交在 `feat/ui-overhaul-flash`
+> 分支（`7066fe4e`），**尚未推送**。本机无 Flutter SDK，只做了括号平衡与
+> ARB JSON 校验，编译未验证。

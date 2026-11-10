@@ -4901,6 +4901,18 @@ class L10nEn extends L10n {
   }
 
   @override
+  String get chatWorkProgressTooltip => 'View progress';
+
+  @override
+  String get chatWorkProgressHoldHint => 'Hold for files';
+
+  @override
+  String get chatComposerControls => 'Controls';
+
+  @override
+  String get chatComposerControlsNewChat => 'Set after this chat starts';
+
+  @override
   String get commonCancel => 'Cancel';
 
   @override

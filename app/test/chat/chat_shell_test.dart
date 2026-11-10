@@ -5,13 +5,10 @@
 // send-options sheet. Regenerate with
 // `flutter test --update-goldens test/chat/chat_shell_test.dart`.
 
-import 'dart:math' as math;
-
+import 'package:dsh_app/l10n/l10n.dart';
 import 'package:dsh_app/state/chat_state.dart';
 import 'package:dsh_app/ui/chat/chat_screen.dart';
 import 'package:dsh_app/ui/chat/composer.dart';
-import 'package:dsh_app/ui/chat/empty_actions.dart';
-import 'package:dsh_app/ui/chat/empty_state.dart';
 import 'package:dsh_app/ui/chat/slash_palette.dart';
 import 'package:dsh_app/ui/chat/widgets/live_clock.dart' show runClock;
 import 'package:dsh_app/ui/chat/widgets/whale_tail.dart';
@@ -41,9 +38,6 @@ Future<void> _pump(
 
 double _screenWidth(WidgetTester tester) => tester.view.physicalSize.width / tester.view.devicePixelRatio;
 
-Rect _suggestion(WidgetTester tester, int i) =>
-    tester.getRect(find.ancestor(of: find.text(defaultSuggestions[i].label), matching: find.byType(InkWell)).first);
-
 void main() {
   setUpAll(() async {
     await loadTestFonts();
@@ -52,61 +46,37 @@ void main() {
   });
 
   group('empty state', () {
-    // The cards' own geometry (cells, insets, one column on very narrow
-    // cells) is measured in empty_actions_test.dart.
+    // The suggestion cards were removed in 2026-11; what stays is the greeting
+    // line, centred above the composer.
     for (final (size, scale) in [(const Size(390, 844), 1.0), (const Size(360, 780), 1.3)]) {
-      testWidgets('suggestions line up with the composer (${size.width.round()}dp, ×$scale)', (tester) async {
+      testWidgets('the greeting sits centred above the composer (${size.width.round()}dp, ×$scale)', (tester) async {
         await _pump(tester, ChatHarness(), size: size, textScale: scale);
         expect(tester.takeException(), isNull);
         final width = _screenWidth(tester);
         final composer = tester.getRect(find.byType(Composer));
-        final chips = [for (var i = 0; i < 4; i++) _suggestion(tester, i)];
 
-        // Same outer edges as the composer (12 from the screen).
-        final left = chips.map((c) => c.left).reduce(math.min);
-        final right = chips.map((c) => c.right).reduce(math.max);
-        expect(left, moreOrLessEquals(composer.left, epsilon: 0.5));
-        expect(right, moreOrLessEquals(composer.right, epsilon: 0.5));
         expect(composer.left, moreOrLessEquals(12, epsilon: 0.5));
         expect(width - composer.right, moreOrLessEquals(12, epsilon: 0.5));
 
-        // Equal cards (each row as tall as its taller card), a card gap apart.
-        for (final c in chips) {
-          expect(c.width, moreOrLessEquals(chips[0].width, epsilon: 0.5));
-        }
-        expect(chips[1].height, moreOrLessEquals(chips[0].height, epsilon: 0.5));
-        expect(chips[3].height, moreOrLessEquals(chips[2].height, epsilon: 0.5));
-        // The third card starts the second row: one card gap below the first.
-        expect(chips[2].top - chips[1].bottom, moreOrLessEquals(SuggestionCardMetrics.gap));
-
-        // A 390 phone at the default size pairs them up: two per row, equal
-        // halves, the second column one gap to the right of the first.
-        if (size.width == 390 && scale == 1) {
-          expect(chips[1].top, moreOrLessEquals(chips[0].top, epsilon: 0.5));
-          expect(chips[1].left - chips[0].right, moreOrLessEquals(EmptyActions.gap, epsilon: 0.5));
-          expect(chips[3].top, moreOrLessEquals(chips[2].top, epsilon: 0.5));
-          expect(chips[2].left, moreOrLessEquals(chips[0].left, epsilon: 0.5));
-        }
-
-        // The one line above the composer, centred on the screen.
-        final greeting = tester.getRect(find.text('有什么可以帮你？'));
-        expect(greeting.center.dx, moreOrLessEquals(width / 2, epsilon: 0.5));
+        final greetings = [
+          appL10n.viewGreetingMorning,
+          appL10n.viewGreetingNoon,
+          appL10n.viewGreetingAfternoon,
+          appL10n.viewGreetingEvening,
+          appL10n.viewGreetingNight,
+        ];
+        final shown = greetings.where((g) => find.text(g).evaluate().isNotEmpty).toList();
+        expect(shown, hasLength(1), reason: '恰好一种问候语');
+        expect(
+          tester.getRect(find.text(shown.single)).center.dx,
+          moreOrLessEquals(width / 2, epsilon: 0.5),
+        );
       });
     }
 
-    testWidgets('a suggestion fills the composer', (tester) async {
-      await _pump(tester, ChatHarness());
-      await tester.tap(find.text(defaultSuggestions[1].label));
-      await tester.pump();
-      final field = tester.widget<TextField>(find.byType(TextField));
-      expect(field.controller!.text, defaultSuggestions[1].prompt);
-    });
-
-    testWidgets('disconnected: the chips do nothing', (tester) async {
+    testWidgets('disconnected: says so, and the composer stays empty', (tester) async {
       await _pump(tester, ChatHarness(connected: false));
       expect(find.text('引擎未连接'), findsOneWidget);
-      await tester.tap(find.text(defaultSuggestions[0].label));
-      await tester.pump();
       final field = tester.widget<TextField>(find.byType(TextField));
       expect(field.controller!.text, isEmpty);
     });

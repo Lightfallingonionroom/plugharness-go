@@ -28,7 +28,7 @@ import '../providers/providers_page.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
 import 'control_icons.dart';
-import 'widgets/plus_panel.dart' show SessionPermissionPage;
+import 'widgets/plus_panel.dart' show showPermissionSheet;
 
 /// 模型名的短写:去掉 "DeepSeek-" 前缀,连字符换空格,首字母大写。
 /// `DeepSeek-V4-Pro` → `V4 Pro`。
@@ -60,12 +60,15 @@ String effortLabel(String id, [String? fallback]) => switch (id) {
   _ => fallback ?? id,
 };
 
-/// 输入条「控制面板」的内容：权限、模式、模型，自上而下三行。
+/// 输入条「控制面板」：权限、模式、模型三行，各自打开已有的页面/弹层。
 ///
-/// 三行都复用已有的页面/弹层，不新造链路：
-///   - 权限 → `SessionPermissionPage`（走 `/permission`）
-///   - 模式 → 权限页里的 Agent Preset（同一页的上半部分）
+/// 都复用现成的，不新造链路：
+///   - 权限 → `showPermissionSheet`（`SessionPermissionPage`，走 `/permission`）
+///   - 模式 → 同一个权限页（Agent Preset 就在里面）
 ///   - 模型 → `showModelSheet`（走 `ModelSelection`）
+///
+/// **不把 `SessionPermissionPage` 直接嵌进来**：它自带 `SheetTitleBar`，
+/// 嵌进来会出现两个标题。这里只放入口行，点开时再 push 它。
 Future<void> showComposerControls(BuildContext context, {String? sessionId}) {
   return showAppSheet<void>(
     context,
@@ -78,25 +81,44 @@ Future<void> showComposerControls(BuildContext context, {String? sessionId}) {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             SheetTitleBar(appL10n.chatComposerControls),
-            // 权限 + 模式：会话已有，用同一个权限页（它已经包含两者）。
-            if (sessionId != null)
-              SessionPermissionPage(sessionId: sessionId)
-            else
-              ListPageRow(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: kSheetGutter),
+              child: ListPageRow(
                 icon: AppIcons.permissions,
-                title: appL10n.nearbyPermissionTitle,
-                subtitle: appL10n.chatComposerControlsNewChat,
-                chevron: false,
+                title: appL10n.featuresPermissions,
+                subtitle: sessionId == null ? appL10n.chatComposerControlsNewChat : null,
+                onTap: sessionId == null
+                    ? null
+                    : () {
+                        Navigator.of(sheet).pop();
+                        unawaited(showPermissionSheet(context, sessionId));
+                      },
               ),
-            const SizedBox(height: 8),
-            // 模型：走现有模型弹层。
-            ListPageRow(
-              icon: AppIcons.providers,
-              title: appL10n.viewModelSelect,
-              onTap: () => showModelSheet(
-                context,
-                current: null,
-                onSelected: (_) {},
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: kSheetGutter),
+              child: ListPageRow(
+                icon: AppIcons.profile,
+                title: appL10n.hubSessionPlanMode,
+                subtitle: sessionId == null ? appL10n.chatComposerControlsNewChat : null,
+                onTap: sessionId == null
+                    ? null
+                    : () {
+                        Navigator.of(sheet).pop();
+                        unawaited(showPermissionSheet(context, sessionId));
+                      },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: kSheetGutter),
+              child: ListPageRow(
+                icon: AppIcons.providers,
+                title: appL10n.viewModelSelect,
+                onTap: () => showModelSheet(
+                  context,
+                  current: null,
+                  onSelected: (_) {},
+                ),
               ),
             ),
             const SizedBox(height: 12),
@@ -151,7 +173,11 @@ class ComposerControlsKey extends StatelessWidget {
 /// 输入条右端的推理强度键：仪表图标，指针随档位转。
 ///
 /// 档位来自 `model.efforts`（**不写死 low/high/max**）：DeepSeek 是 4 档，
-/// 别的模型可能不同。没有档位的模型不显示这个键。
+/// 别的模型可能不同。
+///
+/// 调用点（`chat_screen.dart`）用 `_hasEfforts()` 决定给 `footer` 还是给
+/// `null` —— 因为 `Composer` 用 `footer == null` 判断走一行还是两行布局，
+/// 给一个空部件会让它开一行空白。这里仍保留内部判断，让部件单独使用也安全。
 ///
 /// 改档走 `onSelected(ModelSelection(provider, model, reasoningEffort: ...))`
 /// —— 和模型弹窗、引擎设置页完全同一条链路，不会变成「能选但没用」。

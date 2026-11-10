@@ -15,6 +15,7 @@ import '../../state/cordis_state.dart';
 import '../../state/bots_state.dart';
 import '../../state/connection_state.dart';
 import '../../state/engine_control.dart';
+import '../../state/hosts_state.dart';
 import '../../state/drawer_view_state.dart';
 import '../../state/session_attention_state.dart';
 import '../../state/session_deletion_state.dart';
@@ -33,6 +34,9 @@ import '../common/smooth_size.dart';
 import '../common/read_list_status.dart';
 import '../common/status_dot.dart';
 import '../onboarding/local_install.dart';
+import '../remote/host_status.dart';
+import '../remote/host_switcher.dart' show showHostSheet;
+import '../remote/network_details_sheet.dart' show showRemoteNetworkDetails;
 import '../safe_mode/engine_failure_card.dart';
 import '../safe_mode/safe_mode_banner.dart';
 import '../share/share_entry.dart';
@@ -476,6 +480,7 @@ class _DrawerSearchKey extends StatelessWidget {
             shape: const CircleBorder(),
             clipBehavior: Clip.antiAlias,
             child: InkWell(
+              key: const ValueKey('drawer-search'),
               onTap: () => unawaited(showSessionSearch(context)),
               child: SizedBox.square(
                 dimension: 36,
@@ -530,7 +535,7 @@ class _DrawerMoreRowState extends State<_DrawerMoreRow> {
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 child: Row(
                   children: [
-                    Icon(AppIcons.expand, size: 20, color: shell.secondaryText),
+                    Icon(AppIcons.more, size: 20, color: shell.secondaryText),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
@@ -597,6 +602,13 @@ class _EdgeFade extends StatelessWidget {
     );
   }
 }
+/// How tall the drawer's empty states are: the space the conversation list
+/// would have occupied, so the empty view sits where the rows would.
+double _emptyExtent(BuildContext context) {
+  final available = MediaQuery.sizeOf(context).height - MediaQuery.paddingOf(context).bottom;
+  return available.clamp(280.0, 640.0);
+}
+
 /// The conversation part of the drawer's one scroll body.
 ///
 /// The states that are not a list (loading, error, no scope yet, an empty
@@ -618,19 +630,18 @@ class _DrawerConversationSliver extends ConsumerWidget {
     final scope = ref.watch(drawerScopeProvider);
     if (scope == null) {
       if (ref.watch(readListLiveConnectionProvider) == null && !sessions.isLoading) {
-        return SliverToBoxAdapter(child: _Centered(child: _EmptyState()));
+        return _Centered(child: _EmptyState(), extent: _emptyExtent(context));
       }
       if (sessions.hasError) {
-        return SliverToBoxAdapter(
-          child: _Centered(
-            child: EmptyView(
-              compact: true,
-              icon: AppIcons.offline,
-              title: l10n.shellChatsLoadFailed,
-              actionLabel: l10n.commonRetry,
-              onAction: () => ref.read(sessionsProvider.notifier).refresh(),
-            ),
+        return _Centered(
+          child: EmptyView(
+            compact: true,
+            icon: AppIcons.offline,
+            title: l10n.shellChatsLoadFailed,
+            actionLabel: l10n.commonRetry,
+            onAction: () => ref.read(sessionsProvider.notifier).refresh(),
           ),
+          extent: _emptyExtent(context),
         );
       }
       return const SliverToBoxAdapter(child: _SkeletonList());
@@ -641,10 +652,11 @@ class _DrawerConversationSliver extends ConsumerWidget {
     final showBots = scope.bots.isNotEmpty || (workspace == null && botReady);
     if (scope.sessions.isEmpty && !showBots && ref.watch(drawerViewProvider).folders.isEmpty) {
       if (scope.readOnly) {
-        return SliverToBoxAdapter(child: _Centered(child: Text(readListStatusText(scope.status))));
+        return _Centered(child: Text(readListStatusText(scope.status)), extent: _emptyExtent(context));
       }
-      return SliverToBoxAdapter(
-        child: workspace == null ? _Centered(child: _EmptyState()) : const _WorkspaceEmptyState(),
+      return _Centered(
+        child: workspace == null ? _EmptyState() : const _WorkspaceEmptyState(),
+        extent: _emptyExtent(context),
       );
     }
     return DrawerConversationList(
@@ -961,22 +973,29 @@ class _SkeletonListState extends State<_SkeletonList> with SingleTickerProviderS
   }
 }
 
-/// Keeps an empty view in the upper third of the list area.
+/// An empty view centred in a fixed height, as one sliver of the drawer's
+/// scroll body.
+///
+/// Why not the old `SingleChildScrollView` + `ConstrainedBox`: the drawer's
+/// scroll body lays out its children in a viewport, which gives them
+/// **unbounded height** — a `SingleChildScrollView` there asks for infinite
+/// height and fails to lay out. This takes the height it should fill instead.
 class _Centered extends StatelessWidget {
-  const _Centered({required this.child});
+  const _Centered({required this.child, required this.extent});
 
   final Widget child;
 
+  /// The sliver's height.
+  final double extent;
+
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) => SingleChildScrollView(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(minHeight: constraints.maxHeight),
-          child: Align(
-            alignment: const Alignment(0, -0.4),
-            child: Padding(padding: const EdgeInsets.symmetric(vertical: 24), child: child),
-          ),
+    return SliverToBoxAdapter(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minHeight: extent),
+        child: Align(
+          alignment: const Alignment(0, -0.4),
+          child: Padding(padding: const EdgeInsets.symmetric(vertical: 24), child: child),
         ),
       ),
     );
@@ -990,15 +1009,13 @@ class _WorkspaceEmptyState extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    return _Centered(
-      child: EmptyView(
-        compact: true,
-        icon: AppIcons.folderOpen,
-        title: l10n.shellWorkspaceNoChats,
-        message: l10n.shellWorkspaceNewChatsHint,
-        actionLabel: l10n.remoteWorkspaceAllChats,
-        onAction: () => ref.read(workspacePrefsProvider.notifier).select(null),
-      ),
+    return EmptyView(
+      compact: true,
+      icon: AppIcons.folderOpen,
+      title: l10n.shellWorkspaceNoChats,
+      message: l10n.shellWorkspaceNewChatsHint,
+      actionLabel: l10n.remoteWorkspaceAllChats,
+      onAction: () => ref.read(workspacePrefsProvider.notifier).select(null),
     );
   }
 }
@@ -1052,7 +1069,7 @@ class _EmptyState extends ConsumerWidget {
         message: l10n.shellEngineStatusHint,
       ),
     };
-    return _Centered(child: view);
+    return view;
   }
 }
 
@@ -1099,7 +1116,7 @@ class _RemoteEmptyState extends ConsumerWidget {
         message: status.step == null ? l10n.shellHostChatsAfterConnecting : '${status.step!.label}…',
       ),
     };
-    return _Centered(child: view);
+    return view;
   }
 }
 
@@ -1176,6 +1193,203 @@ class DrawerBottomBar extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// The drawer's old footer: the host switcher and the settings key.
+///
+/// **Not in the drawer any more** (2026-11): ChatGPT's sidebar ends with two
+/// quiet keys, and the engine's state has the header and the empty state to say
+/// it. The drawer now uses [DrawerBottomBar] instead.
+///
+/// **Kept because it is still a working, tested widget**:
+/// `identity_network_test.dart` measures the host switcher's link states and
+/// `settings_search_test.dart` uses it as a convenient round-key row. Deleting
+/// it would break both for no gain. If a future design wants the host switcher
+/// back in the drawer, this is the component.
+class IdentityBar extends ConsumerWidget {
+  const IdentityBar({
+    super.key,
+    required this.onHost,
+    required this.onSettings,
+    this.onSettingsHold,
+    this.onLocalDetails,
+  });
+
+  final VoidCallback onHost;
+
+  /// Local hosts have engine details, not a remote network path.
+  final VoidCallback? onLocalDetails;
+  final VoidCallback onSettings;
+
+  /// ⚙ held down: straight to settings search.
+  final VoidCallback? onSettingsHold;
+
+  /// The round keys, and the host pill's height beside them.
+  static const keySize = 44.0;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+    final colors = DshColors.of(context);
+    final host = ref.watch(activeHostProvider);
+    final name = ref.watch(hostNameProvider(host)) ?? (host.isLocal ? l10n.commonThisPhone : l10n.commonRemoteHost);
+    final view = watchHostStatus(ref, host);
+    final link = host.kind == HostKind.relay ? ref.watch(hostLinkStatusProvider(host)).value : null;
+    final path = link?.isConnected == true ? link?.network?.path ?? link?.path : null;
+    final statusLabel = path == null ? view.label : path.label;
+    final tint = hostKindTint(host.kind);
+    return Padding(
+      // Same 10 / 20 grid as the rows above: the highlight's edge at 10, the
+      // avatar on the 20 text line, the last button's edge at 10. The host
+      // pill is as tall as the round keys beside it (44; taller only for
+      // large text).
+      padding: const EdgeInsets.fromLTRB(10, 9, 10, 13),
+      child: Row(
+        children: [
+          Expanded(
+            child: Row(
+              key: const ValueKey('identity-host-controls'),
+              children: [
+                const SizedBox(width: 6),
+                IconButton(
+                  key: const ValueKey('identity-host-details'),
+                  tooltip: host.isLocal ? l10n.phoneEngineTitle : l10n.remoteNetworkDetails,
+                  onPressed: host.isLocal ? onLocalDetails : () => showRemoteNetworkDetails(context, host),
+                  padding: const EdgeInsets.all(4),
+                  constraints: const BoxConstraints.tightFor(width: keySize, height: keySize),
+                  style: IconButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+                  icon: DecoratedBox(
+                    decoration: ShapeDecoration(color: colors.identity[tint], shape: const CircleBorder()),
+                    child: SizedBox.square(
+                      dimension: 36,
+                      child: Icon(hostKindIcon(host.kind), size: 19, color: colors.onIdentity[tint]),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Semantics(
+                    button: true,
+                    label: l10n.shellCurrentHostLabel(name, statusLabel),
+                    onTap: onHost,
+                    excludeSemantics: true,
+                    child: InkWell(
+                      key: const ValueKey('identity-host-switcher'),
+                      onTap: onHost,
+                      customBorder: Squircle.border(AppShape.md),
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(minHeight: keySize),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Row(
+                            children: [
+                              Flexible(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      name,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: theme.textTheme.titleSmall,
+                                    ),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        StatusDot(tone: view.tone, size: 6),
+                                        const SizedBox(width: 6),
+                                        Flexible(
+                                          child: AnimatedSwitcher(
+                                            duration: AppMotion.of(context, AppMotion.quick),
+                                            layoutBuilder: (current, previous) => Stack(
+                                              alignment: Alignment.centerLeft,
+                                              children: [...previous, ?current],
+                                            ),
+                                            child: Text(
+                                              statusLabel,
+                                              key: ValueKey(statusLabel),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: AppType.tabular(
+                                                theme.textTheme.bodySmall!.copyWith(color: colors.textTertiary),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Icon(AppIcons.dropdown, size: 18, color: colors.textTertiary),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          // Account avatar: the way into settings.
+          _DrawerAvatar(
+            onTap: onSettings,
+            onLongPress: onSettingsHold,
+            tooltip: l10n.commonSettings,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The drawer's account entry: a 44dp tap target holding a 32dp circle with a
+/// hairline ring and the `circle_person` glyph.
+class _DrawerAvatar extends StatelessWidget {
+  const _DrawerAvatar({required this.onTap, required this.tooltip, this.onLongPress});
+
+  final VoidCallback onTap;
+  final VoidCallback? onLongPress;
+  final String tooltip;
+
+  static const _ring = 32.0;
+
+  @override
+  Widget build(BuildContext context) {
+    final shell = ChatGptShellColors.of(context);
+    // No [Tooltip] wrapper: the avatar's Semantics already carries the label,
+    // and a Tooltip would add a second node with the same text.
+    return Semantics(
+      button: true,
+      label: tooltip,
+      onTap: onTap,
+      excludeSemantics: true,
+      child: InkResponse(
+        onTap: onTap,
+        onLongPress: onLongPress,
+        radius: IdentityBar.keySize / 2,
+        child: SizedBox.square(
+          dimension: IdentityBar.keySize,
+          child: Center(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: shell.composerBorder, width: 1),
+              ),
+              child: SizedBox.square(
+                dimension: _ring,
+                child: Icon(AppIcons.avatar, size: 20, color: shell.secondaryText),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

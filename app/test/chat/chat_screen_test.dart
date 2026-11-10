@@ -4,6 +4,7 @@ import 'dart:ui' show SemanticsAction;
 
 import 'package:dsh_app/runtime/runtime_bridge.dart';
 import 'package:dsh_app/runtime/runtime_state.dart';
+import 'package:dsh_app/l10n/l10n.dart';
 import 'package:dsh_app/state/attachments.dart';
 import 'package:dsh_app/state/chat_state.dart';
 import 'package:dsh_app/state/connection_state.dart';
@@ -189,7 +190,6 @@ void main() {
             body: ChatEmptyState(
               connected: !failed,
               onSuggestion: (_) {},
-              suggestions: const [],
               workspace: failed ? null : '项目',
               onWorkspace: () {},
               onReconnect: failed ? () {} : null,
@@ -387,17 +387,23 @@ void main() {
   });
 
   group('new chat', () {
-    testWidgets('greets and fills the composer from a suggestion', (tester) async {
+    testWidgets('greets, and the composer starts empty', (tester) async {
       await pumpScreen(tester, ChatHarness());
-      expect(find.text('有什么可以帮你？'), findsOneWidget);
       // The bar shows the model, not a page title (ChatGPT's layout). The
       // header label is a Text.rich, so the sheet's find.text lookups stay unambiguous.
       expect(find.byKey(const ValueKey('chat-header-model-name')), findsOneWidget);
 
-      await tester.tap(find.text(defaultSuggestions.first.label));
-      await tester.pump();
+      // 空态不再有建议卡（2026-11 删除）；只剩一句时段问候。
+      final greetings = [
+        appL10n.viewGreetingMorning,
+        appL10n.viewGreetingNoon,
+        appL10n.viewGreetingAfternoon,
+        appL10n.viewGreetingEvening,
+        appL10n.viewGreetingNight,
+      ];
+      expect(greetings.where((g) => find.text(g).evaluate().isNotEmpty), hasLength(1));
       final field = tester.widget<TextField>(find.byType(TextField));
-      expect(field.controller!.text, defaultSuggestions.first.prompt);
+      expect(field.controller!.text, isEmpty);
     });
 
     testWidgets('first send creates, selects, then sends', (tester) async {
