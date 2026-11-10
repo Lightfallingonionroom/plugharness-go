@@ -7,6 +7,7 @@
 // 16、列间 12、名字在预览下 8。
 
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -185,7 +186,13 @@ class PalettePicker extends ConsumerWidget {
   /// The last slot, an entry to a colour of one's own.
   final bool custom;
 
-
+  /// 一格色板：色点 + 名字，选中的外面一圈环。
+  ///
+  /// 尺寸取 4 的倍数、和设置页其它网格一致；名字在色点下面 6，最多两行
+  /// （中文名都是两三个字，英文 "Magenta" 这类也放得下）。
+  static const _dot = 28.0;
+  static const _cellGap = 8.0;
+  static const _nameGap = 6.0;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -195,44 +202,129 @@ class PalettePicker extends ConsumerWidget {
     final brightness = Theme.of(context).brightness;
     final accent = ref.watch(accentProvider);
     bool chosen(AppAccent p) => appearance.source == AccentSource.preset && appearance.presetId == p.id;
-    // ChatGPT 的做法:一行「强调色」+ 右侧色点与名字,点开一列十个色板。
-    return AppMenuTile(
-      key: const ValueKey('accent-menu'),
-      title: l10n.pluginsColors,
-      value: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          AccentDot(color: accent.seedFor(brightness), size: 12),
-          const SizedBox(width: 6),
-          Text(accent.label),
-        ],
+
+    // 直接铺开：十个色板 + 自定义，排成自适应网格。
+    // 这一页是"挑颜色"的地方，把色板藏在一次点击后面只会多一步；
+    // ChatGPT 自己的设置页也是把色点直接摊在页面上。
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // 每格至少 56 宽，放不下就换行——窄屏（320）上会自然变成 4 列。
+          const minCell = 56.0;
+          final columns = math.max(2, (constraints.maxWidth / (minCell + _cellGap)).floor());
+          final items = [
+            for (final p in AppAccent.official) (accent: p, custom: false),
+            if (custom) (accent: accent, custom: true),
+          ];
+          return Wrap(
+            spacing: _cellGap,
+            runSpacing: _cellGap,
+            children: [
+              for (final item in items)
+                SizedBox(
+                  width: (constraints.maxWidth - _cellGap * (columns - 1)) / columns,
+                  child: _AccentSwatch(
+                    accent: item.accent,
+                    label: item.custom ? l10n.pluginsCustomColor : item.accent.label,
+                    color: item.custom ? accent.seedFor(brightness) : item.accent.seedFor(brightness),
+                    selected: item.custom ? appearance.source == AccentSource.custom : chosen(item.accent),
+                    dot: _dot,
+                    nameGap: _nameGap,
+                    onTap: () {
+                      if (item.custom) {
+                        unawaited(notifier.selectCustom());
+                      } else {
+                        unawaited(notifier.selectPreset(item.accent.id));
+                      }
+                    },
+                  ),
+                ),
+            ],
+          );
+        },
       ),
-      menuBuilder: (context, close) => [
-        for (final p in AppAccent.official) ...[
-          AppMenuItem(
-            label: p.label,
-            leading: AccentDot(color: p.seedFor(brightness), size: 16),
-            selected: chosen(p),
-            onTap: () {
-              close();
-              unawaited(notifier.selectPreset(p.id));
-            },
+    );
+  }
+}
+
+/// 一格色板：色点 + 名字。选中的色点外面一圈主色环。
+class _AccentSwatch extends StatelessWidget {
+  const _AccentSwatch({
+    required this.accent,
+    required this.label,
+    required this.color,
+    required this.selected,
+    required this.dot,
+    required this.nameGap,
+    required this.onTap,
+  });
+
+  final AppAccent accent;
+  final String label;
+  final Color color;
+  final bool selected;
+  final double dot;
+  final double nameGap;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: label,
+      excludeSemantics: true,
+      child: Pressable(
+        onTap: onTap,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: dot + 8,
+                  height: dot + 8,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: selected ? theme.colorScheme.primary : Colors.transparent,
+                      width: 2,
+                    ),
+                  ),
+                  child: Center(
+                    child: Container(
+                      width: dot,
+                      height: dot,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: color,
+                        border: Border.all(color: theme.colorScheme.outlineVariant, width: 0.5),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: nameGap),
+                Text(
+                  label,
+                  maxLines: 2,
+                  minLines: 1,
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: selected ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant,
+                    fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ],
-        const AppMenuDivider(),
-        if (custom)
-          AppMenuItem(
-            label: l10n.pluginsCustomColor,
-            leading: AccentDot(color: accent.seedFor(brightness), size: 16),
-            selected: appearance.source == AccentSource.custom,
-            onTap: () {
-              close();
-              unawaited(notifier.selectCustom());
-            },
-          ),
-        if (appearance.source == AccentSource.wallpaper)
-          AppMenuItem(label: l10n.pluginsWallpaper, selected: true, onTap: close),
-      ],
+        ),
+      ),
     );
   }
 }

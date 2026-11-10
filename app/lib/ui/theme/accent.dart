@@ -492,6 +492,11 @@ class AppAccent {
     for (final p in presets) {
       if (p.id == id) return p;
     }
+    // 官方十色是独立的列表（设置页默认展示这一组），但 id 同样要能解析回具体的
+    // 色板——否则选了 official_blue 会静默回退到石墨，界面上"点了没反应"。
+    for (final p in official) {
+      if (p.id == id) return p;
+    }
     return graphite;
   }
 
