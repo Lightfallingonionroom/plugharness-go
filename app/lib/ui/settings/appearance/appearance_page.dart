@@ -113,9 +113,6 @@ class _ThemeRowState extends ConsumerState<_ThemeRow> {
               ),
               // 配色：6 个预设 + 自定义，单行等距（设置页其它 picker 的几何契约）。
               const PalettePicker(),
-              // 官方十色：更细的一层，网格排布。放在这里而不是塞进上面那一行，
-              // 是因为十一个色点在 390 宽里会挤到点不中；网格没有单行约束。
-              const OfficialAccentGrid(),
               // 其余外观项（功能图标、桌面图标、启动页、壁纸）在完整页。
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
@@ -207,6 +204,8 @@ class AppearancePage extends ConsumerWidget {
           title: l10n.pluginsColors,
           children: [
             SpotAnchor(spot: Spots.accent, child: const PalettePicker()),
+            // 完整页是滚动页，放得下更多色点：官方十色在这里列成网格。
+            const OfficialAccentGrid(),
             ExpandReveal(open: appearance.source == AccentSource.custom, child: const CustomAccentPanel()),
             if (wallpaper != null) _WallpaperRow(wallpaper: wallpaper, on: appearance.source == AccentSource.wallpaper),
           ],
