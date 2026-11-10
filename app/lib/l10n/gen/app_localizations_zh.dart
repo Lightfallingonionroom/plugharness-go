@@ -16318,6 +16318,20 @@ class L10nZh extends L10n {
   String get shellSearchAfterConnecting => '连接后才能搜索';
 
   @override
+  String get shellVitalsEngineRunning => '引擎运行中';
+
+  @override
+  String get shellVitalsEngineMissing => '引擎未安装';
+
+  @override
+  String get shellVitalsEngineError => '引擎出错';
+
+  @override
+  String shellVitalsPlugins(int count) {
+    return '$count 个插件';
+  }
+
+  @override
   String get shellChatsLoadFailed => '对话列表加载失败';
 
   @override

@@ -17192,6 +17192,20 @@ class L10nEn extends L10n {
   String get shellSearchAfterConnecting => 'Connect to search';
 
   @override
+  String get shellVitalsEngineRunning => 'Engine running';
+
+  @override
+  String get shellVitalsEngineMissing => 'Engine not installed';
+
+  @override
+  String get shellVitalsEngineError => 'Engine error';
+
+  @override
+  String shellVitalsPlugins(int count) {
+    return '$count plugins';
+  }
+
+  @override
   String get shellChatsLoadFailed => 'Couldn’t load chats';
 
   @override

@@ -29822,6 +29822,30 @@ abstract class L10n {
   /// **'连接后才能搜索'**
   String get shellSearchAfterConnecting;
 
+  /// No description provided for @shellVitalsEngineRunning.
+  ///
+  /// In zh, this message translates to:
+  /// **'引擎运行中'**
+  String get shellVitalsEngineRunning;
+
+  /// No description provided for @shellVitalsEngineMissing.
+  ///
+  /// In zh, this message translates to:
+  /// **'引擎未安装'**
+  String get shellVitalsEngineMissing;
+
+  /// No description provided for @shellVitalsEngineError.
+  ///
+  /// In zh, this message translates to:
+  /// **'引擎出错'**
+  String get shellVitalsEngineError;
+
+  /// No description provided for @shellVitalsPlugins.
+  ///
+  /// In zh, this message translates to:
+  /// **'{count} 个插件'**
+  String shellVitalsPlugins(int count);
+
   /// No description provided for @shellChatsLoadFailed.
   ///
   /// In zh, this message translates to:

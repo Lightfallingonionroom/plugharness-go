@@ -91,6 +91,18 @@
   "shellEngineNotRunning": "Engine isn’t running",
   "shellHostNotConnected": "Not connected to “{name}” yet",
   "shellSearchAfterConnecting": "Connect to search",
+  "shellVitalsEngineRunning": "Engine running",
+  "shellVitalsEngineMissing": "Engine not installed",
+  "shellVitalsEngineError": "Engine error",
+  "shellVitalsPlugins": "{count} plugins",
+  "@shellVitalsPlugins": {
+    "description": "Plugin count in the drawer's vitals line.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "shellChatsLoadFailed": "Couldn’t load chats",
   "shellSearchHostChats": "Search chats on “{name}”",
   "shellSearchTitlesHint": "Search titles, including archived chats",

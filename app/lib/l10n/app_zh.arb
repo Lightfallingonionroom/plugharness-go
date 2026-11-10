@@ -10010,6 +10010,18 @@
     }
   },
   "shellSearchAfterConnecting": "连接后才能搜索",
+  "shellVitalsEngineRunning": "引擎运行中",
+  "shellVitalsEngineMissing": "引擎未安装",
+  "shellVitalsEngineError": "引擎出错",
+  "shellVitalsPlugins": "{count} 个插件",
+  "@shellVitalsPlugins": {
+    "description": "抽屉顶部体征条里的插件数量。",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "shellChatsLoadFailed": "对话列表加载失败",
   "shellSearchHostChats": "搜索「{name}」上的对话",
   "@shellSearchHostChats": {
