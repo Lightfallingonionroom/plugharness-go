@@ -81,11 +81,14 @@ async function fixture(t, { packages = [] } = {}) {
 
 const fixture_ = (t, opts) => fixture(t, opts);
 
+const fixtureName = async name =>
+  JSON.parse(await readFile(join(fixtures, name, 'package.json'), 'utf8')).name;
+
 const readManifest = async f => JSON.parse(await readFile(f.manifestPath, 'utf8'));
 
 test('a general Cordis plugin installs, enables, boots and uninstalls without leftovers', async t => {
   const f = await fixture(t, { packages: ['cordis-basic'] });
-  const pkg = '@dsh-go-fixture/basic';
+  const pkg = await fixtureName('cordis-basic');
 
   // Install through the real manager (pnpm), from the local fixture directory. `enabled:
   // false` is what the market's install button does: install first, then let the user
@@ -146,7 +149,7 @@ test('a failing plugin leaves the profile consistent, not half-written', async t
   // `dsh.profile.bundles` in a state the next boot can read — never one without the other.
   for (const fixture of ['cordis-throws', 'cordis-badmain']) {
     const f = await fixture_(t, { packages: [fixture] });
-    const pkg = `@dsh-go-fixture/${fixture.replace(/^cordis-/, '')}`;
+    const pkg = await fixtureName(fixture);
 
     const enabled = await f.ctx.pluginManager.setBundleEnabled(pkg, true);
     // The call must not throw: a plugin recorded as broken is still a *file* the manager
@@ -173,7 +176,7 @@ test('a failing plugin leaves the profile consistent, not half-written', async t
 
 test('cancelling an enable leaves no partial profile write', async t => {
   const f = await fixture(t, { packages: ['cordis-basic'] });
-  const pkg = '@dsh-go-fixture/basic';
+  const pkg = await fixtureName('cordis-basic');
   const before = await readManifest(f);
 
   // Ask to enable, then immediately disable. Whatever the manager serialises, the final
