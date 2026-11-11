@@ -23,6 +23,7 @@ import '../theme/app_icons.dart';
 import '../theme/theme.dart';
 import 'control_icons.dart';
 import 'header_schedule.dart';
+import 'model_sheet.dart' show ModelChip;
 
 /// The flat header's own colours, read from the shell palette without making
 /// every dark/light decision here.
@@ -472,10 +473,12 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
                   // takes the width this row gives it.
                   HeaderTrailingSlot(
                     trailing: switch (widget.trailing) {
-                      // Flexible 不能省：长 trailing（模型胶囊的文字）要靠它在窄屏
-                      // 收缩，否则会把标题挤成负宽度。_ChipSlot 那个空壳
-                      // 包装已删，但 Flexible 本身是布局契约。
-                      final trailing? => Flexible(child: trailing),
+                      // 只有可收缩的 ModelChip 挂 _ChipSlot 标记：_RenderHeaderRow 靠
+                      // _RenderChipSlot 认出它，在窄屏先压 chip 再给标题留
+                      // floor（chat_header_geometry_test 的契约）。定宽的
+                      // 工作进展键不标记，_chipIn 返回 null 走宽松路径，
+                      // 44 圆钮保持原样、不被当成 36 的 chip 压窄。
+                      final trailing? => Flexible(child: trailing is ModelChip ? _ChipSlot(child: trailing) : trailing),
                       null => null,
                     },
                   ),
@@ -601,6 +604,17 @@ class WorkProgressKey extends StatelessWidget {
 }
 
 
+/// Marks the model chip inside the trailing pieces, so the bar can weigh its
+/// widths apart from the agents capsule beside it.
+class _ChipSlot extends SingleChildRenderObjectWidget {
+  const _ChipSlot({required super.child});
+
+  @override
+  RenderObject createRenderObject(BuildContext context) => _RenderChipSlot();
+}
+
+class _RenderChipSlot extends RenderProxyBox {}
+
 /// The bar's pieces on one line: the left key (≡ or the breadcrumb), the
   /// title block, the trailing pieces (agents capsule, the 工作进展 key) and the
   /// 新对话 key.
@@ -670,6 +684,21 @@ class _RenderHeaderRow extends RenderBox
     }
   }
 
+  /// The model chip among the trailing pieces; null when there is none (a
+  /// subagent conversation).
+  static RenderBox? _chipIn(RenderObject trailing) {
+    RenderBox? found;
+    void visit(RenderObject node) {
+      if (found != null) return;
+      if (node is _RenderChipSlot) {
+        found = node;
+      } else {
+        node.visitChildren(visit);
+      }
+    }
+    trailing.visitChildren(visit);
+    return found;
+  }
   List<RenderBox> get _pieces => getChildrenAsList();
 
   @override
@@ -700,21 +729,31 @@ class _RenderHeaderRow extends RenderBox
     final loose = BoxConstraints(maxWidth: width, maxHeight: height);
     lead.layout(loose, parentUsesSize: true);
     fresh.layout(loose, parentUsesSize: true);
-    trailing.layout(loose, parentUsesSize: true);
-    // What the title pill shares with the trailing pieces.
+    // What the title pill and the trailing pieces share.
     // No gap after an empty left piece (≡ handed to the rail).
     final leadEnd = lead.size.width == 0 ? 0.0 : lead.size.width + _gap;
-    final room = math.max(0.0, width - leadEnd - fresh.size.width - trailing.size.width);
+    final room = math.max(0.0, width - leadEnd - fresh.size.width);
     final titleWhole = title.getMaxIntrinsicWidth(height);
-    // The pill's intrinsic width counts the clock; its floor doesn't.
-    final plainWhole = titleWhole - _clockExtra;
-    final plainFloor = math.min(_titleFloor, plainWhole);
-    // Step 3: the clock stays while the title keeps its floor beside it.
-    final clock = _clockExtra > 0 && plainFloor + _clockExtra <= room;
-    final whole = clock ? titleWhole : plainWhole;
-    final floor = clock ? plainFloor + _clockExtra : plainFloor;
+    var trailingMax = room;
+    if (_chipIn(trailing) case final chip?) {
+      final chipWhole = chip.getMaxIntrinsicWidth(height);
+      final others = trailing.getMaxIntrinsicWidth(height) - chipWhole;
+      final named = others + chip.getMinIntrinsicWidth(height);
+      final compact = others + ModelChip.compactWidth;
+      // The pill's intrinsic width counts the clock; its floor doesn't.
+      final plainWhole = titleWhole - _clockExtra;
+      final plainFloor = math.min(_titleFloor, plainWhole);
+      // Step 5: the clock stays while the title keeps its floor beside it
+      // with the chip down to ✦ ⌄.
+      final clock = _clockExtra > 0 && plainFloor + _clockExtra <= room - compact;
+      final whole = clock ? titleWhole : plainWhole;
+      final floor = clock ? plainFloor + _clockExtra : plainFloor;
+      final share = math.min(math.max(floor, math.min(whole, room - named)), math.max(0.0, room - compact));
+      trailingMax = room - share;
+    }
+    trailing.layout(BoxConstraints(maxWidth: math.max(0.0, trailingMax), maxHeight: height), parentUsesSize: true);
     title.layout(
-      BoxConstraints(maxWidth: math.max(floor, math.min(whole, room)), maxHeight: height),
+      BoxConstraints(maxWidth: math.max(0.0, room - trailing.size.width), maxHeight: height),
       parentUsesSize: true,
     );
     void place(RenderBox child, double x) =>
