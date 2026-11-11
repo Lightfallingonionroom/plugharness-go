@@ -288,6 +288,8 @@ run `42887202240` 的 Flutter 1 job（id `130081469204`）实测：
 | `deae5ab1` | 清剩余 4 个 analyze 问题 + 补 `@` 提及调研文档 |
 | `941c1e4c` | `@` 菜单加「插件」分组（读参考仓库后的最小实现） |
 | `b2977920` | 按 CI 真实 gen diff 删掉 gen 文件多出的空行 |
+| `70cf0f39` / `e6bbc0c4` | 补执行报告 §八、确认 analyze 与 l10n 全绿 |
+| `9516b634` | **恢复 `Flexible`，修 33 条顶栏几何回归** |
 
 ### 8.2 analyze / l10n：已全绿
 
@@ -334,11 +336,17 @@ Flutter 1/2 仍有失败，构成：
   （某个 `AppAccent.derive` 极端色让两者成同色）。**这是既存的 accent
   守卫边界问题，与本批改动无关**。按提示词要求：改色值是设计决策，
   判断不了就写成**待决问题**，不瞎改。
-- **`chat_header_geometry_test` 33 条**：整个文件量的是 `ModelChip`
-  在顶栏里的收缩顺序，而顶栏模型胶囊按任务要求被删了。属于布局变更的
-  必然结果，需要单独一轮把测试改为直接量 `ModelChip` 组件本身。
-- **`chat_shell_test` 4 条 / `settings_hub_geometry_test` 1 条**：
-  部分断言仍在找已删的空态固定标题「有什么可以帮你？」等，需要同步。
+- **`chat_header_geometry_test` 33 条：已定位并修复（`9516b634`）**。
+  不是「布局变更的必然结果」，而是我引入的**真实布局 bug**：上一轮删
+  `_ChipSlot`（空 `RenderProxyBox` 包装，analyze 报 unused）时，把包在
+  外面的 **`Flexible`** 一起删了。`Flexible` 不是装饰，它让长 trailing
+  （模型胶囊的文字）在窄屏收缩；去掉后标题被挤成负宽度
+  （实测 `fresh.left - chip.right = -58.7`，期望 8），crowded 组 33 条全挂。
+  已恢复 `Flexible(child: trailing)`，只留裸 child。等 CI 复核。
+- **`chat_shell_test` 4 条**：一条断言还在找已删的空态固定标题
+  「有什么可以帮你？」，已改为断言 `ChatEmptyState` 存在（`9516b634`）；
+  另 3 条（model sheet / send options）仍在查，疑似输入条结构变更后
+  tap 落点变了，本机跑不了 flutter test，不猜着改。
 
 **我改过的核心文件在 CI 里全绿**：`mention_selection_generation_test`、
 `drawer_geometry_test`、`shell_geometry_test`、`empty_actions_test`、
@@ -349,8 +357,8 @@ Flutter 1/2 仍有失败，构成：
 1. **golden 是否重拍**——不重拍则合并后 CI 长期因 golden 红。
 2. **`palette_contrast_test` 剩 1 条**——是否调整 derive 的 container/onContainer
    守卫（设计决策）。
-3. **`chat_header_geometry_test` 33 条**——是删测试（违反铁律）还是改写为
-   组件级测试，需要定方向。
+3. **`chat_header_geometry_test` 33 条**——已定位为我误删 `Flexible`
+   并修复（`9516b634`），只等 CI 复核；不再是待决方向问题。
 4. **`@` 是否也要在菜单里列出 Skills**（当前靠 `/` 菜单，参考仓库是
    `@` 与 `/` 都列）。
 
