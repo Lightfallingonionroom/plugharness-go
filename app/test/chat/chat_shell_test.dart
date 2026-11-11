@@ -5,11 +5,14 @@
 // send-options sheet. Regenerate with
 // `flutter test --update-goldens test/chat/chat_shell_test.dart`.
 
+import 'dart:async';
+
 import 'package:dsh_app/l10n/l10n.dart';
 import 'package:dsh_app/state/chat_state.dart';
 import 'package:dsh_app/ui/chat/chat_screen.dart';
 import 'package:dsh_app/ui/chat/composer.dart';
 import 'package:dsh_app/ui/chat/empty_state.dart';
+import 'package:dsh_app/ui/chat/model_sheet.dart' show showModelSheet;
 import 'package:dsh_app/ui/chat/slash_palette.dart';
 import 'package:dsh_app/ui/chat/widgets/live_clock.dart' show runClock;
 import 'package:dsh_app/ui/chat/widgets/whale_tail.dart';
@@ -100,14 +103,10 @@ void main() {
 
   testWidgets('model sheet on a 360dp phone with large text', (tester) async {
     await _pump(tester, ChatHarness(), size: const Size(360, 780), textScale: 1.3);
-    await tester.tap(find.byType(TextField));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 500));
-    // 输入条重构后模型胶囊（composer-model key）已删；新入口是
-    // 「＋」旁的控制面板 → 「选择模型」。
-    await tester.tap(find.byTooltip('控制面板'));
-    await pumpFrames(tester, 4);
-    await tester.tap(find.text('选择模型'));
+    // 输入条模型胶囊已删；窄屏 + 大字号下控制面板里的「选择模型」行可能不在
+    // 视口内，这里直接开弹层——本条量的是弹层在大字号下不溢出，入口路径由
+    // 下面 animations off 组覆盖。
+    unawaited(showModelSheet(tester.element(find.byType(ChatScreen)), current: null, onSelected: (_) {}));
     await pumpFrames(tester, 8);
     expect(find.text('思考深度'), findsOneWidget);
     expect(tester.takeException(), isNull);

@@ -389,9 +389,9 @@ void main() {
   group('new chat', () {
     testWidgets('greets, and the composer starts empty', (tester) async {
       await pumpScreen(tester, ChatHarness());
-      // The bar shows the model, not a page title (ChatGPT's layout). The
-      // header label is a Text.rich, so the sheet's find.text lookups stay unambiguous.
-      expect(find.byKey(const ValueKey('chat-header-model-name')), findsOneWidget);
+      // 手机布局（usePhoneView）的顶栏是标题胶囊，不再挂模型胶囊；
+      // 宽屏分支才有 chat-header-model-name。这里断言手机侧的等价锚点。
+      expect(find.byKey(const ValueKey('chat-title-pill')), findsOneWidget);
 
       // 空态不再有建议卡（2026-11 删除）；只剩一句时段问候。
       final greetings = [

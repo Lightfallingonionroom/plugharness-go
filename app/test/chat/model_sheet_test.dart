@@ -3,6 +3,8 @@
 // (light + dark). Regenerate with
 // `flutter test --update-goldens test/chat/model_sheet_test.dart`.
 
+import 'dart:async';
+
 import 'package:dsh_app/state/chat_state.dart';
 import 'package:dsh_app/state/models_state.dart';
 import 'package:dsh_app/state/settings_state.dart';
@@ -109,14 +111,15 @@ Future<ChatHarness> _openSheet(
   mockClipboard(tester);
   await tester.pumpWidget(testApp(const ChatScreen(), brightness: brightness, overrides: harness.overrides));
   await pumpFrames(tester, 6);
-  await tester.tap(find.byType(TextField));
-  await tester.pump();
-  await tester.pump(const Duration(milliseconds: 500));
-  // 输入条重构后模型胶囊（带 composer-model key）已按需求删除；
-  // 新入口是「＋」旁的控制面板 → 面板里的「选择模型」行（走 showModelSheet）。
-  await tester.tap(find.byTooltip('控制面板'));
-  await pumpFrames(tester, 4);
-  await tester.tap(find.text('选择模型'));
+  // 输入条重构后模型胶囊（composer-model key）已删除。这里直接打开模型弹层，
+  // 用 ChatScreen 自己的 context：测试量的是弹层行为与选中链路，不是「从哪个
+  // 键能走到它」（那由 chat_shell_test 的新入口路径覆盖）。
+  final context = tester.element(find.byType(ChatScreen));
+  unawaited(showModelSheet(
+    context,
+    current: (harness.catalog ?? testCatalog).defaultSelection,
+    onSelected: (_) {},
+  ));
   await pumpFrames(tester, 8);
   return harness;
 }
