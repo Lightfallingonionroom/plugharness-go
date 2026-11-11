@@ -12,7 +12,6 @@ import '../../l10n/l10n.dart';
 import '../../runtime/runtime_bridge.dart';
 import '../../runtime/runtime_state.dart';
 import '../../runtime/local_footprint.dart';
-import '../../state/cordis_state.dart';
 import '../../state/bots_state.dart';
 import '../../state/connection_state.dart';
 import '../../state/engine_control.dart';
@@ -39,7 +38,6 @@ import '../remote/network_details_sheet.dart' show showRemoteNetworkDetails;
 import '../safe_mode/engine_failure_card.dart';
 import '../safe_mode/safe_mode_banner.dart';
 import '../share/share_entry.dart';
-import '../engine/engine_screen.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
 import '../workspace/workspace_switcher.dart';
@@ -663,11 +661,11 @@ class _DrawerConversationSliver extends ConsumerWidget {
     final showBots = scope.bots.isNotEmpty || (workspace == null && botReady);
     if (scope.sessions.isEmpty && !showBots && ref.watch(drawerViewProvider).folders.isEmpty) {
       if (scope.readOnly) {
-        return _Centered(child: Text(readListStatusText(scope.status)), extent: _emptyExtent(context));
+        return _Centered(extent: _emptyExtent(context), child: Text(readListStatusText(scope.status)));
       }
       return _Centered(
-        child: workspace == null ? _EmptyState() : const _WorkspaceEmptyState(),
         extent: _emptyExtent(context),
+        child: workspace == null ? _EmptyState() : const _WorkspaceEmptyState(),
       );
     }
     return DrawerConversationList(
