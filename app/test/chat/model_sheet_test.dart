@@ -186,6 +186,43 @@ void main() {
     semantics.dispose();
   });
 
+// 评论 C（2026-11-11）：推理仪表必须真能点开，且档位从当前模型动态读取。
+  // 以前 efforts < 2 时 open() 静默 return，用户点了毫无反应（"摆设"）。
+  group('推理仪表（评论 C）', () {
+    Future<ChatHarness> pumpWith(WidgetTester tester, ModelCatalog catalog, {ModelSelection? selection}) async {
+      usePhoneView(tester);
+      final harness = ChatHarness(session: 's1', catalog: catalog);
+      await tester.pumpWidget(testApp(const ChatScreen(), overrides: harness.overrides));
+      await pumpFrames(tester);
+      return harness;
+    }
+
+    testWidgets('有档位的模型：点开后列出这些档位', (tester) async {
+      await pumpWith(tester, multiCatalog);
+      expect(find.byType(ComposerEffortKey), findsOneWidget);
+      await tester.tap(find.byType(ComposerEffortKey));
+      await pumpFrames(tester, 6);
+      // 档位来自 model.efforts（不是写死的 low/high/max）。
+      expect(find.text('思考深度'), findsWidgets);
+      expect(find.text('不思考'), findsOneWidget);
+      expect(find.text('高'), findsOneWidget);
+    });
+
+    testWidgets('无档位时：点开给解释，不静默', (tester) async {
+      // OpenRouter 的 Kimi-K2 没有声明任何档位。
+      final catalog = ModelCatalog(
+        defaultSelection: const ModelSelection(provider: 'openrouter', model: 'moonshotai/kimi-k2'),
+        routableProviders: multiCatalog.routableProviders,
+        groups: multiCatalog.groups,
+        failures: const [],
+      );
+      await pumpWith(tester, catalog);
+      await tester.tap(find.byType(ComposerEffortKey));
+      await pumpFrames(tester, 6);
+      expect(find.textContaining('只有一个思考档位'), findsOneWidget);
+    });
+  });
+
   test('starting effort: the model\'s default, else 中, else the lowest that thinks', () {
     ModelInfo model(List<ReasoningEffort> efforts, {String? defaultEffort}) =>
         ModelInfo(provider: 'p', id: 'm', name: 'M', efforts: efforts, defaultEffort: defaultEffort);
