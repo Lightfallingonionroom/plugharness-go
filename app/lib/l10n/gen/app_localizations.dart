@@ -8582,7 +8582,6 @@ abstract class L10n {
   /// **'不改动'**
   String get thinkingRulesFallbackNone;
 
-
   /// No description provided for @commonCancel.
   ///
   /// In zh, this message translates to:

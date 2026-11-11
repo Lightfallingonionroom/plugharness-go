@@ -4960,7 +4960,6 @@ class L10nEn extends L10n {
   @override
   String get thinkingRulesFallbackNone => 'Keep current';
 
-
   @override
   String get commonCancel => 'Cancel';
 

@@ -4662,7 +4662,6 @@ class L10nZh extends L10n {
   @override
   String get thinkingRulesFallbackNone => '不改动';
 
-
   @override
   String get commonCancel => '取消';
 
