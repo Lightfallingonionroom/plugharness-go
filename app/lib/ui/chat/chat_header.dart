@@ -616,20 +616,19 @@ class _ChipSlot extends SingleChildRenderObjectWidget {
 class _RenderChipSlot extends RenderProxyBox {}
 
 /// The bar's pieces on one line: the left key (≡ or the breadcrumb), the
-  /// title block, the trailing pieces (agents capsule, the 工作进展 key) and the
-  /// 新对话 key.
+  /// title block, the trailing pieces (agents capsule, model chip or the
+  /// 工作进展 key) and the 新对话 key.
   ///
-  /// The trailing pieces have a fixed width now (the 工作进展 key is a 44 circle,
-  /// the agents capsule is its own width), so the bar only has to decide how the
-  /// title shares what is left:
+  /// 1. both whole when they fit;
+  /// 2. else the chip drops its depth (「· 高」) first;
+  /// 3. then the title shortens, down to [titleFloor] (with the schedule clock
+  ///    beside it, when the conversation has one);
+  /// 4. then the chip shortens the model's name, down to ✦ ⌄;
+  /// 5. then the schedule clock goes, [clockExtra] back to the title;
+  /// 6. only then does the title go under its floor.
   ///
-  /// 1. the title takes its whole width when that fits;
-  /// 2. else it shortens, down to [titleFloor] (with the schedule clock beside
-  ///    it, when the conversation has one);
-  /// 3. then the schedule clock goes, [clockExtra] back to the title;
-  /// 4. only then does the title go under its floor.
-  ///
-  /// The pill's content ([_PillContent]) reads step 3 off the width it gets.
+  /// The pill's content ([_PillContent]) reads step 5 off the width it gets.
+  /// 工作进展 键是 44 定宽，不挂 _ChipSlot 标记，_chipIn 返回 null 走宽松路径。
   ///
 /// The title pill sits 8 after the left key; the trailing pieces end at the
 /// 新对话 key (they carry their own 8s); everything centred on one line.
