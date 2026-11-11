@@ -8486,6 +8486,12 @@ abstract class L10n {
   /// **'新对话发出去后再设置'**
   String get chatComposerControlsNewChat;
 
+  /// No description provided for @chatComposerPlugins.
+  ///
+  /// In zh, this message translates to:
+  /// **'插件'**
+  String get chatComposerPlugins;
+
   /// No description provided for @thinkingRulesTitle.
   ///
   /// In zh, this message translates to:

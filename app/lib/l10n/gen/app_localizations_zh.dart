@@ -4615,6 +4615,9 @@ class L10nZh extends L10n {
   String get chatComposerControlsNewChat => '新对话发出去后再设置';
 
   @override
+  String get chatComposerPlugins => '插件';
+
+  @override
   String get thinkingRulesTitle => '思考配置';
 
   @override

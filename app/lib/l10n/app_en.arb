@@ -1399,6 +1399,7 @@
   "chatWorkProgressHoldHint": "Hold for files",
   "chatComposerControls": "Controls",
   "chatComposerControlsNewChat": "Set after this chat starts",
+  "chatComposerPlugins": "Plugins",
   "thinkingRulesTitle": "Thinking rules",
   "thinkingRulesEntry": "Reasoning effort per model",
   "thinkingRulesEmpty": "No rules yet. The current effort is kept when you send.",

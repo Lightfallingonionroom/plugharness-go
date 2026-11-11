@@ -738,6 +738,7 @@
   "chatWorkProgressHoldHint": "长按查看文件",
   "chatComposerControls": "控制面板",
   "chatComposerControlsNewChat": "新对话发出去后再设置",
+  "chatComposerPlugins": "插件",
   "thinkingRulesTitle": "思考配置",
   "thinkingRulesEntry": "按模型分别设置思考强度",
   "thinkingRulesEmpty": "还没有规则。发消息时会保留当前档位。",

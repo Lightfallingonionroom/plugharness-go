@@ -4913,6 +4913,9 @@ class L10nEn extends L10n {
   String get chatComposerControlsNewChat => 'Set after this chat starts';
 
   @override
+  String get chatComposerPlugins => 'Plugins';
+
+  @override
   String get thinkingRulesTitle => 'Thinking rules';
 
   @override

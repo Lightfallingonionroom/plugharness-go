@@ -1682,12 +1682,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     final running = chat?.running ?? false;
     final pillsBesideStrip = sessionId != null && running && !typing;
     final pillsInCapsules = !readOnly && !running && !typing;
-    final composerPills = _composerPills(
-      sessionId,
-      autoApprove: chat?.autoApprove ?? false,
-      generate: readOnly ? null : generate,
-      risk: !pillsBesideStrip,
-    );
+    final composerPills = _composerPills(generate: readOnly ? null : generate);
     final headerHeight = typing ? MediaQuery.paddingOf(context).top + AppSpace.sm : ChatHeader.heightOf(context);
 
     Widget backdrop(Widget child) => widget.backdrop ? WallpaperBackdrop(child: child) : child;
@@ -2161,40 +2156,16 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     return UiTrace(scope: 'chat', child: screen);
   }
 
-  /// What sits on the composer's top-left edge: 「自动允许中 ×」 while this
-  /// client allows everything, else 「⚠ 完全权限 ›」 for a conversation looser
-  /// than 工作区内修改 (unless [risk] is false: they are beside the activity
-  /// strip), then the generation mode's capsule; nothing otherwise.
-  Widget? _composerPills(String? sessionId, {required bool autoApprove, GenerateParams? generate, bool risk = true}) {
-    final capsule = generate == null
+  /// What sits on the composer's top-left edge: the generation mode's capsule
+  /// (and, while a reply runs, 「自动允许中」 beside the activity strip).
+  ///
+  /// 评论 B（2026-11-11）：权限胶囊不再浮在输入框上方——它已经收进左侧齿轮
+  /// 的「控制面板」菜单。这里只留生成模式胶囊；权限只在**运行中**那条窄带上
+  /// 出现（[_stripRisk]，那是"正在发生的事"，不是"这条消息用什么条件"）。
+  Widget? _composerPills({GenerateParams? generate}) {
+    return generate == null
         ? null
         : GenerateCapsule(params: generate, onTap: () => _openGenerateSheet(generate), onExit: _exitGenerate);
-    Widget? pill;
-    if (!risk) {
-      // Beside the activity strip ([_stripRisk]).
-    } else if (sessionId != null && autoApprove) {
-      pill = AutoApprovePill(onDisable: () => ref.read(chatProvider(sessionId).notifier).setAutoApprove(false));
-    } else if (sessionId != null) {
-      final risky = ref.watch(sessionModesProvider(sessionId).select((m) => m.risky ? m.preset : null));
-      if (risky != null) {
-        // Beside the mode capsule it shrinks to its ⚠ (§4.2).
-        pill = PermissionPill(
-          preset: risky,
-          compact: capsule != null,
-          onTap: () => unawaited(showPermissionSheet(context, sessionId)),
-        );
-      }
-    }
-    if (capsule == null) return pill;
-    if (pill == null) return capsule;
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        pill,
-        const SizedBox(width: GenerateCapsuleMetrics.gap),
-        Flexible(child: capsule),
-      ],
-    );
   }
 
   /// 「自动允许中」/「完全权限」 beside the activity strip while a reply generates.

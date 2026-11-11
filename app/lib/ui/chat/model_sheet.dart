@@ -12,6 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
 import '../../state/models_state.dart';
+import '../../state/session_modes.dart';
 import '../../state/settings_state.dart';
 import '../common/app_sheet.dart';
 import '../common/empty_view.dart';
@@ -20,6 +21,8 @@ import '../common/pressable.dart';
 import '../common/segmented_pill.dart';
 import '../common/sheet_title_bar.dart';
 import '../common/smooth_size.dart';
+import '../plugins/plugins_screen.dart';
+import '../settings/app_menu.dart';
 import '../common/read_list_status.dart';
 import '../common/ui_trace.dart';
 import '../onboarding/api_key_page.dart';
@@ -138,49 +141,114 @@ Future<void> showComposerControls(
   );
 }
 
-/// 输入条左端的「控制面板」键：官方「两半圆柱 + 齿轮」矢量，点开一个弹层，
-/// 里面是权限、模式、模型三行。
+/// 输入条左端的「控制面板」键：官方「两半圆柱 + 齿轮」矢量，点开一个
+/// **锚定在齿轮旁边的紧凑菜单**（评论 B：不要再弹占满底部的 Modal Bottom Sheet）。
 ///
-/// 为什么把这三样收在一处：它们都是「这条消息用什么条件发出去」，而输入条
-/// 本身是「发什么」。ChatGPT 把这类条件放在输入框左边的齿轮里，我们照做，
-/// 于是顶栏和输入条都不用再各挂一个胶囊。
-///
-/// 键本身不带状态：它只负责打开面板，选什么由面板里的行决定，走各自已有
-/// 的链路（权限 → `/permission`，模式 → Agent Preset，模型 →
-/// `ModelSelection`）。
-class ComposerControlsKey extends StatelessWidget {
+/// 菜单只有三个一级项：权限、插件、模型选择。「计划模式」不混进来（评论 B）。
+/// 每项走各自已有的链路，并显示当前生效状态：
+///   - 权限 → `showPermissionSheet`（`SessionPermissionPage`）
+///   - 插件 → `PluginsScreen`（已安装插件管理）
+///   - 模型 → `showModelSheet`（走 `ModelSelection`）
+class ComposerControlsKey extends ConsumerStatefulWidget {
   const ComposerControlsKey({super.key, required this.sessionId, this.onOpen, this.onModelSelected});
 
-  /// 打开面板；默认弹出一个底部弹层。测试可注入。
   final String? sessionId;
+
+  /// 保留给测试注入旧行为（打开底部弹层）；默认改为锚定菜单。
   final VoidCallback? onOpen;
 
-  /// 面板里「选择模型」选中后的落点。chat_screen 注入 _modelTarget()；
+  /// 菜单里「选择模型」选中后的落点。chat_screen 注入 _modelTarget()；
   /// 不传则只预览，保持部件单独使用/测试时零改动。
   final ValueChanged<ModelSelection>? onModelSelected;
+
+  @override
+  ConsumerState<ComposerControlsKey> createState() => _ComposerControlsKeyState();
+}
+
+class _ComposerControlsKeyState extends ConsumerState<ComposerControlsKey> {
+  final _controller = MenuController();
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final shell = ChatGptShellColors.of(context);
-    void open() => (onOpen ??
-        () => showComposerControls(context, sessionId: sessionId, onModelSelected: onModelSelected))();
-    return Tooltip(
-      message: l10n.chatComposerControls,
-      child: Semantics(
-        button: true,
-        label: l10n.chatComposerControls,
-        onTap: open,
-        excludeSemantics: true,
-        // Pressable owns the real pointer tap. Semantics.onTap alone is only
-        // the accessibility action — without this the key looks tappable but
-        // does nothing when touched.
-        child: Pressable(
-          onTap: open,
-          child: SizedBox.square(
-            dimension: 40,
-            child: Center(
-              child: ChatGptStorageBadgeGearIcon(size: 20, color: shell.secondaryText),
+    final sessionId = widget.sessionId;
+
+    // 当前权限：会话比「工作区内修改」更宽时显示它的名字。
+    final risky = sessionId == null
+        ? null
+        : ref.watch(sessionModesProvider(sessionId).select((m) => m.risky ? m.preset : null));
+
+    void openFallback() {
+      if (widget.onOpen case final injected?) {
+        injected();
+        return;
+      }
+      _controller.isOpen ? _controller.close() : _controller.open();
+    }
+
+    return MenuAnchor(
+      controller: _controller,
+      alignmentOffset: const Offset(0, -4),
+      // 菜单从齿轮向上弹（它在输入条底部），并靠 Material 自带的边缘避让。
+      style: MenuStyle(
+        backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+        surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
+        elevation: const WidgetStatePropertyAll(0),
+        padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+        shape: const WidgetStatePropertyAll(RoundedRectangleBorder(side: BorderSide.none)),
+      ),
+      menuChildren: [
+        AppMenuPanel(
+          children: [
+            AppMenuItem(
+              label: l10n.featuresPermissions,
+              leading: Icon(AppIcons.permissions, size: AppMenuMetrics.checkSize, color: shell.secondaryText),
+              onTap: () {
+                _controller.close();
+                if (sessionId != null) unawaited(showPermissionSheet(context, sessionId));
+              },
+            ),
+            AppMenuItem(
+              label: l10n.chatComposerPlugins,
+              leading: Icon(AppIcons.plugin, size: AppMenuMetrics.checkSize, color: shell.secondaryText),
+              onTap: () {
+                _controller.close();
+                unawaited(Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const PluginsScreen())));
+              },
+            ),
+            AppMenuItem(
+              label: l10n.viewModelSelect,
+              leading: Icon(AppIcons.providers, size: AppMenuMetrics.checkSize, color: shell.secondaryText),
+              onTap: () {
+                _controller.close();
+                unawaited(showModelSheet(
+                  context,
+                  current: null,
+                  onSelected: widget.onModelSelected ?? (_) {},
+                ));
+              },
+            ),
+          ],
+        ),
+      ],
+      builder: (context, controller, child) => Tooltip(
+        message: l10n.chatComposerControls,
+        child: Semantics(
+          button: true,
+          label: risky == null ? l10n.chatComposerControls : '$l10n.chatComposerControls · $risky',
+          onTap: openFallback,
+          excludeSemantics: true,
+          // Pressable owns the real pointer tap. Semantics.onTap alone is only
+          // the accessibility action — without this the key looks tappable but
+          // does nothing when touched.
+          child: Pressable(
+            onTap: openFallback,
+            child: SizedBox.square(
+              dimension: 40,
+              child: Center(
+                child: ChatGptStorageBadgeGearIcon(size: 20, color: shell.secondaryText),
+              ),
             ),
           ),
         ),
