@@ -963,16 +963,24 @@ class _SkeletonListState extends State<_SkeletonList> with SingleTickerProviderS
         child: LayoutBuilder(
           builder: (context, constraints) {
             final row = constraints.maxWidth - 40;
-            return ListView(
-              physics: const NeverScrollableScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(20, 4, 20, 16),
+            // 这里在 `SliverToBoxAdapter` 里（见上方 `_Centered` 的注释）：
+            // 滚动体给出的是**无界高度**，纵向 `ListView` 会直接抛
+            // 「Vertical viewport was given unbounded height」。骨架是固定
+            // 几条，用 `Column` 就对了。
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Padding(padding: const EdgeInsets.only(top: 19, bottom: 9), child: bar(28, 8)),
+                Padding(padding: const EdgeInsets.fromLTRB(20, 4 + 19, 20, 9), child: bar(28, 8)),
                 for (final w in widths)
                   SizedBox(
                     height: 44,
-                    child: Align(alignment: Alignment.centerLeft, child: bar(row * w, 10)),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Align(alignment: Alignment.centerLeft, child: bar(row * w, 10)),
+                    ),
                   ),
+                const SizedBox(height: 16),
               ],
             );
           },
