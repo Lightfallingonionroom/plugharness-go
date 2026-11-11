@@ -157,7 +157,8 @@ class QuickPanelRow extends StatelessWidget {
         onTap: onTap,
         customBorder: Squircle.border(AppShape.md),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 48),
+          // P5: ChatGPT's sidebar rows are tighter than the old 48.
+          constraints: const BoxConstraints(minHeight: 42),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             child: Row(

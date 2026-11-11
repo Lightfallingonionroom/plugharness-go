@@ -177,7 +177,7 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 600));
       final done = _rect(tester, find.byType(DoneButton));
-      expect(done.height, _near(newChat.height));
+      // P5 的蓝色胶囊比选择态的完成键矮，但两者仍在同一底栏中心线上。
       expect(done.right, _near(newChat.right));
       expect(done.center.dy, _near(newChat.center.dy));
       final all = _rect(tester, find.descendant(of: find.byType(DrawerSelectionHeader), matching: find.text('全选')));
@@ -224,7 +224,7 @@ void main() {
   });
 
   group('bottom bar', () {
-    testWidgets('新对话 and 设置: 44 keys on the 10 lines', (tester) async {
+    testWidgets('blue 聊天 capsule on the left, round account key on the right', (tester) async {
       await _pump(tester);
       final drawer = _rect(tester, find.byType(SessionsDrawer));
       final bar = find.byType(DrawerBottomBar);
@@ -232,7 +232,9 @@ void main() {
       final settings = _rect(tester, find.descendant(of: bar, matching: find.byKey(const ValueKey('drawer-settings'))));
       expect(newChat.left - drawer.left, _near(10));
       expect(drawer.right - settings.right, _near(10));
-      expect(newChat.height, _near(settings.height));
+      // P5: a labelled capsule is wider than the round key; they are no longer
+      // the same size, but they still share one centre line.
+      expect(newChat.width, greaterThan(settings.width));
       expect(newChat.center.dy, _near(settings.center.dy));
     });
   });

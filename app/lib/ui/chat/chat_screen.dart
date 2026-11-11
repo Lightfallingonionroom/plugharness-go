@@ -1406,18 +1406,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     }
   }
 
-  /// 当前模型有没有推理档位。
-///
-/// 没有档位的模型（纯对话模型）不该显示强度键；而 Composer 用
-/// `footer == null` 判断走一行还是两行布局，所以这里必须返回 bool
-/// 让调用点决定给 null 还是给部件。
-bool _hasEfforts(ModelSelection? selection) {
-  final catalog = ref.read(currentModelCatalogProvider);
-  final model = findModel(catalog, selection ?? catalog?.defaultSelection);
-  return (model?.efforts.length ?? 0) >= 2;
-}
-
-void _onSuggestion(ChatSuggestion suggestion) {
+  void _onSuggestion(ChatSuggestion suggestion) {
     // The suggest-to-composer contract: a tap puts the prompt in the field,
     // focused, for the person to word in their own way. ChatGPT sends on the
     // tap instead — a behaviour change for the product owner to call, not a
@@ -2087,31 +2076,22 @@ void _onSuggestion(ChatSuggestion suggestion) {
                                     onContentInserted: connected ? _pasteContent : null,
                                     onStop: _stop,
                                     hasAttachments: _drafts.isNotEmpty,
-                                    // 输入条左端是「控制面板」键（官方存储+齿轮
-                                    // 矢量）：权限、模式、模型都在这里选。＋ 附件
-                                    // 仍在它旁边。
+                                    // ChatGPT 的顺序：＋ 附件在最左，控制面板键紧随其后。
                                     leading: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
+                                        AttachButton(onPressed: connected ? _attach : null),
+                                        const SizedBox(width: 8),
                                         ComposerControlsKey(
                                           sessionId: sessionId,
                                         ),
-                                        const SizedBox(width: 8),
-                                        AttachButton(onPressed: connected ? _attach : null),
                                       ],
                                     ),
                                     keyboardInset: MediaQuery.viewInsetsOf(context).bottom,
-                                    // 没有档位的模型不显示强度键 —— 而且要给 null，
-                                    // 不是空部件：Composer 用 `footer == null` 判断
-                                    // 是否走两行布局，空部件会让它开一行空白。
-                                    footer: _composerOpens(context) &&
-                                            !isChild &&
-                                            _hasEfforts(sessionId == null ? pendingModel : chat?.model)
-                                        ? ComposerEffortKey(
-                                            selection: sessionId == null ? pendingModel : chat?.model,
-                                            onSelected: _modelTarget(),
-                                          )
-                                        : null,
+                                    // 推理强度仪表是**常驻**在麦克风/发送键左边的，不是键盘弹起时的
+                                    // 第二行（footer）。P3 反馈：之前放 footer 里，
+                                    // 新对话页看不到。现在随输入条一直在。
+                                    footer: null,
                                     tray: ComposerTrayStack.maybe(
                                       quote: switch (quote) {
                                         final quote? => QuoteChip(
@@ -2128,12 +2108,23 @@ void _onSuggestion(ChatSuggestion suggestion) {
                                               labels: frameLabels(generate, generateModel, _drafts.length),
                                             ),
                                     ),
-                                    accessory: sessionId == null || contextFraction == null
-                                        ? null
-                                        : ContextRing(
+                                    // 发送/麦克风键左边：推理强度仪表常驻，上下文环（会话内）在其右。
+                                    accessory: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        ComposerEffortKey(
+                                          selection: sessionId == null ? pendingModel : chat?.model,
+                                          onSelected: _modelTarget(),
+                                        ),
+                                        if (sessionId != null && contextFraction != null) ...[
+                                          const SizedBox(width: 6),
+                                          ContextRing(
                                             fraction: contextFraction,
                                             onTap: () => _openUsage(sessionId, chat?.model),
                                           ),
+                                        ],
+                                      ],
+                                    ),
                                   ),
                               ],
                             ),

@@ -29,192 +29,73 @@ import 'launch_screen_section.dart';
 import 'tile_style_picker.dart';
 import 'wallpaper_section.dart';
 
-/// 设置首页「外观」组的三张卡片：**强调色**、**外观**、**更多设置**。
+/// 设置首页「外观」组的三行。
 ///
-/// 三框各自独立、点开就地展开（不是跳到别的页），这是用户定的结构：
-/// 最常用的两样（配色、明暗）就在首页改，其余外观项（功能图标、桌面图标、
-/// 启动页、壁纸、对话字号、完成后收起、宠物）收进第三张「更多设置」。
+/// 实机反馈第三轮（docs/UI_FEEDBACK_ROUND3_2026-11-11.md）：
+/// ChatGPT 设置页是**所有项都在同一张连续卡片里**（行间细线），点「外观」/
+/// 「强调色」是**弹出浮层菜单**而不是就地伸开。上一版做成三张独立圆角框 +
+/// 就地展开，视觉断裂、交互也错。
 ///
-/// 拆成三框而不是一个可展开的大行，是因为上一版把配色 + 明暗 + 十色塞进
-/// 一个展开区，高度预算装不下，`ThemeModePicker` 被挤出视口
-/// （`appearance_page_test` 的「深色」找不到）。
+/// 这里三行都只是普通的 [SettingsTile] / [AppMenuTile]，由外层的
+/// [SettingsSection] 统一包成一张卡；[AppMenuTile] 已实现锚定弹层 + ✓ 选中态。
 class AppearanceEntryTile extends ConsumerWidget {
   const AppearanceEntryTile({super.key, this.tint = 0});
 
-  /// The hub group's hue.
-  final int tint;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _AccentCard(tint: tint),
-        const SizedBox(height: 8),
-        _ModeCard(tint: tint),
-        const SizedBox(height: 8),
-        _MoreAppearanceCard(tint: tint),
-      ],
-    );
-  }
-}
-
-/// 一张可展开的卡片：收起时是一行（标题 + 当前值），展开后在下方就地显示内容。
-///
-/// 与旧 `_ThemeRow` 的区别：卡片自己带玻璃底和圆角（ChatGPT 设置里每一组
-/// 设置就是一张卡），收起/展开有 `ExpandReveal` 的高度过渡。
-class _AppearanceCard extends ConsumerStatefulWidget {
-  const _AppearanceCard({
-    required this.tint,
-    required this.title,
-    required this.value,
-    required this.keyId,
-    required this.child,
-  });
-
-  final int tint;
-  final String title;
-  final Widget value;
-
-  /// 测试与深链用的稳定键，例如 `appearance-card-accent`。
-  final String keyId;
-  final Widget child;
-
-  @override
-  ConsumerState<_AppearanceCard> createState() => _AppearanceCardState();
-}
-
-class _AppearanceCardState extends ConsumerState<_AppearanceCard> {
-  bool _open = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return GlassSurface(
-      tier: GlassTier.card,
-      borderRadius: AppShape.radiusLg,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          SettingsTile(
-            key: ValueKey(widget.keyId),
-            icon: null,
-            tint: widget.tint,
-            tinted: false,
-            title: widget.title,
-            value: widget.value,
-            trailing: AnimatedRotation(
-              turns: _open ? 0.5 : 0,
-              duration: AppMotion.of(context, AppMotion.quick),
-              child: const Icon(AppIcons.expand, size: 16),
-            ),
-            onTap: () => setState(() => _open = !_open),
-          ),
-          ExpandReveal(
-            open: _open,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-              child: widget.child,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// 框 A：强调色。收起显示当前色点与名字，展开显示 6 预设 + 自定义。
-class _AccentCard extends ConsumerWidget {
-  const _AccentCard({required this.tint});
-
+  /// The hub group's hue (kept for the caller; rows draw no tinted disc).
   final int tint;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final accent = ref.watch(accentProvider);
-    final seed = accent.seedFor(Theme.of(context).brightness);
-    return _AppearanceCard(
-      tint: tint,
-      keyId: 'appearance-card-accent',
-      title: l10n.pluginsColors,
-      value: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          AccentDot(color: seed, size: 10),
-          const SizedBox(width: 6),
-          Text(accent.label),
-        ],
-      ),
-      child: const Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Divider(height: 1),
-          // 6 个预设 + 自定义，单行等距。官方十色是更细的一层，在「更多设置」
-          // 的完整页里选——11 个色点在 390 宽里每个只剩 21 px，点不中。
-          PalettePicker(),
-        ],
-      ),
-    );
-  }
-}
-
-/// 框 B：外观（明暗）。收起显示当前模式，展开显示三个选项。
-class _ModeCard extends ConsumerWidget {
-  const _ModeCard({required this.tint});
-
-  final int tint;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = context.l10n;
-    final mode = switch (ref.watch(settingsProvider.select((s) => s.themeMode))) {
-      ThemeMode.light => l10n.commonLight,
-      ThemeMode.dark => l10n.commonDark,
-      ThemeMode.system => l10n.commonFollowSystem,
-    };
-    return _AppearanceCard(
-      tint: tint,
-      keyId: 'appearance-card-mode',
-      title: l10n.hubThemeLightDark,
-      value: Text(mode),
-      child: const Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Divider(height: 1),
-          Padding(
-            padding: EdgeInsets.fromLTRB(8, 12, 8, 4),
-            child: ThemeModePicker(),
+    final brightness = Theme.of(context).brightness;
+    final seed = accent.seedFor(brightness);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // 强调色：一行 + 当前色点，点开弹出选项菜单。
+        AppMenuTile(
+          key: const ValueKey('appearance-card-accent'),
+          title: l10n.pluginsColors,
+          value: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AccentDot(color: seed, size: 10),
+              const SizedBox(width: 6),
+              Text(accent.label),
+            ],
           ),
-        ],
-      ),
+          menuBuilder: (context, close) => [
+            for (final p in AppAccent.presets)
+              AppMenuItem(
+                label: p.label,
+                leading: AccentDot(color: p.seedFor(brightness), size: 12),
+                selected: accent.id == p.id,
+                onTap: () {
+                  close();
+                  unawaited(ref.read(appearanceProvider.notifier).selectPreset(p.id));
+                },
+              ),
+          ],
+        ),
+        // 明暗：复用完整外观页里那一行 AppMenuTile。
+        const ThemeModePicker(),
+        // 更多设置：普通行，跳完整外观页。
+        SettingsTile(
+          key: const ValueKey('appearance-card-more'),
+          tinted: false,
+          tint: tint,
+          title: l10n.pluginsAppearanceMore,
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(builder: (_) => const AppearancePage()),
+          ),
+        ),
+      ],
     );
   }
 }
 
-/// 框 C：更多设置。点开后跳完整外观页（其余外观项都在那里）。
-class _MoreAppearanceCard extends StatelessWidget {
-  const _MoreAppearanceCard({required this.tint});
-
-  final int tint;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    return SettingsTile(
-      key: const ValueKey('appearance-card-more'),
-      tint: tint,
-      tinted: false,
-      title: l10n.pluginsAppearanceMore,
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute<void>(builder: (_) => const AppearancePage()),
-      ),
-    );
-  }
-}
 
 /// 官方十色：一排网格，比 [PalettePicker] 的预设更细。
 ///

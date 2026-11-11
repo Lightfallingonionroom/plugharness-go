@@ -24,7 +24,6 @@ import '../../state/sessions_state.dart';
 import '../../state/read_list_identity.dart';
 import '../../state/workspaces_state.dart';
 import '../bots/bots_page.dart' show BotsPage, UnreadBadge;
-import '../chat/control_icons.dart';
 import '../chat/media/media_format.dart' show chatTitleShown;
 import '../common/app_dialog.dart';
 import '../common/app_sheet.dart';
@@ -205,10 +204,9 @@ class SessionsDrawer extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _sectionLabel(context, l10n.searchFeatures),
-                // 插件 / 自动化任务 / 网页版: the three that stay on the top
-                // level. 快捷入口's own picks are not repeated here — the
-                // drawer is their home now.
+                // P5 (ChatGPT) has no 「功能」 heading: the feature rows start right
+                // under the wordmark, tight. 插件 / 自动化任务 / 网页版 stay
+                // on the top level; 快捷入口's own picks are not repeated here.
                 for (final destination in const [
                   DrawerDestination.plugins,
                   DrawerDestination.schedules,
@@ -396,9 +394,9 @@ class _RenderReportHeight extends RenderProxyBox {
   }
 }
 
-/// "新对话": the drawer's one solid primary element. ChatGPT draws it as a
-/// 36dp circle holding just the compose glyph; the words live in the tooltip
-/// and the semantics label, so the brand row keeps its room.
+/// 「聊天」: the drawer's one solid primary element. P5 (ChatGPT) draws it as
+/// a **blue filled capsule** with the compose glyph and the word beside it,
+/// not a bare white circle.
 class NewChatButton extends StatelessWidget {
   const NewChatButton({super.key, required this.onTap});
 
@@ -407,7 +405,6 @@ class NewChatButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final shell = ChatGptShellColors.of(context);
     return Tooltip(
       message: l10n.commonNewChat,
       child: Semantics(
@@ -417,15 +414,26 @@ class NewChatButton extends StatelessWidget {
         excludeSemantics: true,
         child: Pressable(
           child: Material(
-            color: shell.primaryAction,
-            shape: const CircleBorder(),
+            color: const Color(0xFF3B6FEB),
+            shape: const StadiumBorder(),
             clipBehavior: Clip.antiAlias,
             child: InkWell(
               onTap: onTap,
-              child: SizedBox.square(
-                dimension: 36,
-                child: Center(
-                  child: Icon(AppIcons.newChat, size: 19, color: shell.onPrimaryAction),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(AppIcons.newChat, size: 18, color: Colors.white),
+                    const SizedBox(width: 8),
+                    Text(
+                      l10n.chatChat,
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -519,7 +527,8 @@ class _DrawerMoreRowState extends State<_DrawerMoreRow> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // The row itself: 「更多」+ a chevron that turns.
+        // P5: a plain text row, no leading dots and no turning chevron. The extra
+        // destinations still fold in place (we have more than ChatGPT's six).
         Semantics(
           button: true,
           expanded: _open,
@@ -531,25 +540,27 @@ class _DrawerMoreRowState extends State<_DrawerMoreRow> {
             onTap: () => setState(() => _open = !_open),
             customBorder: Squircle.border(AppShape.md),
             child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 48),
+              constraints: const BoxConstraints(minHeight: 42),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
                 child: Row(
                   children: [
-                    Icon(AppIcons.more, size: 20, color: shell.secondaryText),
-                    const SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         l10n.commonMore,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 15, height: 1.4),
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              fontSize: 15,
+                              height: 1.4,
+                              color: shell.secondaryText,
+                            ),
                       ),
                     ),
                     AnimatedRotation(
                       turns: _open ? 0.5 : 0,
                       duration: AppMotion.of(context, AppMotion.quick),
-                      child: Icon(AppIcons.expand, size: 16, color: shell.tertiaryText),
+                      child: Icon(AppIcons.disclosure, size: 16, color: shell.tertiaryText),
                     ),
                   ],
                 ),
@@ -1149,22 +1160,16 @@ class DrawerBottomBar extends StatelessWidget {
     final l10n = context.l10n;
     final shell = ChatGptShellColors.of(context);
     return Padding(
-      // Same 10 / 20 grid as the rows above: the new-chat key on the 10 line,
-      // the settings key ending on the 10 line.
+      // P5: the blue 「聊天」 capsule at the left, a round account key at the
+      // right. Both on the 10 line, no Expanded stretching the capsule.
       padding: const EdgeInsets.fromLTRB(10, 6, 10, 10),
       child: Row(
         children: [
-          Expanded(
-            child: Align(
-              alignment: AlignmentDirectional.centerStart,
-              // The round compose key, exactly as ChatGPT draws it: a solid
-              // primary circle holding the glyph, with the words in the label.
-              child: NewChatButton(onTap: onNewChat),
-            ),
-          ),
-          const SizedBox(width: 8),
-          // The official gear, so the app's own settings glyph stays out of the
-          // drawer's chrome (it is what every other entry here uses).
+          NewChatButton(onTap: onNewChat),
+          const Spacer(),
+          // P5 ends with a round avatar. We keep the settings action (long
+          // press → settings search) behind it, drawn as a ring with a person
+          // glyph instead of the gear, so the bar reads like ChatGPT's.
           Semantics(
             button: true,
             label: l10n.commonSettings,
@@ -1186,7 +1191,7 @@ class DrawerBottomBar extends StatelessWidget {
                     ),
                     child: SizedBox.square(
                       dimension: 32,
-                      child: ChatGptGearIcon(size: 19, color: shell.secondaryText),
+                      child: Icon(AppIcons.account, size: 19, color: shell.secondaryText),
                     ),
                   ),
                 ),

@@ -150,14 +150,19 @@ class ComposerControlsKey extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final shell = ChatGptShellColors.of(context);
+    void open() => (onOpen ?? () => showComposerControls(context, sessionId: sessionId))();
     return Tooltip(
       message: l10n.chatComposerControls,
       child: Semantics(
         button: true,
         label: l10n.chatComposerControls,
-        onTap: onOpen ?? () => showComposerControls(context, sessionId: sessionId),
+        onTap: open,
         excludeSemantics: true,
+        // Pressable owns the real pointer tap. Semantics.onTap alone is only
+        // the accessibility action — without this the key looks tappable but
+        // does nothing when touched.
         child: Pressable(
+          onTap: open,
           child: SizedBox.square(
             dimension: 40,
             child: Center(
@@ -198,20 +203,25 @@ class ComposerEffortKey extends ConsumerWidget {
     final effective = selection ?? catalog?.defaultSelection;
     final model = findModel(catalog, effective);
     final efforts = model?.efforts ?? const <ReasoningEffort>[];
-    // 没有档位的模型不显示（例如纯对话模型）。
-    if (efforts.length < 2) return const SizedBox.shrink();
-    final current = effective?.reasoningEffort ?? model?.defaultEffort ?? efforts.first.id;
-    final index = efforts.indexWhere((e) => e.id == current).clamp(0, efforts.length - 1);
-    final progress = efforts.length == 1 ? 0.5 : index / (efforts.length - 1);
-    void open() => showEffortSheet(
-      context,
-      current: effective,
-      efforts: efforts,
-      onSelected: onSelected,
-    );
+    // 目录还没到、或这个模型没有档位时，仪表仍然常驻（指针居中），
+    // 只是点开没有可选项。这样输入条不会在连接过程中忽宽忽窄。
+    final current = effective?.reasoningEffort ?? model?.defaultEffort ?? (efforts.isEmpty ? null : efforts.first.id);
+    final index = efforts.isEmpty ? -1 : efforts.indexWhere((e) => e.id == current).clamp(0, efforts.length - 1);
+    final progress = efforts.length < 2 || index < 0 ? 0.5 : index / (efforts.length - 1);
+    void open() {
+      if (efforts.length < 2 || effective == null) return;
+      showEffortSheet(
+        context,
+        current: effective,
+        efforts: efforts,
+        onSelected: onSelected,
+      );
+    }
     return Semantics(
       button: true,
-      label: l10n.viewModelEffortLabel(effortLabel(current)),
+      label: current == null
+          ? l10n.viewModelEffort
+          : l10n.viewModelEffortLabel(effortLabel(current)),
       onTap: open,
       excludeSemantics: true,
       child: Pressable(

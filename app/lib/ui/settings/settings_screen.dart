@@ -206,9 +206,8 @@ class SettingsScreen extends ConsumerWidget {
         SettingsSection(
           title: l10n.hubSettingsAppearance,
           children: [
-            // 外观的三张卡片取代了这里原来的 4 个散行：配色、明暗各自一张
-            // 就地展开，其余外观项（字号、收起、宠物、官方十色）都在第三张
-            // 「更多设置」后面的完整页里。
+            // 三行都在这一张 SettingsSection 卡片里，行间细线，和其余组一致。
+            // 强调色 / 明暗点开是锚定浮层菜单（AppMenuTile），不是就地展开。
             const AppearanceEntryTile(tint: SettingsHues.appearance),
           ],
         ),
