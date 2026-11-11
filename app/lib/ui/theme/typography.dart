@@ -140,63 +140,77 @@ abstract final class AppType {
 
   /// Material 3 字阶(颜色在 app_theme 里按方案统一 apply)。
   ///
-  /// ## 与 ChatGPT 官方规格的对齐（2026-11-11，见 docs/CHATGPT_FONT_SPEC）
+  /// ## 对齐口径：OpenAI 官方设计系统（App / 源码级）
   ///
-  /// 官方网页版实测：界面正文 14px / 聊天正文 16px / 行高 1.5；
-  /// 标题 heading-lg 24px、heading-2xl 36px，字重 semibold(590)，字距 tight(-.025em)。
-  /// 官方 App 另内置 OpenAI Sans（品牌场景），UI 文字同样走系统字体栈——
-  /// 所以我们 `sansFamily = null` 的策略不变。
+  /// 一手材料 `docs/openai-sdk-ui-spec.md`（OpenAI 官方公开的 `@openai/apps-sdk-ui`，
+  /// MIT）——这是**官方 App 口径**的 token，不是网页版：
   ///
-  /// 本次对齐的三处：
-  /// 1. 行高从 1.55–1.65 收到 **1.5**（中文在小字号下不再显得散）；
-  /// 2. 标题放大：headlineMedium 22→**24**、displaySmall 28→**36**；
-  /// 3. 补 **w500** 档（官方 medium = 500/510），用在次要标题与胶囊上。
+  /// ```
+  /// text-2xs   10 / lh 14   w400
+  /// text-xs    12 / lh 18   w400
+  /// text-sm    14 / lh 20   w400
+  /// text-md    16 / lh 24   w400
+  /// heading-xs 16 / lh 24   w600
+  /// heading-sm 18 / lh 26   w600
+  /// heading-md 20 / lh 26   w600
+  /// heading-lg 24 / lh 28   w600
+  /// heading-xl 32 / lh 38   w600
+  /// ```
+  /// 字重只有 400/500/600/700，**bold 用 600**。
   ///
-  /// | 角色 | 字号 / 行高 | 用途 |
-  /// |---|---|---|
-  /// | displaySmall | 36 / 1.2 w600 | 欢迎语、安装完成大字（对齐 heading-2xl）|
-  /// | headlineMedium | 24 / 1.3 w600 | 页面标题(设置、引擎)（对齐 heading-lg）|
-  /// | headlineSmall | 20 / 1.35 w600 | 对话框标题 |
-  /// | titleLarge | 18 / 1.4 w600 | 弹层标题、顶栏会话名(展开态) |
-  /// | titleMedium | 16 / 1.5 w500 | 卡片 / 列表标题、正文小标题 |
-  /// | titleSmall | 14 / 1.5 w500 | 工具行名、分组名 |
-  /// | bodyLarge | 16 / 1.5 | 聊天正文（官方 md）|
-  /// | bodyMedium | 14 / 1.5 | 界面正文（官方 sm）|
-  /// | bodySmall | 12 / 1.5 | 说明、元信息 |
-  /// | labelLarge | 14 / 1.4 w600 | 按钮 |
-  /// | labelMedium | 12 / 1.35 w500 | Chip、胶囊 |
-  /// | labelSmall | 11 / 1.35 | 时间戳、角标 |
+  /// 与网页版（`docs/CHATGPT_FONT_SPEC`）的区别：网页版 heading-2xl=36、3xl=48，
+  /// **App 口径最大标题是 32（heading-xl）**。本表按 App 口径。
+  ///
+  /// 行高一律用官方 px 换算成比值，不再自造更松的值。
+  ///
+  /// | 角色 | 官方 token | 字号 / 行高 | 字重 |
+  /// |---|---|---|---|
+  /// | displayLarge | heading-xl | 32 / 1.19 | 600 |
+  /// | displayMedium | heading-lg | 24 / 1.17 | 600 |
+  /// | displaySmall | heading-lg | 24 / 1.17 | 600 |
+  /// | headlineLarge | heading-lg | 24 / 1.17 | 600 |
+  /// | headlineMedium | heading-md | 20 / 1.3 | 600 |
+  /// | headlineSmall | heading-sm | 18 / 1.44 | 600 |
+  /// | titleLarge | heading-xs | 16 / 1.5 | 600 |
+  /// | titleMedium | text-md | 16 / 1.5 | 500 |
+  /// | titleSmall | text-sm | 14 / 1.43 | 500 |
+  /// | bodyLarge | text-md | 16 / 1.5 | 400 |
+  /// | bodyMedium | text-sm | 14 / 1.43 | 400 |
+  /// | bodySmall | text-xs | 12 / 1.5 | 400 |
+  /// | labelLarge | text-sm | 14 / 1.43 | 500 |
+  /// | labelMedium | text-xs | 12 / 1.5 | 500 |
+  /// | labelSmall | text-2xs | 10 / 1.4 | 400 |
   static const textTheme = TextTheme(
-    displayLarge: TextStyle(fontSize: 36, fontWeight: FontWeight.w300, height: 1.2, letterSpacing: -0.6, leadingDistribution: _even),
-    displayMedium: TextStyle(fontSize: 32, fontWeight: FontWeight.w300, height: 1.2, letterSpacing: -0.5, leadingDistribution: _even),
-    displaySmall: TextStyle(fontSize: 36, fontWeight: FontWeight.w600, height: 1.2, letterSpacing: -0.54, leadingDistribution: _even),
-    headlineLarge: TextStyle(fontSize: 28, fontWeight: FontWeight.w600, height: 1.25, letterSpacing: -0.4, leadingDistribution: _even),
-    headlineMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, height: 1.3, letterSpacing: -0.3, leadingDistribution: _even),
-    headlineSmall: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, height: 1.35, letterSpacing: -0.2, leadingDistribution: _even),
-    titleLarge: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, height: 1.4, leadingDistribution: _even),
+    displayLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.w600, height: 1.19, letterSpacing: -0.4, leadingDistribution: _even),
+    displayMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, height: 1.17, letterSpacing: -0.3, leadingDistribution: _even),
+    displaySmall: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, height: 1.17, letterSpacing: -0.3, leadingDistribution: _even),
+    headlineLarge: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, height: 1.17, letterSpacing: -0.3, leadingDistribution: _even),
+    headlineMedium: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, height: 1.3, leadingDistribution: _even),
+    headlineSmall: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, height: 1.44, leadingDistribution: _even),
+    titleLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, height: 1.5, leadingDistribution: _even),
     titleMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, height: 1.5, leadingDistribution: _even),
-    titleSmall: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, height: 1.5, leadingDistribution: _even),
+    titleSmall: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, height: 1.43, leadingDistribution: _even),
     bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, height: 1.5, leadingDistribution: _even),
-    bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, height: 1.5, leadingDistribution: _even),
+    bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, height: 1.43, leadingDistribution: _even),
     bodySmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, height: 1.5, leadingDistribution: _even),
     labelLarge: TextStyle(
       fontSize: 14,
-      fontWeight: FontWeight.w600,
-      height: 1.4,
+      fontWeight: FontWeight.w500,
+      height: 1.43,
       letterSpacing: 0.1,
       leadingDistribution: _even,
     ),
     labelMedium: TextStyle(
       fontSize: 12,
       fontWeight: FontWeight.w500,
-      height: 1.35,
+      height: 1.5,
       letterSpacing: 0.1,
       leadingDistribution: _even,
     ),
     labelSmall: TextStyle(
-      fontSize: 11,
+      fontSize: 10,
       fontWeight: FontWeight.w400,
-      height: 1.35,
+      height: 1.4,
       letterSpacing: 0.2,
       leadingDistribution: _even,
     ),
