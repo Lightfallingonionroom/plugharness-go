@@ -348,11 +348,21 @@ Flutter 1/2 仍有失败，构成：
   `c99964a6` 完整恢复算法与 `_ChipSlot`，并只对 `ModelChip` 挂标记：app 实际
   传的 `WorkProgressKey` 是 44 定宽圆钮，不能按 36 的 `compactWidth` 误压。
   这 33 条是组件级测试（直接给 `ChatHeader` 传 `ModelChip` 验证窄屏契约），
-  **不是过时断言**，不能删。等 CI 复核。
-- **`chat_shell_test` 4 条**：一条断言还在找已删的空态固定标题
-  「有什么可以帮你？」，已改为断言 `ChatEmptyState` 存在（`9516b634`）；
-  另 3 条（model sheet / send options）仍在查，疑似输入条结构变更后
-  tap 落点变了，本机跑不了 flutter test，不猜着改。
+  **不是过时断言**，不能删。`42987269209` 的 Flutter 1 日志已确认
+  `43 ✅ / 0 ❌`（crowded 组 32 条全绿），修复成立。
+- **`chat_shell_test` 仍在红 4 条**：另有 1 条空态固定标题断言早前已改为
+  `ChatEmptyState` 存在（`9516b634`）。这 4 条已按 CI 真实异常拆清：
+  - **2 条 model sheet**（`model sheet on a 360dp`、`animations off new chat`）：
+    `Found 0 widgets with key [<'composer-model'>]`。旧输入条 footer 里的
+    `ComposerModelPill`（带该 key）按任务要求已删；这两条还要
+    `tap('V41 Flash')` 与 `find.text('V41 Flash 不思考')`，后者是旧胶囊的
+    Semantics label，新输入条不再渲染。**不是单纯换个 key 能修**：
+    `ComposerEffortKey` 只开 `showEffortSheet`（无模型列表），控制面板
+    「选择模型」虽走 `showModelSheet`，但 `onSelected: (_) {}` 是空实现。
+  - **2 条 send options（light/dark）**：golden `85.58%` 像素差，归 §8.6
+    的「golden 是否重拍」，不是代码 bug。
+  按铁律不删断言、不放宽期望值；要改就得按新交互重写测试意图，属需用户
+  拍板的方向问题，本机又跑不了 `flutter test` 验证落点，故未猜着改。
 
 **我改过的核心文件在 CI 里全绿**：`mention_selection_generation_test`、
 `drawer_geometry_test`、`shell_geometry_test`、`empty_actions_test`、
@@ -363,9 +373,18 @@ Flutter 1/2 仍有失败，构成：
 1. **golden 是否重拍**——不重拍则合并后 CI 长期因 golden 红。
 2. **`palette_contrast_test` 剩 1 条**——是否调整 derive 的 container/onContainer
    守卫（设计决策）。
-3. ~~`chat_header_geometry_test` 33 条~~ → 完整根因已修（`c99964a6`），只等 CI 复核；不再是待决方向问题。
+3. ~~`chat_header_geometry_test` 33 条~~ → **CI 已确认修复**：`42987269209`
+   的 Flutter 1 分片日志里该文件 `43 ✅ / 0 ❌`（crowded 组 32 条全绿），
+   完整根因见 `c99964a6`；不再是待决方向问题。
 4. **`@` 是否也要在菜单里列出 Skills**（当前靠 `/` 菜单，参考仓库是
    `@` 与 `/` 都列）。
+5. **`chat_shell_test` 2 条 model sheet 测试怎么改**——旧输入条模型胶囊
+   已按需求删除，测试仍依赖 `composer-model` key 与胶囊的 Semantics label。
+   选项：(a) 按新交互重写测试意图（控制面板 → 选择模型 → 选模型/深度），
+   同时把 `showComposerControls` 的 `onSelected: (_) {}` 空实现接上真实链路；
+   (b) 接受这 2 条随 UI 重构一起红，等后续统一整理输入条测试。
+   另 2 条 send options 是 golden，随第 1 项一起决定。
+   本机跑不了 `flutter test`，未猜着改。
 
 ### 8.7 工具故障（如实记）
 
