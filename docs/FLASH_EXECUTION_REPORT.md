@@ -148,12 +148,21 @@ run `42887202240`（2026-11-10）：
 | **#4** Cordis 插件生命周期集成测试 | ✅ 已实现、已验证 | `runtime/tests/cordis-lifecycle.test.mjs`；**本批真跑 3/3 通过** |
 | **#5** 插件运行时兼容性治理 | ⚠️ **判断层已实现、UI 接线未做** | `plugin_runtime_compat.dart` + 22 条测试；`app/lib/ui/` 里 0 处调用 |
 
+> **2026-11-11 复核**：`grep -rn 'checkPluginAtRuntime|classifyPluginRuntimeError|plugin_runtime_compat' app/lib/ui/` 仍是 **0 命中**，
+> 「已实现」的只有判断层（分类 / 诊断 / 迁移契约）。用户追问的「插件适配」
+> 指的就是这一项，**不要与 `@` 菜单的「插件」分组混淆**——后者是独立需求，
+> 已完整接线（`chat_screen.dart` 的 `client.listPlugins()` → `MentionController.plugins`）。
+
 ### #5 的缺口
 
 `grep plugin_runtime_compat app/lib/ui/` → 0 命中。要让用户看到，还差三步：
 插件列表/详情页调 `checkPluginAtRuntime()`；Runtime 报错经
-`classifyPluginRuntimeError()` 转诊断卡；迁移确认弹窗。
-**这是独立一轮**（要动 UI 和 bridge），不该夹在 UI 改版里。
+`classifyPluginRuntimeError()` 转诊断卡；迁移确认弹窗
+（`migrationsFor()` 列可迁移项 + `PluginConfigMigration.apply()` 需显式确认）。
+可照抄 `#3` 的接线模式：`plugin_actions.dart` 里的
+`confirmPluginCompatibility()`（安装前弹 `AlertDialog` 拦截）。
+**这是独立一轮**（要动 UI 和 bridge），不该夹在 UI 改版里；
+本报告曾明确把它列为「下一步」，至今未完成。
 
 ---
 
