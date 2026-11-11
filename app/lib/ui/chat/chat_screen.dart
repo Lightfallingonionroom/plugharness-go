@@ -2101,6 +2101,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                                         const SizedBox(width: 8),
                                         ComposerControlsKey(
                                           sessionId: sessionId,
+                                          onModelSelected: _modelTarget(),
                                         ),
                                       ],
                                     ),

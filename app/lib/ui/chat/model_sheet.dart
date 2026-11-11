@@ -69,7 +69,11 @@ String effortLabel(String id, [String? fallback]) => switch (id) {
 ///
 /// **不把 `SessionPermissionPage` 直接嵌进来**：它自带 `SheetTitleBar`，
 /// 嵌进来会出现两个标题。这里只放入口行，点开时再 push 它。
-Future<void> showComposerControls(BuildContext context, {String? sessionId}) {
+Future<void> showComposerControls(
+  BuildContext context, {
+  String? sessionId,
+  ValueChanged<ModelSelection>? onModelSelected,
+}) {
   return showAppSheet<void>(
     context,
     isScrollControlled: true,
@@ -114,11 +118,16 @@ Future<void> showComposerControls(BuildContext context, {String? sessionId}) {
               child: ListPageRow(
                 icon: AppIcons.providers,
                 title: appL10n.viewModelSelect,
-                onTap: () => showModelSheet(
-                  context,
-                  current: null,
-                  onSelected: (_) {},
-                ),
+                onTap: () {
+                  Navigator.of(sheet).pop();
+                  unawaited(showModelSheet(
+                    context,
+                    current: null,
+                    // 不传时保持旧行为（只预览不落盘）；chat_screen 会注入
+                    // _modelTarget()，让控制面板里选的模型真正生效。
+                    onSelected: onModelSelected ?? (_) {},
+                  ));
+                },
               ),
             ),
             const SizedBox(height: 12),
@@ -140,17 +149,22 @@ Future<void> showComposerControls(BuildContext context, {String? sessionId}) {
 /// 的链路（权限 → `/permission`，模式 → Agent Preset，模型 →
 /// `ModelSelection`）。
 class ComposerControlsKey extends StatelessWidget {
-  const ComposerControlsKey({super.key, required this.sessionId, this.onOpen});
+  const ComposerControlsKey({super.key, required this.sessionId, this.onOpen, this.onModelSelected});
 
   /// 打开面板；默认弹出一个底部弹层。测试可注入。
   final String? sessionId;
   final VoidCallback? onOpen;
 
+  /// 面板里「选择模型」选中后的落点。chat_screen 注入 _modelTarget()；
+  /// 不传则只预览，保持部件单独使用/测试时零改动。
+  final ValueChanged<ModelSelection>? onModelSelected;
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final shell = ChatGptShellColors.of(context);
-    void open() => (onOpen ?? () => showComposerControls(context, sessionId: sessionId))();
+    void open() => (onOpen ??
+        () => showComposerControls(context, sessionId: sessionId, onModelSelected: onModelSelected))();
     return Tooltip(
       message: l10n.chatComposerControls,
       child: Semantics(
