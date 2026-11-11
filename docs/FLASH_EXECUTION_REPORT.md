@@ -364,9 +364,19 @@ Flutter 1/2 仍有失败，构成：
   按铁律不删断言、不放宽期望值；要改就得按新交互重写测试意图，属需用户
   拍板的方向问题，本机又跑不了 `flutter test` 验证落点，故未猜着改。
 
-**我改过的核心文件在 CI 里全绿**：`mention_selection_generation_test`、
-`drawer_geometry_test`、`shell_geometry_test`、`empty_actions_test`、
-`appearance_page_test` 均 0 失败。
+**我改过的核心文件在 CI 里全绿**：`mention_selection_generation_test`、`drawer_geometry_test`、`empty_actions_test`、`appearance_page_test` 均 0 失败。
+
+**修正两处早前的分片误判**（`42989403797` 的 Flutter 2 分片实测）：
+- `shell/shell_geometry_test.dart` **2 条失败**，异常是
+  `Vertical viewport was given unbounded height`（抽屉 `CustomScrollView` 在测试的
+  无界高度环境里）。早前只看了 Flutter 1 分片就说它全绿，是错的。这属于
+  侧边栏整列滚动改造的遗留，不是 `e3bf0571` 引入。
+- `chat/model_sheet_test.dart` **19 条失败**：18 条
+  `Found 0 widgets with key [<'composer-model'>]`、1 条同类 `Bad state`，
+  与 `chat_shell_test` 同一根因（旧输入条模型胶囊已删）。所以
+  「`composer-model` key 消失」实际影响 **20 条**（chat_shell 2 + model_sheet 18），
+  不是之前写的 2 条。`e3bf0571` 前后失败总数与各文件计数完全一致
+  （Flutter 1 都是 313），确认该修复没引入任何新失败。
 
 ### 8.6 待决问题（需要用户拍板）
 
@@ -378,13 +388,30 @@ Flutter 1/2 仍有失败，构成：
    完整根因见 `c99964a6`；不再是待决方向问题。
 4. **`@` 是否也要在菜单里列出 Skills**（当前靠 `/` 菜单，参考仓库是
    `@` 与 `/` 都列）。
-5. **`chat_shell_test` 2 条 model sheet 测试怎么改**——旧输入条模型胶囊
-   已按需求删除，测试仍依赖 `composer-model` key 与胶囊的 Semantics label。
+5. **依赖 `composer-model` key 的 20 条测试怎么改**（`chat_shell_test` 2 条
+    + `model_sheet_test` 18 条）——旧输入条模型胶囊已按需求删除。
    选项：(a) 按新交互重写测试意图（控制面板 → 选择模型 → 选模型/深度），
    同时把 `showComposerControls` 的 `onSelected: (_) {}` 空实现接上真实链路；
-   (b) 接受这 2 条随 UI 重构一起红，等后续统一整理输入条测试。
+   (b) 接受这 20 条随 UI 重构一起红，等后续统一整理输入条测试。
+   **进展**：`e3bf0571` 已完成选项 (a) 的产品侧一半——控制面板「选择模型」
+   现在经 `ComposerControlsKey.onModelSelected` 注入 `_modelTarget()`，选中
+   会真正落到当前会话/待发消息，且先关掉控制面板再开模型 sheet。
+   **仍缺**：按新交互重写这 20 条测试；本机跑不了 `flutter test`，未猜着改。
+   **已推演的改写路径**（`chat_shell_test` 的 `_pump` 构造的是真实
+   `ChatScreen`，`ChatHarness` 提供 `activeConnectionProvider` fake，
+   `_modelTarget()` 的依赖在同一 build 里已被 `ComposerEffortKey` 用过，
+   所以新链路在测试环境可达）：
+   1. `tap(TextField)` 展开输入条；
+   2. `tap(find.byTooltip('控制面板'))`（`ComposerControlsKey` 的 tooltip，
+      来自 `chatComposerControls`）；
+   3. `tap(find.text('选择模型'))`（`viewModelSelect`，`ListPageRow`）；
+   4. 此后 `showModelSheet` 已打开，原有 `tap('V41 Flash')` /
+      `tap('不思考')` 断言可保留。
+   **唯一仍需用户拍板的点**：最后的
+   `expect(find.text('V41 Flash 不思考'), findsOneWidget)` 断言依赖旧输入条
+   模型胶囊的 Semantics label，新 UI 不再渲染这串组合文字。要保留它就得
+   改期望值；按「不放宽期望值」的铁律，我没有擅自改。
    另 2 条 send options 是 golden，随第 1 项一起决定。
-   本机跑不了 `flutter test`，未猜着改。
 
 ### 8.7 工具故障（如实记）
 
