@@ -112,7 +112,11 @@ Future<ChatHarness> _openSheet(
   await tester.tap(find.byType(TextField));
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 500));
-  await tester.tap(find.byKey(const ValueKey('composer-model')));
+  // 输入条重构后模型胶囊（带 composer-model key）已按需求删除；
+  // 新入口是「＋」旁的控制面板 → 面板里的「选择模型」行（走 showModelSheet）。
+  await tester.tap(find.byTooltip('控制面板'));
+  await pumpFrames(tester, 4);
+  await tester.tap(find.text('选择模型'));
   await pumpFrames(tester, 8);
   return harness;
 }

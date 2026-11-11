@@ -103,7 +103,11 @@ void main() {
     await tester.tap(find.byType(TextField));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
-    await tester.tap(find.byKey(const ValueKey('composer-model')));
+    // 输入条重构后模型胶囊（composer-model key）已删；新入口是
+    // 「＋」旁的控制面板 → 「选择模型」。
+    await tester.tap(find.byTooltip('控制面板'));
+    await pumpFrames(tester, 4);
+    await tester.tap(find.text('选择模型'));
     await pumpFrames(tester, 8);
     expect(find.text('思考深度'), findsOneWidget);
     expect(tester.takeException(), isNull);
@@ -128,7 +132,9 @@ void main() {
       await tester.tap(find.byType(TextField));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
-      await tester.tap(find.byKey(const ValueKey('composer-model')));
+      await tester.tap(find.byTooltip('控制面板'));
+      await pumpFrames(tester, 4);
+      await tester.tap(find.text('选择模型'));
       await pumpFrames(tester, 6);
       expect(tester.takeException(), isNull);
       await tester.tap(find.text('V41 Flash'));
@@ -138,7 +144,9 @@ void main() {
       await pumpFrames(tester, 6);
       expect(tester.takeException(), isNull);
       expect(find.text('思考深度'), findsNothing, reason: 'closed at once');
-      expect(find.text('V41 Flash 不思考'), findsOneWidget);
+      // 旧输入条的模型胶囊（显示「V41 Flash 不思考」）已按需求删除；
+      // 新 UI 里「选完反映在输入条上」的等价物是推理仪表的语义标签。
+      expect(find.bySemanticsLabel('思考深度不思考'), findsOneWidget);
 
       await tester.enterText(find.byType(TextField), '/');
       await pumpFrames(tester, 2);
