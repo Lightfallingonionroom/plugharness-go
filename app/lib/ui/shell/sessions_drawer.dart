@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../l10n/l10n.dart';
 import '../../runtime/runtime_bridge.dart';
 import '../../runtime/runtime_state.dart';
+import '../../runtime/local_footprint.dart';
 import '../../state/cordis_state.dart';
 import '../../state/bots_state.dart';
 import '../../state/connection_state.dart';

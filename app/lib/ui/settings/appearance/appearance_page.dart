@@ -54,7 +54,7 @@ class AppearanceEntryTile extends ConsumerWidget {
         const SizedBox(height: 8),
         _ModeCard(tint: tint),
         const SizedBox(height: 8),
-        const _MoreAppearanceCard(tint: tint),
+        _MoreAppearanceCard(tint: tint),
       ],
     );
   }
