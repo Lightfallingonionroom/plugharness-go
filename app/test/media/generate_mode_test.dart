@@ -258,28 +258,18 @@ void main() {
         expect(exit.center.dy, moreOrLessEquals(capsule.center.dy, epsilon: 0.01));
       });
 
-      testWidgets('with the permission pill: a 34 round ⚠ first, the capsule 8 after it, both one height (×$scale)', (
-        tester,
-      ) async {
+      // 评论 B：权限胶囊已移入齿轮菜单，生成模式胶囊独占这一行、靠左。
+      testWidgets('the capsule alone on the edge (×$scale)', (tester) async {
         await pumpGenerate(
           tester,
           modes: const SessionModes(preset: 'danger-full-access'),
           scale: scale,
         );
         await enterMode(tester);
-        final pill = tester.getRect(find.byType(PermissionPill));
+        expect(find.byType(PermissionPill), findsNothing);
         final capsule = tester.getRect(_capsule);
         final composer = tester.getRect(find.byType(Composer));
-        expect(pill.size, const Size.square(PermissionPillMetrics.height));
-        expect(pill.left, moreOrLessEquals(composer.left, epsilon: 0.01));
-        expect(capsule.left - pill.right, moreOrLessEquals(GenerateCapsuleMetrics.gap, epsilon: 0.01));
-        expect(capsule.top, pill.top);
-        expect(capsule.height, pill.height);
-        final glyph = tester.getRect(
-          find.descendant(of: find.byType(PermissionPill), matching: find.byIcon(AppIcons.permissionRisky)),
-        );
-        expect(glyph.center.dx, moreOrLessEquals(pill.center.dx, epsilon: 0.01));
-        expect(glyph.center.dy, moreOrLessEquals(pill.center.dy, epsilon: 0.01));
+        expect(capsule.left, moreOrLessEquals(composer.left, epsilon: 0.01));
       });
     }
   });

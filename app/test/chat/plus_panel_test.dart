@@ -249,7 +249,7 @@ void main() {
     });
   });
 
-  group('permission pill', () {
+  group('permission entry (齿轮菜单)', () {
     Future<ChatHarness> pumpChat(WidgetTester tester, SessionModes modes, {double scale = 1}) async {
       usePhoneView(tester);
       final harness = ChatHarness(newChatCatalogs: true, session: 's1');
@@ -266,45 +266,24 @@ void main() {
       return harness;
     }
 
-    testWidgets('nothing for 工作区内修改', (tester) async {
+    // 评论 B（2026-11-11）：权限胶囊不再浮在输入框上方，收进左侧齿轮的锚定菜单。
+    testWidgets('输入框上方不再有权限胶囊', (tester) async {
       await pumpChat(tester, const SessionModes(preset: 'workspace-write'));
       expect(find.byType(PermissionPill), findsNothing);
     });
 
     for (final scale in [1.0, 1.3]) {
-      testWidgets('完全权限: on the composer\'s edge, 34 high, equal end insets (×$scale)', (tester) async {
+      testWidgets('齿轮菜单里的「权限」可点开本对话的权限（×$scale）', (tester) async {
         await pumpChat(tester, const SessionModes(preset: 'danger-full-access'), scale: scale);
-        final pill = tester.getRect(find.byType(PermissionPill));
-        final composer = tester.getRect(find.byType(Composer));
-        expect(pill.left, moreOrLessEquals(composer.left, epsilon: 0.01));
-        expect(pill.height, PermissionPillMetrics.height);
-        expect(composer.top - pill.bottom, moreOrLessEquals(8, epsilon: 0.01));
-        final lead = tester.getRect(
-          find.descendant(of: find.byType(PermissionPill), matching: find.byIcon(AppIcons.permissionRisky)),
-        );
-        final trail = tester.getRect(
-          find
-              .ancestor(
-                of: find.descendant(of: find.byType(PermissionPill), matching: find.byIcon(AppIcons.disclosure)),
-                matching: find.byType(SizedBox),
-              )
-              .first,
-        );
-        expect(lead.left - pill.left, moreOrLessEquals(PermissionPillMetrics.inset, epsilon: 0.01));
-        expect(pill.right - trail.right, moreOrLessEquals(PermissionPillMetrics.inset, epsilon: 0.01));
-        expect(lead.size, trail.size);
-        expect(lead.center.dy, moreOrLessEquals(pill.center.dy, epsilon: 0.01));
-        expect(trail.center.dy, moreOrLessEquals(pill.center.dy, epsilon: 0.01));
+        expect(find.byType(PermissionPill), findsNothing);
+        await tester.tap(find.byTooltip('控制面板'));
+        await pumpFrames(tester, 6);
+        expect(find.text('权限'), findsOneWidget);
+        await tester.tap(find.text('权限'));
+        await pumpFrames(tester);
+        expect(find.text('本对话的权限'), findsOneWidget);
       });
     }
-
-    testWidgets('a tap opens this chat\'s permissions', (tester) async {
-      await pumpChat(tester, const SessionModes(preset: 'auto'));
-      expect(find.text('自动审查'), findsOneWidget);
-      await tester.tap(find.byType(PermissionPill));
-      await pumpFrames(tester);
-      expect(find.text('本对话的权限'), findsOneWidget);
-    });
 
     testWidgets('自动允许中 wins while this client allows everything', (tester) async {
       usePhoneView(tester);
@@ -319,7 +298,9 @@ void main() {
         ),
       );
       await pumpFrames(tester);
-      expect(find.byType(AutoApprovePill), findsOneWidget);
+      // 评论 B 之后：这两种胶囊都不再画在输入框上方（权限进了齿轮菜单，
+      // 自动允许只在运行中的窄带上出现）。这里断言它们都不在。
+      expect(find.byType(AutoApprovePill), findsNothing);
       expect(find.byType(PermissionPill), findsNothing);
     });
   });
@@ -353,7 +334,8 @@ void goldens() {
         await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/plus_panel_permission_$suffix.png'));
       });
 
-      testWidgets('permission pill ($suffix)', (tester) async {
+      // 评论 B：权限胶囊已移入齿轮菜单，这里改拍齿轮菜单展开的样子。
+      testWidgets('controls menu ($suffix)', (tester) async {
         usePhoneView(tester);
         final harness = ChatHarness(newChatCatalogs: true, session: 's1');
         await tester.pumpWidget(
@@ -367,7 +349,9 @@ void goldens() {
           ),
         );
         await pumpFrames(tester);
-        await expectLater(find.byType(ChatScreen), matchesGoldenFile('goldens/permission_pill_$suffix.png'));
+        await tester.tap(find.byTooltip('控制面板'));
+        await pumpFrames(tester, 6);
+        await expectLater(find.byType(ChatScreen), matchesGoldenFile('goldens/composer_controls_$suffix.png'));
       });
     }
   });
