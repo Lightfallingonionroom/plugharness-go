@@ -380,19 +380,24 @@ Flutter 1/2 仍有失败，构成：
 
 ### 8.6 待决问题（需要用户拍板）
 
-1. **golden 是否重拍**——不重拍则合并后 CI 长期因 golden 红。
+1. **golden 是否重拍**——**用户 2026-11-11 拍板：重拍**。已触发仓库自带的
+   `regen-goldens.yml`（只重拍 10 个相关套件 + 上传 artifact，不 push main），
+   待取回 PNG 后提交。
 2. **`palette_contrast_test` 剩 1 条**——是否调整 derive 的 container/onContainer
-   守卫（设计决策）。
+   守卫（设计决策）。**尚未定位**：需先从 CI 日志拿到确切失败的色对，
+   再决定是调守卫还是改色值。
 3. ~~`chat_header_geometry_test` 33 条~~ → **CI 已确认修复**：`42987269209`
    的 Flutter 1 分片日志里该文件 `43 ✅ / 0 ❌`（crowded 组 32 条全绿），
    完整根因见 `c99964a6`；不再是待决方向问题。
-4. **`@` 是否也要在菜单里列出 Skills**（当前靠 `/` 菜单，参考仓库是
-   `@` 与 `/` 都列）。
+4. **`@` 是否也要在菜单里列出 Skills**——**用户 2026-11-11 拍板：不列**。
+   技能继续只走 `/` 菜单，`@` 菜单保持文件/会话/子代理/插件四类。无需改代码。
 5. **依赖 `composer-model` key 的 20 条测试怎么改**（`chat_shell_test` 2 条
-    + `model_sheet_test` 18 条）——旧输入条模型胶囊已按需求删除。
-   选项：(a) 按新交互重写测试意图（控制面板 → 选择模型 → 选模型/深度），
-   同时把 `showComposerControls` 的 `onSelected: (_) {}` 空实现接上真实链路；
-   (b) 接受这 20 条随 UI 重构一起红，等后续统一整理输入条测试。
+   + `model_sheet_test` 18 条）——旧输入条模型胶囊已按需求删除。
+   **用户 2026-11-11 选 (a)：按新交互重写**。
+   `47334243` 已改：`model_sheet_test` 的 `_openSheet` helper（一处，覆盖 18 条）
+   与 `chat_shell_test` 的 2 处，改走「控制面板 → 选择模型」；
+   第 2 条末尾断言从旧胶囊文字换成新仪表的语义标签
+   `find.bySemanticsLabel('思考深度不思考')`（等价，非放宽）。
    **进展**：`e3bf0571` 已完成选项 (a) 的产品侧一半——控制面板「选择模型」
    现在经 `ComposerControlsKey.onModelSelected` 注入 `_modelTarget()`，选中
    会真正落到当前会话/待发消息，且先关掉控制面板再开模型 sheet。
