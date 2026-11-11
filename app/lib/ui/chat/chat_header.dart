@@ -556,9 +556,18 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
 /// 长按。两者都是**这个对话**的实际进展（终端跑的是它的工作区，文件列的是
 /// 它的目录），不是它的配置——模型、权限、模式都在输入条的「控制面板」里。
 class WorkProgressKey extends StatelessWidget {
-  const WorkProgressKey({super.key, required this.sessionId});
+  const WorkProgressKey({super.key, this.sessionId, this.resolveSession, this.onOpenFiles});
 
-  final String sessionId;
+  /// 已有会话时直接用它。新对话页为 null —— 那时靠 [resolveSession] 先建会话。
+  final String? sessionId;
+
+  /// 新对话页面的取会话：调用方（`chat_screen`）注入 `_ensureSession`，
+  /// 返回刚建好的会话 id（失败/用户已离开则 null）。评论：新对话页也要有
+  /// 终端入口，而终端开在「这个对话的工作区」里，所以先落一个会话。
+  final Future<String?> Function()? resolveSession;
+
+  /// 长按开文件；新对话页由调用方注入「先建会话再开文件」。
+  final Future<void> Function(BuildContext context, String sessionId)? onOpenFiles;
 
   /// 键的可见尺寸与点击区，和顶栏其它圆键一致。
   static const size = 44.0;
@@ -594,12 +603,26 @@ class WorkProgressKey extends StatelessWidget {
     );
   }
 
-  void _openTerminal(BuildContext context) {
-    Navigator.of(context).push(TerminalPage.route(sessionId));
+  /// 会话 id：现成的直接用，否则先向宿主借一个（新对话页）。
+  Future<String?> _resolve() async {
+    if (sessionId case final id?) return id;
+    return resolveSession?.call();
   }
 
-  void _openFiles(BuildContext context) {
-    Navigator.of(context).push(WorkspaceFilesPage.route(sessionId));
+  Future<void> _openTerminal(BuildContext context) async {
+    final id = await _resolve();
+    if (id == null || !context.mounted) return;
+    await Navigator.of(context).push(TerminalPage.route(id));
+  }
+
+  Future<void> _openFiles(BuildContext context) async {
+    final id = await _resolve();
+    if (id == null || !context.mounted) return;
+    if (onOpenFiles case final custom?) {
+      await custom(context, id);
+      return;
+    }
+    await Navigator.of(context).push(WorkspaceFilesPage.route(id));
   }
 }
 

@@ -21,7 +21,7 @@ import '../common/pressable.dart';
 import '../common/segmented_pill.dart';
 import '../common/sheet_title_bar.dart';
 import '../common/smooth_size.dart';
-import '../plugins/plugins_screen.dart';
+import '../plugins/native/chat_plugins_sheet.dart';
 import '../settings/app_menu.dart';
 import '../common/read_list_status.dart';
 import '../common/ui_trace.dart';
@@ -214,7 +214,8 @@ class _ComposerControlsKeyState extends ConsumerState<ComposerControlsKey> {
               leading: Icon(AppIcons.plugin, size: AppMenuMetrics.checkSize, color: shell.secondaryText),
               onTap: () {
                 _controller.close();
-                unawaited(Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const PluginsScreen())));
+                // 和原来输入框上方的「插件」胶囊同一个落点：本会话的插件面板。
+                if (sessionId != null) unawaited(showChatPluginsSheet(context, sessionId: sessionId));
               },
             ),
             AppMenuItem(

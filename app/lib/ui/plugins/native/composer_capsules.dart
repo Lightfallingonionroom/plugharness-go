@@ -269,17 +269,13 @@ class _ComposerCapsuleBarState extends ConsumerState<ComposerCapsuleBar> {
   Widget build(BuildContext context) {
     final quick = ref.watch(uiOverridesProvider.select((o) => o.config.quickActions)) ?? const <UiQuickAction>[];
     final plugins = ref.watch(nativeComposerActionsProvider);
-    final hidePluginCapsule = ref.watch(uiHiddenProvider(UiHideItem.pluginCapsule));
+    // 评论 B：会话内的「插件」胶囊已收进齿轮菜单，`UiHideItem.pluginCapsule`
+    // 不再对应任何舱位（enum 保留，避免既有 ui.json 配置报未知项）。
     final session = widget.sessionId;
     final items = [
       ...composerCapsules(context, ref, sessionId: session, quick: quick, plugins: plugins),
-      if (!hidePluginCapsule && session != null && ref.watch(chatPluginsHaveContentProvider(session)))
-        CapsuleItem(
-          id: chatPluginsCapsuleId,
-          label: context.l10n.plugslotsChatEntry,
-          icon: AppIcons.plugin,
-          onTap: () => unawaited(showChatPluginsSheet(context, sessionId: session)),
-        ),
+      // 评论 B（2026-11-11）：会话内的「插件」胶囊已收进输入条左侧齿轮的
+      // 「控制面板」菜单（权限 / 插件 / 模型三行），这里不再单独出胶囊。
     ];
     final leading = widget.leading;
     final open = widget.visible && (items.isNotEmpty || leading != null);

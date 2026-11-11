@@ -1834,7 +1834,16 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                         // 里选（和权限、模式同一处）。右上角留给「查看工作
                         // 进展」——点按开终端、长按开文件，都是这个对话的
                         // 实际进展，而不是它的配置。
-                        trailing: sessionId == null ? null : WorkProgressKey(sessionId: sessionId),
+                        //
+                        // 新对话页也给这个键（评论 A）：没有会话时先向宿主借
+                        // 一个（`_ensureSession`，和发消息走同一条建会话链路），
+                        // 因为终端是开在「这个对话的工作区」里的。
+                        trailing: WorkProgressKey(
+                          sessionId: sessionId,
+                          resolveSession: sessionId != null
+                              ? null
+                              : () => _ensureSession(isCurrent: () => mounted),
+                        ),
                       ),
                     ),
                   ),
