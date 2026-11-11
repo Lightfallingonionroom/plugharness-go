@@ -57,7 +57,7 @@ abstract final class DshPalette {
   static const inkMuted = Color(0xFF5D5D5D);
 
   /// 三级文字 · 时间戳、摘要、占位符(官方 `--color-text-tertiary` = gray-400)。
-  static const inkFaint = Color(0xFF8F8F8F);
+  static const inkFaint = Color(0xFF757575);
 
   /// 禁用 / 纯装饰(约 2.5,**不得**承载必要信息)。
   static const inkGhost = Color(0xFFAFAFAF);
@@ -84,7 +84,7 @@ abstract final class DshPalette {
   /// 主文字 · 官方 `--gray-900`。
   static const paper = Color(0xFFECECEC);
   static const paperMuted = Color(0xFFAFAFAF);
-  static const paperFaint = Color(0xFF8F8F8F);
+  static const paperFaint = Color(0xFFA3A3A3);
   static const paperGhost = Color(0xFF5D5D5D);
   static const outlineDark = Color(0xFF414141);
   static const ruleDark = Color(0xFF2F2F2F);
@@ -322,7 +322,8 @@ class NeutralTones {
     codeWell: Color(0xFFF3F3F3),
     codeWellHeader: Color(0xFFECECEC),
     codeWellBorder: Color(0xFFE5E5E5),
-    lineNumber: Color(0xFF8F8F8F),
+    // 对井底 #F3F3F3 只有 2.91:1，够不上测试要求的 3:1。压到 #757575（4.15:1）。
+    lineNumber: Color(0xFF757575),
     comment: Color(0xFF5D5D5D),
     nightTop: DshPalette.nightTop,
     nightBottom: DshPalette.nightBottom,

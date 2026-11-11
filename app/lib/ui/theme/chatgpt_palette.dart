@@ -122,7 +122,9 @@ class ChatGptShellColors extends ThemeExtension<ChatGptShellColors> {
       divider: const Color(0xFFE5E5E5),
       primaryText: const Color(0xFF0D0D0D),
       secondaryText: const Color(0xFF5D5D5D),
-      tertiaryText: const Color(0xFF8F8F8F),
+      // 与 DshColors.light.textTertiary 保持一致（official_palette_test 断言两者相等）。
+      // 官方 gray-600 对白底只有 3.23:1，压到 #757575 达标（4.61:1）。
+      tertiaryText: const Color(0xFF757575),
       // --color-background-primary-solid (light) = gray-900.
       primaryAction: const Color(0xFF181818),
       onPrimaryAction: const Color(0xFFFFFFFF),
@@ -151,7 +153,8 @@ class ChatGptShellColors extends ThemeExtension<ChatGptShellColors> {
       divider: const Color(0xFF2F2F2F),
       primaryText: const Color(0xFFECECEC),
       secondaryText: const Color(0xFFB4B4B4),
-      tertiaryText: const Color(0xFF8E8E8E),
+      // 与 DshColors.dark.textTertiary 保持一致（official_palette_test 断言两者相等）。
+      tertiaryText: const Color(0xFFA3A3A3),
       // --color-background-primary-solid (dark) = gray-950: near-white.
       primaryAction: const Color(0xFFF3F3F3),
       onPrimaryAction: const Color(0xFF0D0D0D),

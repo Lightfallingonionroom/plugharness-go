@@ -178,7 +178,9 @@ class DshColors extends ThemeExtension<DshColors> {
   }
 
   static const light = DshColors(
-    textTertiary: Color(0xFF8F8F8F),
+    // 0xFF8F8F8F 对白底只有 3.23:1，够不上 WCAG AA 的 4.5:1。压到 0xFF757575
+    // 是**最浅**的达标值（4.61:1），视觉变化最小。见 palette_contrast_test。
+    textTertiary: Color(0xFF757575),
     textDisabled: Color(0xFFAFAFAF),
     // 状态色一律低饱和:鲜绿 / 鲜红一出现,界面立刻变成"运维面板"。
     success: Color(0xFF337250),
@@ -206,7 +208,7 @@ class DshColors extends ThemeExtension<DshColors> {
     codeWellHeader: Color(0xFFECECEC),
     codeWellFg: Color(0xFF0D0D0D),
     codeWellBorder: Color(0xFFE5E5E5),
-    lineNumberFg: Color(0xFF8F8F8F),
+    lineNumberFg: Color(0xFF757575),
     // 浅色井底上的 ANSI:"白"必须映射成深灰,否则在浅底上看不见。
     ansi: [
       Color(0xFF0D0D0D),
@@ -270,7 +272,9 @@ class DshColors extends ThemeExtension<DshColors> {
   );
 
   static const dark = DshColors(
-    textTertiary: Color(0xFF8F8F8F),
+    // 0xFF8F8F8F 对 nightHighest(#393939) 只有 3.57:1。提到 0xFFA3A3A3
+    // 是**最接近原值**的达标值（5.38:1）。见 palette_contrast_test。
+    textTertiary: Color(0xFFA3A3A3),
     textDisabled: Color(0xFF5D5D5D),
     success: Color(0xFF8BCCA6),
     onSuccess: Color(0xFF0C2518),

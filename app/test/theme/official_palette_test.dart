@@ -12,6 +12,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// The official `--gray-*` scale (dark) from docs/openai-sdk-ui-spec.md §3.
+///
+/// `textTertiary` (gray-600) is deliberately **not** used as-is: 0xFF8F8F8F
+/// gives only 3.57:1 on nightHighest, under WCAG AA's 4.5:1. The app ships
+/// 0xFFA3A3A3 instead (5.38:1). See the note where the assertion was changed.
 const _officialDark = <String, int>{
   'surface': 0xFF212121, // gray-200
   'surfaceSecondary': 0xFF181818, // gray-100
@@ -19,7 +23,6 @@ const _officialDark = <String, int>{
   'surfaceElevated': 0xFF303030, // gray-300
   'text': 0xFFECECEC, // gray-900
   'textSecondary': 0xFFAFAFAF, // gray-700
-  'textTertiary': 0xFF8F8F8F, // gray-600
   'backgroundPrimarySolid': 0xFFF3F3F3, // gray-950
   'backgroundPrimarySolidText': 0xFF0D0D0D, // gray-0
 };
@@ -32,7 +35,11 @@ void main() {
     expect(n.nightContainer, Color(_officialDark['surfaceElevated']!));
     expect(n.paper, Color(_officialDark['text']!));
     expect(n.paperMuted, Color(_officialDark['textSecondary']!));
-    expect(n.paperFaint, Color(_officialDark['textTertiary']!));
+    // 2026-11-11: textTertiary 从官方 gray-600(#8F8F8F) 提到 #A3A3A3。
+    // 官方值对 nightHighest(#393939) 只有 3.57:1，够不上 WCAG AA 的 4.5:1
+    // （palette_contrast_test 78 条失败）。#A3A3A3 是 5.38:1。
+    // 这是**有意偏离官方令牌**，理由是可访问性；其余中性色仍与官方一致。
+    expect(n.paperFaint, const Color(0xFFA3A3A3));
     expect(n.sheetDark, Color(_officialDark['surfaceElevated']!));
 
     // No blue cast: R == G == B on every neutral (the old palette was blue-tinted).
@@ -66,7 +73,8 @@ void main() {
     expect(n.mistContainer, const Color(0xFFF3F3F3));
     expect(n.ink, const Color(0xFF0D0D0D));
     expect(n.inkMuted, const Color(0xFF5D5D5D));
-    expect(n.inkFaint, const Color(0xFF8F8F8F));
+    // 同上：对可访问性让路，从官方 gray-600 压到 #757575（白底 4.61:1）。
+    expect(n.inkFaint, const Color(0xFF757575));
     expect(n.ruleLight, const Color(0xFFE5E5E5));
   });
 
