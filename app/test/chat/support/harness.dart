@@ -460,6 +460,18 @@ Future<void> pumpFrames(WidgetTester tester, [int frames = 6]) async {
   }
 }
 
+/// 打开输入条左侧齿轮里的「选择模型」。
+///
+/// 输入条重构后模型胶囊（`composer-model`）已删除，模型选择在控制面板里
+/// （权限 / 插件 / 模型三行，见 `ComposerControlsKey`）。测试里凡是原来
+/// 点胶囊的，都改走这里，保持「从真实入口进去」而不是直接调弹层。
+Future<void> openModelSheetFromControls(WidgetTester tester) async {
+  await tester.tap(find.byTooltip('控制面板'));
+  await pumpFrames(tester, 6);
+  await tester.tap(find.text('选择模型'));
+  await pumpFrames(tester, 8);
+}
+
 /// Clipboard calls in tests go nowhere instead of throwing.
 void mockClipboard(WidgetTester tester) {
   tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, (call) async => null);

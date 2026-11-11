@@ -26,7 +26,6 @@ import 'package:dsh_app/ui/chat/widgets/whale_tail.dart';
 import 'package:dsh_app/ui/theme/app_icons.dart';
 import 'package:dsh_app/ui/theme/theme.dart';
 import 'package:dsh_client/dsh_client.dart';
-import 'package:dsh_app/ui/chat/model_sheet.dart' show ModelChip;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -389,13 +388,12 @@ void main() {
         catalog: ModelCatalog.fromJson(const {'groups': <Object?>[]}),
       );
       await pumpChat(tester, harness);
-      // The new chat's header chip (and the composer's, once typing) asks for one.
-      expect(find.descendant(of: find.byType(ModelChip), matching: find.text('选择模型')), findsOneWidget);
+      // 顶栏不再挂模型胶囊（模型在输入条齿轮里选）；空目录时控制面板的
+      // 「选择模型」仍可点，并给出「需要 API Key」的说明。
       await tester.tap(find.byType(TextField));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
-      await tester.tap(find.byKey(const ValueKey('composer-model')));
-      await pumpFrames(tester, 8);
+      await openModelSheetFromControls(tester);
       expect(find.text('需要 API Key'), findsOneWidget);
       expect(find.text('填写 API Key'), findsOneWidget);
       expect(harness.balanceRequests, isEmpty);
@@ -459,8 +457,7 @@ void main() {
         await tester.tap(find.byType(TextField));
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 500));
-        await tester.tap(find.byKey(const ValueKey('composer-model')));
-        await pumpFrames(tester, 10);
+        await openModelSheetFromControls(tester);
         await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/model_sheet_$suffix.png'));
       });
 
@@ -476,8 +473,7 @@ void main() {
         await tester.tap(find.byType(TextField));
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 500));
-        await tester.tap(find.byKey(const ValueKey('composer-model')));
-        await pumpFrames(tester, 10);
+        await openModelSheetFromControls(tester);
         await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/model_empty_$suffix.png'));
       });
     });

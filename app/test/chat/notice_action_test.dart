@@ -266,8 +266,7 @@ void main() {
       await tester.tap(find.byType(TextField));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
-      await tester.tap(find.byKey(const ValueKey('composer-model')));
-      await pumpFrames(tester, 4);
+      await openModelSheetFromControls(tester);
       expect(find.text('选择模型'), findsOneWidget);
 
       c.read(currentSessionProvider.notifier).select('s2');
