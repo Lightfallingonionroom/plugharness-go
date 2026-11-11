@@ -472,7 +472,10 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
                   // takes the width this row gives it.
                   HeaderTrailingSlot(
                     trailing: switch (widget.trailing) {
-                      final trailing? => trailing,
+                      // Flexible 不能省：长 trailing（模型胶囊的文字）要靠它在窄屏
+                      // 收缩，否则会把标题挤成负宽度。_ChipSlot 那个空壳
+                      // 包装已删，但 Flexible 本身是布局契约。
+                      final trailing? => Flexible(child: trailing),
                       null => null,
                     },
                   ),

@@ -122,7 +122,8 @@ void main() {
     testWidgets('new chat, model sheet, effort, palette', (tester) async {
       await _pump(tester, ChatHarness());
       expect(tester.takeException(), isNull);
-      expect(find.text('有什么可以帮你？'), findsOneWidget);
+      // 空态精简后不再有固定标题，只剩鲸尾 + 时段问候。
+      expect(find.byType(ChatEmptyState), findsOneWidget);
 
       await tester.tap(find.byType(TextField));
       await tester.pump();
