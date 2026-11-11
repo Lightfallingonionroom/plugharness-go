@@ -20855,6 +20855,14 @@ class L10nEn extends L10n {
   String get viewModelEffort => 'Thinking effort';
 
   @override
+  String get chatEffortUnavailableNoModel => 'No model list yet. Connect the engine and this gauge becomes adjustable.';
+
+  @override
+  String chatEffortUnavailableModelFixed(String model) {
+    return '$model has a single thinking level, so there is nothing to adjust. Pick a model with several levels and it lights up.';
+  }
+
+  @override
   String get viewModelKeyRequired => 'API key needed';
 
   @override

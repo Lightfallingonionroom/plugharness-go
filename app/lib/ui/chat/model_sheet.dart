@@ -223,7 +223,20 @@ class ComposerEffortKey extends ConsumerWidget {
     final index = efforts.isEmpty ? -1 : efforts.indexWhere((e) => e.id == current).clamp(0, efforts.length - 1);
     final progress = efforts.length < 2 || index < 0 ? 0.5 : index / (efforts.length - 1);
     void open() {
-      if (efforts.length < 2 || effective == null) return;
+      // 评论 C：这个键必须真能点开。以前 efforts < 2 时静默 return，用户点了
+      // 毫无反应（"摆设"）。现在两种情况都给回应：
+      //   · 模型有 ≥2 档 → 打开档位选择；
+      //   · 目录未到 / 模型不支持档位 → 弹一个说明弹层，讲清原因，不静默吞掉。
+      if (effective == null || efforts.length < 2) {
+        showEffortUnavailableSheet(
+          context,
+          modelName: model?.name,
+          reason: effective == null
+              ? EffortUnavailableReason.noModel
+              : EffortUnavailableReason.modelHasNoEfforts,
+        );
+        return;
+      }
       showEffortSheet(
         context,
         current: effective,
@@ -249,6 +262,50 @@ class ComposerEffortKey extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// 为什么这个模型的思考强度不可调。评论 C 要求「不支持时明确禁用并解释原因」。
+enum EffortUnavailableReason {
+  /// 还没拿到模型目录（没连接、正在加载）。
+  noModel,
+
+  /// 模型目录到了，但这个模型只支持一个档位（或不支持）。
+  modelHasNoEfforts,
+}
+
+/// 推理强度不可调时的说明弹层：不静默吞掉点击，而是讲清为什么。
+///
+/// 以前 `ComposerEffortKey` 在 `efforts.length < 2` 时直接 return，键看起来
+/// 能点、点了没反应——评论 C 把这叫作"摆设"。这里给出可见原因。
+Future<void> showEffortUnavailableSheet(
+  BuildContext context, {
+  String? modelName,
+  required EffortUnavailableReason reason,
+}) {
+  final l10n = appL10n;
+  final body = switch (reason) {
+    EffortUnavailableReason.noModel => l10n.chatEffortUnavailableNoModel,
+    EffortUnavailableReason.modelHasNoEfforts =>
+      l10n.chatEffortUnavailableModelFixed(modelName ?? l10n.viewModelSelect),
+  };
+  return showAppSheet<void>(
+    context,
+    isScrollControlled: true,
+    builder: (sheet) => SafeArea(
+      top: false,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SheetTitleBar(l10n.viewModelEffort),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 20),
+            child: Text(body, style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.6)),
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 /// 推理强度的档位面板：一排胶囊，选了立刻生效并收起。

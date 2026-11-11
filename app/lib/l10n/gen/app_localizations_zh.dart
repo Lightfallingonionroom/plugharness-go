@@ -19743,6 +19743,14 @@ class L10nZh extends L10n {
   String get viewModelEffort => '思考深度';
 
   @override
+  String get chatEffortUnavailableNoModel => '还没拿到模型列表。连接引擎后这个仪表就能调了。';
+
+  @override
+  String chatEffortUnavailableModelFixed(String model) {
+    return '$model 只有一个思考档位，不需要调。换一个支持多档的模型就会亮起来。';
+  }
+
+  @override
   String get viewModelKeyRequired => '需要 API Key';
 
   @override

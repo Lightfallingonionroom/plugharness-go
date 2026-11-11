@@ -12414,6 +12414,15 @@
   "viewModelDisconnected": "未连接引擎",
   "viewModelConnectHint": "连接后即可选择模型",
   "viewModelEffort": "思考深度",
+  "chatEffortUnavailableNoModel": "还没拿到模型列表。连接引擎后这个仪表就能调了。",
+  "chatEffortUnavailableModelFixed": "{model} 只有一个思考档位，不需要调。换一个支持多档的模型就会亮起来。",
+  "@chatEffortUnavailableModelFixed": {
+    "placeholders": {
+      "model": {
+        "type": "String"
+      }
+    }
+  },
   "viewModelKeyRequired": "需要 API Key",
   "viewModelProvidersHint": "支持 DeepSeek 和其他模型渠道",
   "viewModelEnterKey": "填写 API Key",

@@ -35936,6 +35936,18 @@ abstract class L10n {
   /// **'思考深度'**
   String get viewModelEffort;
 
+  /// No description provided for @chatEffortUnavailableNoModel.
+  ///
+  /// In zh, this message translates to:
+  /// **'还没拿到模型列表。连接引擎后这个仪表就能调了。'**
+  String get chatEffortUnavailableNoModel;
+
+  /// No description provided for @chatEffortUnavailableModelFixed.
+  ///
+  /// In zh, this message translates to:
+  /// **'{model} 只有一个思考档位，不需要调。换一个支持多档的模型就会亮起来。'**
+  String chatEffortUnavailableModelFixed(String model);
+
   /// No description provided for @viewModelKeyRequired.
   ///
   /// In zh, this message translates to:

@@ -5974,6 +5974,8 @@
   "viewModelDisconnected": "Engine not connected",
   "viewModelConnectHint": "Connect to choose a model",
   "viewModelEffort": "Thinking effort",
+  "chatEffortUnavailableNoModel": "No model list yet. Connect the engine and this gauge becomes adjustable.",
+  "chatEffortUnavailableModelFixed": "{model} has a single thinking level, so there is nothing to adjust. Pick a model with several levels and it lights up.",
   "viewModelKeyRequired": "API key needed",
   "viewModelProvidersHint": "Supports DeepSeek and other model providers",
   "viewModelEnterKey": "Enter API key",
