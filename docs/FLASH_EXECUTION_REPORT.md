@@ -295,6 +295,11 @@ run `42887202240` 的 Flutter 1 job（id `130081469204`）实测：
 - l10n gen diff 曾因我手工插入 16 条键时**多留一个空行**而红，已按 CI 日志里的
   真实 `git diff` 精确删除（三份 gen 文件各一处），提交 `b2977920`。
   这是提示词 §七.2 早警告过的「手写 gen 永远和生成器不一致」，现已用 CI 输出校准。
+- **最终确认**：`42976604637`（`b2977920`）的 Flutter 0 第 11 步
+  `Analyze, and generated localization matches its source` = **success**。
+  即 `flutter analyze` 零问题 **且** `git diff --exit-code -- lib/l10n` 归零。
+  该 job 的 failure 只来自第 12 步 `Test every third file`（golden/几何测试），
+  与编译和生成物无关。
 
 ### 8.3 APK
 
