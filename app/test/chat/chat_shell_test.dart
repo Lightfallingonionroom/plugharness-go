@@ -9,6 +9,7 @@ import 'package:dsh_app/l10n/l10n.dart';
 import 'package:dsh_app/state/chat_state.dart';
 import 'package:dsh_app/ui/chat/chat_screen.dart';
 import 'package:dsh_app/ui/chat/composer.dart';
+import 'package:dsh_app/ui/chat/empty_state.dart';
 import 'package:dsh_app/ui/chat/slash_palette.dart';
 import 'package:dsh_app/ui/chat/widgets/live_clock.dart' show runClock;
 import 'package:dsh_app/ui/chat/widgets/whale_tail.dart';

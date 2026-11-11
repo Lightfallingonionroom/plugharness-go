@@ -18,6 +18,7 @@ import 'package:dsh_app/ui/chat/empty_actions.dart';
 import 'package:dsh_app/ui/chat/empty_state.dart';
 import 'package:dsh_app/ui/chat/widgets/whale_tail.dart';
 import 'package:dsh_app/ui/theme/app_icons.dart';
+import 'package:dsh_client/dsh_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;

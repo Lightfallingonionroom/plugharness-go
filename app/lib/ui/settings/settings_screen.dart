@@ -36,7 +36,6 @@ import '../features/feature_catalog.dart' show communityPage;
 import '../features/feature_format.dart' show permissionName;
 import '../features/permission_page.dart';
 import '../onboarding/api_key_page.dart' show maskApiKey;
-import '../pets/pet_settings_page.dart';
 import '../phone/phone_control_screen.dart';
 import '../plugins/plugins_screen.dart';
 import '../plugins/seats/plugin_settings_tiles.dart';
@@ -88,11 +87,9 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final settings = ref.watch(settingsProvider);
     final runtime = ref.watch(localRuntimeProvider);
     final engine = EngineStatusView.of(runtime);
     final colors = DshColors.of(context);
-    final notifier = ref.read(settingsProvider.notifier);
     final uiMode = ref.watch(uiModeProvider.select((s) => s.mode));
     final host = ref.watch(activeHostProvider);
     Widget? text(String? value, {Color? color}) =>

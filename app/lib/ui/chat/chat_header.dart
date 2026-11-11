@@ -597,16 +597,6 @@ class WorkProgressKey extends StatelessWidget {
   }
 }
 
-/// Marks the model chip inside the trailing pieces, so the bar can weigh its
-/// widths apart from the agents capsule beside it.
-class _ChipSlot extends SingleChildRenderObjectWidget {
-  const _ChipSlot({required super.child});
-
-  @override
-  RenderObject createRenderObject(BuildContext context) => _RenderChipSlot();
-}
-
-class _RenderChipSlot extends RenderProxyBox {}
 
 /// The bar's pieces on one line: the left key (≡ or the breadcrumb), the
   /// title block, the trailing pieces (agents capsule, the 工作进展 key) and the

@@ -200,7 +200,7 @@ class ThinkingRulesController extends Notifier<ThinkingRulesState> {
   ));
 
   Future<void> remove(String id) => _write(state.copyWith(
-    rules: [for (final r in state.rules) r.id != id],
+    rules: [for (final r in state.rules) if (r.id != id) r],
   ));
 
   /// 把 [id] 的规则与它前一条交换（上移）。

@@ -35,7 +35,6 @@ import '../common/read_list_status.dart';
 import '../common/status_dot.dart';
 import '../onboarding/local_install.dart';
 import '../remote/host_status.dart';
-import '../remote/host_switcher.dart' show showHostSheet;
 import '../remote/network_details_sheet.dart' show showRemoteNetworkDetails;
 import '../safe_mode/engine_failure_card.dart';
 import '../safe_mode/safe_mode_banner.dart';
@@ -642,10 +641,11 @@ class _DrawerConversationSliver extends ConsumerWidget {
     final scope = ref.watch(drawerScopeProvider);
     if (scope == null) {
       if (ref.watch(readListLiveConnectionProvider) == null && !sessions.isLoading) {
-        return _Centered(child: _EmptyState(), extent: _emptyExtent(context));
+        return _Centered(extent: _emptyExtent(context), child: _EmptyState());
       }
       if (sessions.hasError) {
         return _Centered(
+          extent: _emptyExtent(context),
           child: EmptyView(
             compact: true,
             icon: AppIcons.offline,
@@ -653,7 +653,6 @@ class _DrawerConversationSliver extends ConsumerWidget {
             actionLabel: l10n.commonRetry,
             onAction: () => ref.read(sessionsProvider.notifier).refresh(),
           ),
-          extent: _emptyExtent(context),
         );
       }
       return const SliverToBoxAdapter(child: _SkeletonList());
@@ -1394,98 +1393,6 @@ class _DrawerAvatar extends StatelessWidget {
                 child: Icon(AppIcons.avatar, size: 20, color: shell.secondaryText),
               ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-
-/// 抽屉顶部的「Agent 体征」条：这台 Agent 现在是什么状态、有几样本事。
-///
-/// 为什么要有这一条：ChatGPT 的侧栏只有会话列表，它不需要告诉用户「模型在不在」。
-/// PlugHarness 是个宿主——用户得先知道引擎起没起、插件装没装，才谈得上「让 Agent 干活」。
-/// 把这些塞进侧栏能把「去设置页查状态」的往返省掉。
-///
-/// 三条克制规则：
-/// - **没有信息就不占位**：断线、未安装、插件清单未就绪时整条收起，不留空壳；
-/// - **一行说完**：最多两个分段（引擎 / 插件），再多就换行而不是挤；
-/// - **可点即去**：点它打开引擎页，与 `SafeModeBanner` 的落点一致。
-///
-/// **这一条现在没有接线**：2026-11 的侧栏改版把它从固定区挪走后没有再放回
-/// 滚动体，所以它当前不被任何地方构造。保留是因为「引擎起没起」在窄屏侧栏
-/// 仍然有信息价值，但**不要以为它在侧栏上看得见** —— 要恢复就得把它放进
-/// `_DrawerConversationSliver` 上方的 sliver 里（并配几何测试）。
-class _AgentVitals extends ConsumerWidget {
-  const _AgentVitals({required this.padding});
-
-  final EdgeInsets padding;
-
-  /// 分段之间的点。
-  static const _gap = 6.0;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final phase = ref.watch(localRuntimeProvider.select((s) => s.status.phase));
-    final plugins = ref.watch(cordisInventoryProvider).value;
-
-    final segments = <String>[];
-    // 引擎：只说「在跑」和「还没起来」，busy 的中间态不在这里播报（顶栏已有）。
-    if (phase == RuntimePhase.running) {
-      segments.add(context.l10n.shellVitalsEngineRunning);
-    } else if (phase == RuntimePhase.notInstalled) {
-      segments.add(context.l10n.shellVitalsEngineMissing);
-    } else if (phase == RuntimePhase.error) {
-      segments.add(context.l10n.shellVitalsEngineError);
-    }
-    final count = plugins?.length;
-    if (count != null && count > 0) {
-      segments.add(context.l10n.shellVitalsPlugins(count));
-    }
-    if (segments.isEmpty) return const SizedBox.shrink();
-
-    final shell = ChatGptShellColors.of(context);
-    final theme = Theme.of(context);
-    final row = Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        for (var i = 0; i < segments.length; i++) ...[
-          if (i > 0) const SizedBox(width: _gap),
-          if (i > 0)
-            Text('·', style: theme.textTheme.bodySmall?.copyWith(color: shell.tertiaryText))
-          else
-            Container(
-              width: 5,
-              height: 5,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: phase == RuntimePhase.running ? DshColors.of(context).success : shell.tertiaryText,
-              ),
-            ),
-          if (i > 0) const SizedBox(width: _gap),
-          Flexible(
-            child: Text(
-              segments[i],
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.bodySmall?.copyWith(color: shell.tertiaryText),
-            ),
-          ),
-        ],
-      ],
-    );
-
-    return Padding(
-      padding: padding,
-      child: Semantics(
-        button: true,
-        label: segments.join('，'),
-        child: Pressable(
-          onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const EngineScreen())),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            child: Align(alignment: AlignmentDirectional.centerStart, child: row),
           ),
         ),
       ),

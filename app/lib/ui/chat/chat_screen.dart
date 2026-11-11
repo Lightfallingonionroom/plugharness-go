@@ -80,7 +80,6 @@ import 'chat_header.dart';
 import 'chat_list.dart';
 import 'composer.dart';
 import 'composer_toast.dart';
-import 'control_icons.dart';
 import 'dock/chat_dock.dart';
 import 'dock/dock_stack.dart';
 import 'empty_state.dart';

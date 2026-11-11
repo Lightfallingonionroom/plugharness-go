@@ -172,7 +172,7 @@ class _FallbackRow extends ConsumerWidget {
     final l10n = context.l10n;
     final state = ref.watch(thinkingRulesProvider);
     // SegmentedPill 要求至少两段；目录还没加载时补 off/high，避免 assert。
-    final available = efforts.length >= 1 ? efforts : ['off', 'high'];
+    final available = efforts.isNotEmpty ? efforts : ['off', 'high'];
     final options = <PillSegment<String?>>[
       PillSegment<String?>(null, l10n.thinkingRulesFallbackNone),
       for (final e in available) PillSegment<String?>(e, effortLabel(e)),
