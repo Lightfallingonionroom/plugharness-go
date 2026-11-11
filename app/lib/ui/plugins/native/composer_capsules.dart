@@ -19,6 +19,7 @@ import '../../../l10n/l10n.dart';
 import '../../../plugins/native/native_model.dart';
 import '../../../plugins/native/native_state.dart';
 import '../../../ui_config/ui_config_model.dart';
+import '../../../ui_config/ui_config_state.dart';
 import '../../common/edge_fade.dart';
 import '../../pets/pet_perch.dart';
 import '../../theme/theme.dart';
