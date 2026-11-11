@@ -289,7 +289,8 @@ run `42887202240` 的 Flutter 1 job（id `130081469204`）实测：
 | `941c1e4c` | `@` 菜单加「插件」分组（读参考仓库后的最小实现） |
 | `b2977920` | 按 CI 真实 gen diff 删掉 gen 文件多出的空行 |
 | `70cf0f39` / `e6bbc0c4` | 补执行报告 §八、确认 analyze 与 l10n 全绿 |
-| `9516b634` | **恢复 `Flexible`，修 33 条顶栏几何回归** |
+| `9516b634` | 恢复 `Flexible`，修顶栏几何 gap 回归（第一轮，未竟） |
+| `c99964a6` | **完整恢复顶栏收缩算法 + `_ChipSlot` 标记，修 33 条几何回归** |
 
 ### 8.2 analyze / l10n：已全绿
 
@@ -336,13 +337,18 @@ Flutter 1/2 仍有失败，构成：
   （某个 `AppAccent.derive` 极端色让两者成同色）。**这是既存的 accent
   守卫边界问题，与本批改动无关**。按提示词要求：改色值是设计决策，
   判断不了就写成**待决问题**，不瞎改。
-- **`chat_header_geometry_test` 33 条：已定位并修复（`9516b634`）**。
-  不是「布局变更的必然结果」，而是我引入的**真实布局 bug**：上一轮删
-  `_ChipSlot`（空 `RenderProxyBox` 包装，analyze 报 unused）时，把包在
-  外面的 **`Flexible`** 一起删了。`Flexible` 不是装饰，它让长 trailing
-  （模型胶囊的文字）在窄屏收缩；去掉后标题被挤成负宽度
-  （实测 `fresh.left - chip.right = -58.7`，期望 8），crowded 组 33 条全挂。
-  已恢复 `Flexible(child: trailing)`，只留裸 child。等 CI 复核。
+- **`chat_header_geometry_test` 33 条：两轮才查清并修完（`9516b634` → `c99964a6`）**。
+  第一轮只恢复了 `Flexible`，CI 复核后 33 条仍全挂，但失败位置从第 169 行
+  （gap 断言，实测 `-58.7`）前移到第 197 行（`titleText.didExceedMaxLines`），
+  说明几何放对了、收缩顺序仍错。追到 `main` 的 `_RenderHeaderRow.performLayout`：
+  它靠 `_chipIn(trailing)` 认出模型胶囊，先算 `chipWhole / named / compact`
+  压缩 trailing，再给标题留 floor，最后 `title.layout(room - trailing.size.width)`。
+  我此前把这套算法连同 `_ChipSlot`（非空壳，是类型标记）一起简化成了
+  「trailing 先 `layout(loose)` 拿满自然宽度，剩下的才给标题」，于是标题溢出。
+  `c99964a6` 完整恢复算法与 `_ChipSlot`，并只对 `ModelChip` 挂标记：app 实际
+  传的 `WorkProgressKey` 是 44 定宽圆钮，不能按 36 的 `compactWidth` 误压。
+  这 33 条是组件级测试（直接给 `ChatHeader` 传 `ModelChip` 验证窄屏契约），
+  **不是过时断言**，不能删。等 CI 复核。
 - **`chat_shell_test` 4 条**：一条断言还在找已删的空态固定标题
   「有什么可以帮你？」，已改为断言 `ChatEmptyState` 存在（`9516b634`）；
   另 3 条（model sheet / send options）仍在查，疑似输入条结构变更后
@@ -357,8 +363,7 @@ Flutter 1/2 仍有失败，构成：
 1. **golden 是否重拍**——不重拍则合并后 CI 长期因 golden 红。
 2. **`palette_contrast_test` 剩 1 条**——是否调整 derive 的 container/onContainer
    守卫（设计决策）。
-3. **`chat_header_geometry_test` 33 条**——已定位为我误删 `Flexible`
-   并修复（`9516b634`），只等 CI 复核；不再是待决方向问题。
+3. ~~`chat_header_geometry_test` 33 条~~ → 完整根因已修（`c99964a6`），只等 CI 复核；不再是待决方向问题。
 4. **`@` 是否也要在菜单里列出 Skills**（当前靠 `/` 菜单，参考仓库是
    `@` 与 `/` 都列）。
 
