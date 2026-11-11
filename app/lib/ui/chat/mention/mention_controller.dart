@@ -24,6 +24,8 @@ class MentionItem {
     this.path,
     this.sessionId,
     this.subagent = false,
+    // 纯文本插入：不画引用 chip（用于插件这类「提示」而非文件/会话引用）。
+    this.plain = false,
   });
 
   /// `f:<path>` or `s:<sessionId>`.
@@ -45,7 +47,24 @@ class MentionItem {
   final String? sessionId;
   final bool subagent;
 
+  /// 纯文本插入，不生成引用 token（不画 chip）。
+  final bool plain;
+
   bool get drillable => kind == MentionKind.folder;
+}
+
+/// 一个可被引用的已安装插件。
+///
+/// 参考 `dsh-reference-anything`：它的「本地插件」分组把插件目录喂给 Agent。
+/// 我们不伪造 DSH 的引用协议（wire format 只认文件与会话），改用纯文本
+/// `@<moduleName> ` 作为提示，让 Agent 自己去查该插件。
+class MentionPlugin {
+  const MentionPlugin({required this.moduleName, this.title, this.description, this.enabled = true});
+
+  final String moduleName;
+  final String? title;
+  final String? description;
+  final bool enabled;
 }
 
 /// A titled group of rows.
@@ -67,6 +86,8 @@ class MentionPickerController extends ChangeNotifier {
     required this.sessionId,
     required this.localSessions,
     required this.recents,
+    // 可选的插件候选源：不传就没有「插件」分组（测试里的 fake 无需改动）。
+    this.plugins,
     this.debounce = const Duration(milliseconds: 120),
     DateTime Function()? clock,
   }) : _clock = clock ?? DateTime.now {
@@ -91,6 +112,9 @@ class MentionPickerController extends ChangeNotifier {
   /// The visible (not archived, not subagent) conversations of this host.
   final Future<List<SessionSummary>> Function() localSessions;
   final MentionRecents recents;
+
+  /// 已安装插件的候选源；null 时不显示「插件」分组。
+  final Future<List<MentionPlugin>> Function()? plugins;
   final Duration debounce;
   final DateTime Function() _clock;
 
@@ -199,7 +223,33 @@ class MentionPickerController extends ChangeNotifier {
     MentionQuery q,
   ) async {
     final now = _clock();
-    if (src == null) return (sections: const <MentionSection>[], cwd: null);
+    // 插件候选不依赖 session，也不依赖文件/会话查询是否成功：单独一个域，
+    // 失败就当没有（参考 dsh-reference-anything 的「一个域失败不影响其它」）。
+    final pluginsFuture = plugins == null || q.pathOnly
+        ? Future.value(const <MentionPlugin>[])
+        : plugins!().catchError((_) => <MentionPlugin>[]);
+    List<MentionItem> pluginItems(List<MentionPlugin> rows, String query) => [
+      for (final p in rows)
+        if (p.enabled && fuzzyScore('${p.title ?? ''} ${p.moduleName}', query) != null)
+          MentionItem(
+            key: 'p:${p.moduleName}',
+            kind: MentionKind.file,
+            label: p.title ?? p.moduleName,
+            detail: p.description,
+            // moduleName 本身就带 @scope/ 前缀，不再额外加 @。
+            mention: p.moduleName,
+            plain: true,
+          ),
+    ];
+    if (src == null) {
+      final rows = pluginItems(await pluginsFuture, q.query);
+      return (
+        sections: rows.isEmpty
+            ? const <MentionSection>[]
+            : [MentionSection(appL10n.hubPlugins, rows.take(20).toList())],
+        cwd: null,
+      );
+    }
     if (sid == null) {
       // A new chat has no workspace yet: other conversations only, built
       // from the local list.
@@ -230,6 +280,7 @@ class MentionPickerController extends ChangeNotifier {
           files: const [],
           subagents: const [],
           conversations: conversations,
+          plugins: pluginItems(await pluginsFuture, q.query),
           cwd: null,
           sid: null,
         ),
@@ -309,6 +360,7 @@ class MentionPickerController extends ChangeNotifier {
         files: _boost(fileItems),
         subagents: subagents,
         conversations: conversations,
+        plugins: pluginItems(await pluginsFuture, q.query),
         cwd: cwd,
         sid: sid,
       ),
@@ -355,6 +407,7 @@ class MentionPickerController extends ChangeNotifier {
     required List<MentionItem> files,
     required List<MentionItem> subagents,
     required List<MentionItem> conversations,
+    required List<MentionItem> plugins,
     required String? cwd,
     required String? sid,
   }) {
@@ -362,11 +415,12 @@ class MentionPickerController extends ChangeNotifier {
       return [
         if (files.isNotEmpty) MentionSection(appL10n.chatFile, files),
         if (subagents.isNotEmpty) MentionSection(appL10n.chatSubagent, subagents),
+        if (plugins.isNotEmpty) MentionSection(appL10n.hubPlugins, plugins.take(20).toList()),
         if (conversations.isNotEmpty) MentionSection(appL10n.chatChat, conversations.take(20).toList()),
       ];
     }
     // A bare `@`: what was picked lately, then a few of each.
-    final candidates = [...files, ...subagents, ...conversations];
+    final candidates = [...files, ...subagents, ...conversations, ...plugins];
     final recent = <MentionItem>[];
     for (final entry in recents.entries) {
       if (recent.length == 3) break;
@@ -382,11 +436,13 @@ class MentionPickerController extends ChangeNotifier {
     ].take(n).toList();
     final f = rest(files, 5);
     final s = rest(subagents, 4);
+    final p = rest(plugins, 4);
     final c = rest(conversations, 8);
     return [
       if (recent.isNotEmpty) MentionSection(appL10n.chatRecent, recent),
       if (f.isNotEmpty) MentionSection(appL10n.chatFile, f),
       if (s.isNotEmpty) MentionSection(appL10n.chatSubagent, s),
+      if (p.isNotEmpty) MentionSection(appL10n.hubPlugins, p),
       if (c.isNotEmpty) MentionSection(appL10n.chatChat, c),
     ];
   }
@@ -406,7 +462,18 @@ class MentionPickerController extends ChangeNotifier {
       ),
     );
     if (item.kind == MentionKind.session) MentionLabels.add(item.label);
-    input.insertMention(item.mention, start: q.start, end: q.end);
+    if (item.plain) {
+      // 纯文本提示：直接替换 @ 词，不生成引用 token、不画 chip。
+      final text = input.text;
+      final next = text.replaceRange(q.start, q.end, '${item.mention} ');
+      final caret = q.start + item.mention.length + 1;
+      input.value = TextEditingValue(
+        text: next,
+        selection: TextSelection.collapsed(offset: caret),
+      );
+    } else {
+      input.insertMention(item.mention, start: q.start, end: q.end);
+    }
   }
 
   /// Opens [item] (a folder) in the picker instead of picking it.

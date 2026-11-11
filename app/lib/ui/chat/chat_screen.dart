@@ -176,6 +176,24 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     sessionId: () => ref.read(currentSessionProvider),
     localSessions: () => ref.read(sessionsProvider.future),
     recents: ref.read(mentionRecentsProvider),
+    // 「插件」分组：一个 @ 菜单里引用已安装的插件。数据源是 Host 的
+    // pluginManager/listPlugins；单独一个域，失败时返回空而不影响文件/会话。
+    plugins: () async {
+      final client = ref.read(activeConnectionProvider).value?.client;
+      if (client == null) return const <MentionPlugin>[];
+      final locale = appL10n.localeName;
+      final entries = await client.listPlugins();
+      return [
+        for (final e in entries)
+          if (e.moduleName.isNotEmpty)
+            MentionPlugin(
+              moduleName: e.moduleName,
+              title: e.meta?.title?.resolve(locale),
+              description: e.meta?.description?.resolve(locale),
+              enabled: e.enabled,
+            ),
+      ];
+    },
   );
 
   /// Dictation into [_input]. Made in [initState], not on first use: a

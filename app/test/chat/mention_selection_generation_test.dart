@@ -35,15 +35,19 @@ class _Source implements MentionSource {
 }
 
 class _Fixture {
-  _Fixture() {
+  _Fixture({this.plugins}) {
     picker = MentionPickerController(
       input: input,
       source: () => source,
       sessionId: () => 'main',
       localSessions: () async => const [],
       recents: recents,
+      plugins: plugins,
     );
   }
+
+  /// 可选的插件候选源；不传时 @ 菜单里没有「插件」分组。
+  final Future<List<MentionPlugin>> Function()? plugins;
 
   final input = MentionTextController();
   final source = _Source();
@@ -181,5 +185,46 @@ void main() {
     expect(f.picker.pickHighlighted(), isFalse);
     f.picker.pick(f.picker.items.first);
     expect(f.input.text, '@old.txt ');
+  });
+
+  // ── 插件分组（docs/AT_MENTION_RESEARCH_2026-11-11.md）──────────────────
+  group('plugin mentions', () {
+    const entries = [
+      MentionPlugin(moduleName: '@dsh/phone', title: '手机操控'),
+      MentionPlugin(moduleName: '@dsh/mcp-github', title: 'GitHub MCP', description: 'MCP 工具'),
+      MentionPlugin(moduleName: '@dsh/disabled', title: '停用插件', enabled: false),
+    ];
+
+    testWidgets('typed @ shows an enable-only plugin section', (tester) async {
+      final f = _Fixture(plugins: () async => entries);
+      addTearDown(f.dispose);
+      f.type('@git');
+      await tester.pump();
+      // 「插件」分组只收启用的、名字匹配查询的插件。
+      final pluginItems = f.picker.items.where((i) => i.plain).toList();
+      expect(pluginItems, hasLength(1));
+      expect(pluginItems.single.key, 'p:@dsh/mcp-github');
+      expect(pluginItems.single.label, 'GitHub MCP');
+    });
+
+    testWidgets('picking a plugin inserts plain text, not a reference chip', (tester) async {
+      final f = _Fixture(plugins: () async => entries);
+      addTearDown(f.dispose);
+      f.type('@git');
+      await tester.pump();
+      final item = f.picker.items.firstWhere((i) => i.plain);
+      f.picker.pick(item);
+      expect(f.input.text, '@dsh/mcp-github ');
+      // plain 项不生成 MentionToken → 输入条不画引用 chip。
+      expect(f.input.tokens, isEmpty);
+    });
+
+    testWidgets('no plugin source means no plugin section', (tester) async {
+      final f = _Fixture();
+      addTearDown(f.dispose);
+      f.type('@git');
+      await tester.pump();
+      expect(f.picker.items.where((i) => i.plain), isEmpty);
+    });
   });
 }

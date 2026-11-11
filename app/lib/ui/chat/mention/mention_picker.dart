@@ -168,7 +168,7 @@ class _MentionTile extends StatelessWidget {
     final colors = theme.colorScheme;
     final dsh = DshColors.of(context);
     final detail = item.detail;
-    final kind = MentionChip.semanticKind(item.kind);
+    final kind = item.plain ? l10n.hubPlugins : MentionChip.semanticKind(item.kind);
 
     final tile = Material(
       type: MaterialType.transparency,
@@ -190,7 +190,11 @@ class _MentionTile extends StatelessWidget {
               SizedBox(
                 width: 32,
                 child: Icon(
-                  item.subagent ? AppIcons.subagents : MentionChip.iconFor(item.kind),
+                  item.plain
+                      ? AppIcons.plugin
+                      : item.subagent
+                          ? AppIcons.subagents
+                          : MentionChip.iconFor(item.kind),
                   size: 20,
                   color: colors.onSurfaceVariant,
                 ),
