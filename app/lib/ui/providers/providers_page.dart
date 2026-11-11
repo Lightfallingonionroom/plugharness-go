@@ -24,6 +24,7 @@ import '../features/feature_kit.dart';
 import '../features/feature_widgets.dart';
 import '../onboarding/api_key_page.dart' show maskApiKey;
 import '../settings/index/spots.dart';
+import '../settings/thinking_rules_page.dart';
 import '../shell/page_frame.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
@@ -57,6 +58,12 @@ class ProvidersPage extends ConsumerWidget {
           : Text(summary),
       children: [
         const NewChatDefaultsCard(),
+        ListPageRow(
+          icon: AppIcons.workflow,
+          title: l10n.thinkingRulesTitle,
+          subtitle: l10n.thinkingRulesEntry,
+          onTap: () => _push(context, const ThinkingRulesPage()),
+        ),
         const _DeepSeekCard(),
         const _SubscriptionAccounts(),
         if (view.value?.supported == false)

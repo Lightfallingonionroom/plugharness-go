@@ -4913,6 +4913,55 @@ class L10nEn extends L10n {
   String get chatComposerControlsNewChat => 'Set after this chat starts';
 
   @override
+  String get thinkingRulesTitle => 'Thinking rules';
+
+  @override
+  String get thinkingRulesEntry => 'Reasoning effort per model';
+
+  @override
+  String get thinkingRulesEmpty => 'No rules yet. The current effort is kept when you send.';
+
+  @override
+  String get thinkingRulesAdd => 'Add rule';
+
+  @override
+  String get thinkingRulesMatch => 'Match model';
+
+  @override
+  String get thinkingRulesProvider => 'Provider (* for any)';
+
+  @override
+  String get thinkingRulesModel => 'Model (* or deepseek-*)';
+
+  @override
+  String get thinkingRulesEffort => 'Effort to write';
+
+  @override
+  String get thinkingRulesAlways => 'Always on';
+
+  @override
+  String get thinkingRulesManual => 'Manual only';
+
+  @override
+  String get thinkingRulesEnable => 'Enabled';
+
+  @override
+  String get thinkingRulesMoveUp => 'Move up';
+
+  @override
+  String get thinkingRulesMoveDown => 'Move down';
+
+  @override
+  String get thinkingRulesDelete => 'Delete';
+
+  @override
+  String get thinkingRulesFallback => 'Fallback effort';
+
+  @override
+  String get thinkingRulesFallbackNone => 'Keep current';
+
+
+  @override
   String get commonCancel => 'Cancel';
 
   @override

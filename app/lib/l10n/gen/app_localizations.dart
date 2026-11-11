@@ -8486,6 +8486,103 @@ abstract class L10n {
   /// **'新对话发出去后再设置'**
   String get chatComposerControlsNewChat;
 
+  /// No description provided for @thinkingRulesTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'思考配置'**
+  String get thinkingRulesTitle;
+
+  /// No description provided for @thinkingRulesEntry.
+  ///
+  /// In zh, this message translates to:
+  /// **'按模型分别设置思考强度'**
+  String get thinkingRulesEntry;
+
+  /// No description provided for @thinkingRulesEmpty.
+  ///
+  /// In zh, this message translates to:
+  /// **'还没有规则。发消息时会保留当前档位。'**
+  String get thinkingRulesEmpty;
+
+  /// No description provided for @thinkingRulesAdd.
+  ///
+  /// In zh, this message translates to:
+  /// **'添加规则'**
+  String get thinkingRulesAdd;
+
+  /// No description provided for @thinkingRulesMatch.
+  ///
+  /// In zh, this message translates to:
+  /// **'匹配模型'**
+  String get thinkingRulesMatch;
+
+  /// No description provided for @thinkingRulesProvider.
+  ///
+  /// In zh, this message translates to:
+  /// **'服务商（* 通配）'**
+  String get thinkingRulesProvider;
+
+  /// No description provided for @thinkingRulesModel.
+  ///
+  /// In zh, this message translates to:
+  /// **'模型（* 或 deepseek-*）'**
+  String get thinkingRulesModel;
+
+  /// No description provided for @thinkingRulesEffort.
+  ///
+  /// In zh, this message translates to:
+  /// **'写入档位'**
+  String get thinkingRulesEffort;
+
+  /// No description provided for @thinkingRulesAlways.
+  ///
+  /// In zh, this message translates to:
+  /// **'始终开启'**
+  String get thinkingRulesAlways;
+
+  /// No description provided for @thinkingRulesManual.
+  ///
+  /// In zh, this message translates to:
+  /// **'仅手动'**
+  String get thinkingRulesManual;
+
+  /// No description provided for @thinkingRulesEnable.
+  ///
+  /// In zh, this message translates to:
+  /// **'启用'**
+  String get thinkingRulesEnable;
+
+  /// No description provided for @thinkingRulesMoveUp.
+  ///
+  /// In zh, this message translates to:
+  /// **'上移'**
+  String get thinkingRulesMoveUp;
+
+  /// No description provided for @thinkingRulesMoveDown.
+  ///
+  /// In zh, this message translates to:
+  /// **'下移'**
+  String get thinkingRulesMoveDown;
+
+  /// No description provided for @thinkingRulesDelete.
+  ///
+  /// In zh, this message translates to:
+  /// **'删除'**
+  String get thinkingRulesDelete;
+
+  /// No description provided for @thinkingRulesFallback.
+  ///
+  /// In zh, this message translates to:
+  /// **'未命中时的兜底档位'**
+  String get thinkingRulesFallback;
+
+  /// No description provided for @thinkingRulesFallbackNone.
+  ///
+  /// In zh, this message translates to:
+  /// **'不改动'**
+  String get thinkingRulesFallbackNone;
+
+
   /// No description provided for @commonCancel.
   ///
   /// In zh, this message translates to:

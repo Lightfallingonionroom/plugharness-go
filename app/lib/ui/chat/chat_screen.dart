@@ -40,6 +40,7 @@ import '../../state/session_search.dart' show folderLabel;
 import '../../state/safe_mode_state.dart';
 import '../../state/session_modes.dart';
 import '../../state/sessions_state.dart';
+import '../../state/thinking_rules_state.dart';
 import '../../state/settings_state.dart';
 import '../../state/usage_state.dart';
 import '../../state/voice_state.dart';
@@ -675,9 +676,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     _input.clear();
     ref.read(composerQuoteProvider.notifier).clear(sessionId);
 
-    // One open question and nothing else waiting: the text is its answer
-    // (a steer would wait behind the question).
+    // 思考配置规则层：发消息这一刻按「当前模型」求值，结果仍写进
+    // ModelSelection.reasoningEffort，走 setModel() 这条已有链路。
+    // 只有规则确实改了档位才发 RPC，避免每条消息多一次往返。
     final current = ref.read(chatProvider(sessionId));
+    final selection = current.model;
+    if (selection != null) {
+      final ruled = applyThinkingRules(selection, ref.read(thinkingRulesProvider));
+      if (!identical(ruled, selection)) await chat.setModel(ruled);
+    }
     final bool ok;
     if (current.singleQuestion case final request?
         when drafts.isEmpty &&

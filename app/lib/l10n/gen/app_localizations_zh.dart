@@ -4615,6 +4615,55 @@ class L10nZh extends L10n {
   String get chatComposerControlsNewChat => '新对话发出去后再设置';
 
   @override
+  String get thinkingRulesTitle => '思考配置';
+
+  @override
+  String get thinkingRulesEntry => '按模型分别设置思考强度';
+
+  @override
+  String get thinkingRulesEmpty => '还没有规则。发消息时会保留当前档位。';
+
+  @override
+  String get thinkingRulesAdd => '添加规则';
+
+  @override
+  String get thinkingRulesMatch => '匹配模型';
+
+  @override
+  String get thinkingRulesProvider => '服务商（* 通配）';
+
+  @override
+  String get thinkingRulesModel => '模型（* 或 deepseek-*）';
+
+  @override
+  String get thinkingRulesEffort => '写入档位';
+
+  @override
+  String get thinkingRulesAlways => '始终开启';
+
+  @override
+  String get thinkingRulesManual => '仅手动';
+
+  @override
+  String get thinkingRulesEnable => '启用';
+
+  @override
+  String get thinkingRulesMoveUp => '上移';
+
+  @override
+  String get thinkingRulesMoveDown => '下移';
+
+  @override
+  String get thinkingRulesDelete => '删除';
+
+  @override
+  String get thinkingRulesFallback => '未命中时的兜底档位';
+
+  @override
+  String get thinkingRulesFallbackNone => '不改动';
+
+
+  @override
   String get commonCancel => '取消';
 
   @override
