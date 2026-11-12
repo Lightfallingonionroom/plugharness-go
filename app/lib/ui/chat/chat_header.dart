@@ -315,23 +315,22 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
       ),
     );
     if (quickRow == null) return bar;
+    // The bar is the Stack's non-Positioned child so it supplies bounded
+    // constraints; wrapping it in a Positioned would leave the Stack
+    // unconstrained and break ChatScreen's layout in every widget test.
     return Stack(
       clipBehavior: Clip.none,
       children: [
+        Padding(
+          padding: EdgeInsets.only(top: quickRowHeight),
+          child: bar,
+        ),
         Positioned(
-          left: 0,
-          right: 0,
+          left: 12,
+          right: 12,
           top: top,
           height: quickRowHeight,
           child: quickRow,
-        ),
-        // The bar keeps its own status-bar inset; shift the whole bar down so
-        // the quick-access row really sits above the title, not over it.
-        Positioned(
-          left: 0,
-          right: 0,
-          top: quickRowHeight,
-          child: bar,
         ),
       ],
     );
@@ -376,30 +375,22 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
     final chrome = AdaptiveChrome.maybeOf(context);
     // The stack is only as tall as the bar; the fade runs 12dp past it, so it
     // must not clip (a clipped fade is a hard line right under the pills).
-    // The quick-access row sits above the title bar in its own line; the bar
-    // itself is shifted down by [quickAccessHeight] so its geometry (and all
-    // the tests that read 'chat-header-bar') stay unchanged.
-    final quick = widget.quickAccess;
-    final quickHeight = quick == null ? 0.0 : ChatHeader.quickAccessHeight;
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Positioned(
-          left: 0,
-          right: 0,
-          top: top,
-          height: quickHeight,
-          child: quick ?? const SizedBox.shrink(),
-        ),
-        Positioned(
-          left: 0,
-          right: 0,
-          top: quickHeight,
-          child: _barStack(context, top: top, barHeight: barHeight, pillHeight: pillHeight,
-              titleStyle: titleStyle, statusStyle: statusStyle, titleFloor: titleFloor,
-              clockExtra: clockExtra, chrome: chrome),
-        ),
-      ],
+    // The quick-access row sits above the title bar in its own line. It is a
+    // *Positioned* child of the existing bar Stack, whose non-Positioned
+    // Padding child supplies the Stack's bounded size; wrapping the bar in a
+    // new all-Positioned Stack would leave it unconstrained and break every
+    // ChatScreen layout.
+    return _barStack(
+      context,
+      top: top,
+      barHeight: barHeight,
+      pillHeight: pillHeight,
+      titleStyle: titleStyle,
+      statusStyle: statusStyle,
+      titleFloor: titleFloor,
+      clockExtra: clockExtra,
+      chrome: chrome,
+      quickAccess: widget.quickAccess,
     );
   }
 
@@ -414,12 +405,22 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
     required double titleFloor,
     required double clockExtra,
     required AdaptiveChrome? chrome,
+    Widget? quickAccess,
   }) {
     final l10n = context.l10n;
     final dsh = DshColors.of(context);
+    final quickHeight = quickAccess == null ? 0.0 : ChatHeader.quickAccessHeight;
     return Stack(
       clipBehavior: Clip.none,
       children: [
+        if (quickAccess != null)
+          Positioned(
+            left: 12,
+            right: 12,
+            top: top,
+            height: quickHeight,
+            child: quickAccess,
+          ),
         Positioned(
           left: 0,
           right: 0,
@@ -433,7 +434,7 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
                 ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(12, top, 12, 0),
+          padding: EdgeInsets.fromLTRB(12, top + quickHeight, 12, 0),
           child: BackdropGroup(
             child: SizedBox(
               key: const ValueKey('chat-header-bar'),
