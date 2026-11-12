@@ -9,7 +9,6 @@
 import 'package:flutter/material.dart';
 
 import '../../l10n/l10n.dart';
-import '../theme/motion.dart';
 import '../theme/theme.dart';
 
 /// Stable keys for widget tests and golden names.
@@ -103,7 +102,7 @@ class _QuickAccessRowState extends State<QuickAccessRow> {
         key: key,
         button: true,
         enabled: enabled,
-        label: enabled ? label : '${widget.disabledHint ?? label}',
+        label: enabled ? label : (widget.disabledHint ?? label),
         excludeSemantics: true,
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
