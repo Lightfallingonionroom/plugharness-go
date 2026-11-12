@@ -15,15 +15,13 @@ import '../agents/header_agents.dart';
 import '../common/fluid_bits.dart';
 import '../common/smooth_size.dart';
 import '../common/status_dot.dart';
-import '../files/files_page.dart';
 import '../shell/adaptive/adaptive_scaffold.dart' show AdaptiveChrome;
 import '../shell/adaptive/detail_panel_keys.dart';
-import '../terminal/terminal_page.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
-import 'control_icons.dart';
 import 'header_schedule.dart';
 import 'model_sheet.dart' show ModelChip;
+import 'quick_access_row.dart';
 
 /// The flat header's own colours, read from the shell palette without making
 /// every dark/light decision here.
@@ -65,6 +63,7 @@ class ChatHeader extends ConsumerStatefulWidget {
     this.scrolledUnder,
     this.centerLabel,
     this.onCenterTap,
+    this.quickAccess,
   });
 
   final String title;
@@ -78,11 +77,15 @@ class ChatHeader extends ConsumerStatefulWidget {
   final String? centerLabel;
   final Future<void> Function()? onCenterTap;
 
+  /// The quick-access row above the title (three dots / three capsules). Null
+  /// hides the row, e.g. on pages that embed the header without a workspace.
+  final Widget? quickAccess;
+
   /// What follows the status under the title (a phone: the workspace). Shortens first.
   final String? detail;
 
-  /// 右侧件（「查看工作进展」[WorkProgressKey]，或别的东西）。它是定宽的，
-  /// 所以顶栏只需要决定标题怎么分剩下的地方。
+  /// 右侧件（通常是可收缩的模型胶囊）。它是定宽的，所以顶栏只需要决定
+  /// 标题怎么分剩下的地方。终端 / 团队 / 文件已移到标题上方的快捷菜单。
   /// Null: the title has the room.
   final Widget? trailing;
   final VoidCallback? onOpenDrawer;
@@ -107,7 +110,19 @@ class ChatHeader extends ConsumerStatefulWidget {
 
   static double barHeightOf(BuildContext context) => math.max(barHeight, pillHeightOf(context) + 12);
 
-  static double heightOf(BuildContext context) => MediaQuery.paddingOf(context).top + barHeightOf(context) + 8;
+  /// Full top inset of the chat page. Pass [withQuickAccess] only where the
+  /// header actually renders the quick-access row; the other callers reuse the
+  /// bar height without that extra line and must not reserve 36dp of blank.
+  static double heightOf(BuildContext context, {bool withQuickAccess = false}) =>
+      MediaQuery.paddingOf(context).top +
+      barHeightOf(context) +
+      8 +
+      (withQuickAccess ? quickAccessHeight : 0);
+
+  /// Height reserved above the title bar for the quick-access row. The row is
+  /// 36 high and sits directly under the status bar; the rest of the header is
+  /// shifted down by the same amount so the title keeps its 56dp bar.
+  static double get quickAccessHeight => QuickAccessRow.height;
 
   @override
   ConsumerState<ChatHeader> createState() => _ChatHeaderState();
@@ -172,7 +187,9 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
           ),
         );
 
-    return Padding(
+    final quick = widget.quickAccess;
+    final quickHeight = quick == null ? 0.0 : ChatHeader.quickAccessHeight;
+    final bar = Padding(
       padding: EdgeInsets.fromLTRB(12, top, 12, 0),
       child: BackdropGroup(
         child: SizedBox(
@@ -285,17 +302,38 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
                     // optically centred; it must not answer `chat-new-chat`,
                     // which the new-chat screen deliberately does not show.
                     ? const SizedBox.square(key: ValueKey('chat-header-balance'), dimension: 44)
-                    : roundKey(
-                        key: const ValueKey('chat-new-chat'),
-                        icon: AppIcons.newChat,
-                        tooltip: l10n.commonNewChat,
-                        onTap: widget.onNewChat,
-                      ),
+                     : roundKey(
+                         key: const ValueKey('chat-new-chat'),
+                         icon: AppIcons.newChat,
+                         tooltip: l10n.commonNewChat,
+                         onTap: widget.onNewChat,
+                       ),
               ),
             ],
           ),
         ),
       ),
+    );
+    if (quick == null) return bar;
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Positioned(
+          left: 0,
+          right: 0,
+          top: top,
+          height: quickHeight,
+          child: quick,
+        ),
+        // The bar keeps its own status-bar inset; shift the whole bar down so
+        // the quick-access row really sits above the title, not over it.
+        Positioned(
+          left: 0,
+          right: 0,
+          top: quickHeight,
+          child: bar,
+        ),
+      ],
     );
   }
 
@@ -310,9 +348,7 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
     final top = MediaQuery.paddingOf(context).top;
     final barHeight = ChatHeader.barHeightOf(context);
     final pillHeight = ChatHeader.pillHeightOf(context);
@@ -340,6 +376,47 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
     final chrome = AdaptiveChrome.maybeOf(context);
     // The stack is only as tall as the bar; the fade runs 12dp past it, so it
     // must not clip (a clipped fade is a hard line right under the pills).
+    // The quick-access row sits above the title bar in its own line; the bar
+    // itself is shifted down by [quickAccessHeight] so its geometry (and all
+    // the tests that read 'chat-header-bar') stay unchanged.
+    final quick = widget.quickAccess;
+    final quickHeight = quick == null ? 0.0 : ChatHeader.quickAccessHeight;
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Positioned(
+          left: 0,
+          right: 0,
+          top: top,
+          height: quickHeight,
+          child: quick ?? const SizedBox.shrink(),
+        ),
+        Positioned(
+          left: 0,
+          right: 0,
+          top: quickHeight,
+          child: _barStack(context, top: top, barHeight: barHeight, pillHeight: pillHeight,
+              titleStyle: titleStyle, statusStyle: statusStyle, titleFloor: titleFloor,
+              clockExtra: clockExtra, chrome: chrome),
+        ),
+      ],
+    );
+  }
+
+  /// The original one-line bar, kept intact so its geometry contract holds.
+  Widget _barStack(
+    BuildContext context, {
+    required double top,
+    required double barHeight,
+    required double pillHeight,
+    required TextStyle? titleStyle,
+    required TextStyle? statusStyle,
+    required double titleFloor,
+    required double clockExtra,
+    required AdaptiveChrome? chrome,
+  }) {
+    final l10n = context.l10n;
+    final dsh = DshColors.of(context);
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -550,85 +627,8 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
   }
 }
 
-/// 顶栏右上角的「查看工作进展」键：**点按开终端，长按开文件**。
-///
-/// 一个图标两种动作，是用户定的：终端是主操作（所以显示成终端），文件是
-/// 长按。两者都是**这个对话**的实际进展（终端跑的是它的工作区，文件列的是
-/// 它的目录），不是它的配置——模型、权限、模式都在输入条的「控制面板」里。
-class WorkProgressKey extends StatelessWidget {
-  const WorkProgressKey({super.key, this.sessionId, this.resolveSession, this.onOpenFiles});
-
-  /// 已有会话时直接用它。新对话页为 null —— 那时靠 [resolveSession] 先建会话。
-  final String? sessionId;
-
-  /// 新对话页面的取会话：调用方（`chat_screen`）注入 `_ensureSession`，
-  /// 返回刚建好的会话 id（失败/用户已离开则 null）。评论：新对话页也要有
-  /// 终端入口，而终端开在「这个对话的工作区」里，所以先落一个会话。
-  final Future<String?> Function()? resolveSession;
-
-  /// 长按开文件；新对话页由调用方注入「先建会话再开文件」。
-  final Future<void> Function(BuildContext context, String sessionId)? onOpenFiles;
-
-  /// 键的可见尺寸与点击区，和顶栏其它圆键一致。
-  static const size = 44.0;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final colors = ChatHeaderColors.of(context);
-    return Tooltip(
-      message: l10n.chatWorkProgressTooltip,
-      child: Semantics(
-        button: true,
-        label: l10n.chatWorkProgressTooltip,
-        onLongPressHint: l10n.chatWorkProgressHoldHint,
-        onTap: () => _openTerminal(context),
-        onLongPress: () => _openFiles(context),
-        excludeSemantics: true,
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () => _openTerminal(context),
-          onLongPress: () => _openFiles(context),
-          child: GlassSurface(
-            tier: GlassTier.chrome,
-            circle: true,
-            grouped: true,
-            style: colors.flatChrome,
-            child: Center(
-              child: ChatGptTerminalIcon(size: 22, color: colors.primaryText),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// 会话 id：现成的直接用，否则先向宿主借一个（新对话页）。
-  Future<String?> _resolve() async {
-    if (sessionId case final id?) return id;
-    return resolveSession?.call();
-  }
-
-  Future<void> _openTerminal(BuildContext context) async {
-    final id = await _resolve();
-    if (id == null || !context.mounted) return;
-    await Navigator.of(context).push(TerminalPage.route(id));
-  }
-
-  Future<void> _openFiles(BuildContext context) async {
-    final id = await _resolve();
-    if (id == null || !context.mounted) return;
-    if (onOpenFiles case final custom?) {
-      await custom(context, id);
-      return;
-    }
-    await Navigator.of(context).push(WorkspaceFilesPage.route(id));
-  }
-}
-
-
 /// Marks the model chip inside the trailing pieces, so the bar can weigh its
-/// widths apart from the agents capsule beside it.
+/// own width apart from the fixed-size keys beside it.
 class _ChipSlot extends SingleChildRenderObjectWidget {
   const _ChipSlot({required super.child});
 

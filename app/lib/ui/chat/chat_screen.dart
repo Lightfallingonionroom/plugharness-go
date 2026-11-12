@@ -15,7 +15,7 @@ import '../../notify/chat_alerts.dart' show approvalText, questionText;
 import '../../runtime/local_footprint.dart' show RuntimeMissing;
 import '../../runtime/runtime_bridge.dart' show RuntimePhase;
 import '../../runtime/runtime_state.dart' show localRuntimeProvider;
-import '../../state/agents_state.dart' show subagentParentProvider;
+import '../../state/agents_state.dart' show headerAgentsProvider, subagentParentProvider;
 import '../../state/attachments.dart';
 import '../../state/balance_state.dart';
 import '../../state/chat_error_text.dart';
@@ -55,7 +55,10 @@ import '../common/ui_trace.dart';
 import '../common/sheet_title_bar.dart';
 import '../common/smooth_size.dart';
 import '../common/status_dot.dart';
+import '../agents/lineage_sheet.dart' show showLineageSheet;
+import '../agents/team_page.dart' show TeamPage;
 import '../features/all_features_page.dart';
+import '../files/files_page.dart' show WorkspaceFilesPage;
 import '../features/session_export_page.dart';
 import '../onboarding/local_install.dart';
 import '../pets/pet_perch.dart';
@@ -75,6 +78,7 @@ import '../theme/theme.dart';
 import '../wallpaper/wallpaper_backdrop.dart';
 import '../workspace/workspace_switcher.dart' show showWorkspaceSheet;
 import '../workspace/workspaces_page.dart';
+import '../terminal/terminal_page.dart' show TerminalPage;
 import 'balance_widgets.dart';
 import 'chat_header.dart';
 import 'chat_list.dart';
@@ -84,6 +88,7 @@ import 'dock/chat_dock.dart';
 import 'dock/dock_stack.dart';
 import 'empty_state.dart';
 import 'new_chat_options.dart';
+import 'quick_access_row.dart';
 import 'media/generate_mode.dart';
 import 'media/generate_sheet.dart';
 import 'media/media_card.dart' show MediaCardActions, mediaItemBytes;
@@ -700,7 +705,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     final selection = current.model;
     if (selection != null) {
       final ruled = applyThinkingRules(selection, ref.read(thinkingRulesProvider));
-      if (!identical(ruled, selection)) await chat.setModel(ruled);
+      if (!identical(ruled, selection)) {
+        // Host 回执才是事实：setModel 失败会把档位回滚并写 state.error，
+        // 此时不能让消息带着「以为已经切换」的档位发出去。把输入还给用户。
+        final applied = await chat.setModel(ruled);
+        if (!applied) {
+          if (mounted) _giveBack(sessionId, typed, drafts, quote: quote);
+          return;
+        }
+      }
     }
     final bool ok;
     if (current.singleQuestion case final request?
@@ -1683,7 +1696,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     final pillsBesideStrip = sessionId != null && running && !typing;
     final pillsInCapsules = !readOnly && !running && !typing;
     final composerPills = _composerPills(generate: readOnly ? null : generate);
-    final headerHeight = typing ? MediaQuery.paddingOf(context).top + AppSpace.sm : ChatHeader.heightOf(context);
+    final headerHeight = typing
+        ? MediaQuery.paddingOf(context).top + AppSpace.sm
+        : ChatHeader.heightOf(context, withQuickAccess: true);
 
     Widget backdrop(Widget child) => widget.backdrop ? WallpaperBackdrop(child: child) : child;
     // The conversation sits on the shell's flat page colour — the ChatGPT
@@ -1830,19 +1845,34 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                         onTitleTap: sessionId == null
                             ? null
                             : () => SessionDetailPage.open(context, sessionId, toggle: true),
-                        // 顶栏右上角不再是模型胶囊：模型在输入条的「控制面板」
-                        // 里选（和权限、模式同一处）。右上角留给「查看工作
-                        // 进展」——点按开终端、长按开文件，都是这个对话的
-                        // 实际进展，而不是它的配置。
-                        //
-                        // 新对话页也给这个键（评论 A）：没有会话时先向宿主借
-                        // 一个（`_ensureSession`，和发消息走同一条建会话链路），
-                        // 因为终端是开在「这个对话的工作区」里的。
-                        trailing: WorkProgressKey(
-                          sessionId: sessionId,
-                          resolveSession: sessionId != null
-                              ? null
-                              : () => _ensureSession(isCurrent: () => mounted),
+                        // Quick access: three dots that expand into Terminal / Team / Files.
+                        // Replaces the old WorkProgressKey and the agents
+                        // capsule in the title row. On a new chat the buttons
+                        // stay visible but disabled; no session is created.
+                        quickAccess: QuickAccessRow(
+                          enabled: sessionId != null,
+                          disabledHint: context.l10n.chatComposerControlsNewChat,
+                          onTerminal: () {
+                            if (sessionId == null) return;
+                            unawaited(Navigator.of(context).push(TerminalPage.route(sessionId)));
+                          },
+                          onTeam: () {
+                            if (sessionId == null) return;
+                            // TeamPage when this conversation has a team;
+                            // otherwise the lineage sheet keeps subagent
+                            // navigation reachable (it used to share the
+                            // agents capsule).
+                            final agents = ref.read(headerAgentsProvider(sessionId));
+                            if (agents.hasTeam) {
+                              unawaited(Navigator.of(context).push(TeamPage.route(sessionId: sessionId)));
+                            } else {
+                              unawaited(showLineageSheet(context, sessionId: sessionId));
+                            }
+                          },
+                          onFiles: () {
+                            if (sessionId == null) return;
+                            unawaited(Navigator.of(context).push(WorkspaceFilesPage.route(sessionId)));
+                          },
                         ),
                       ),
                     ),

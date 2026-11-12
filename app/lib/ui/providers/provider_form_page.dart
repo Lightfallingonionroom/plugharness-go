@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
+import '../../state/provider_presets.dart';
 import '../../state/providers_state.dart';
 import '../common/app_dialog.dart';
 import '../common/app_sheet.dart';
@@ -52,6 +53,14 @@ class _ProviderFormPageState extends ConsumerState<ProviderFormPage> {
   late ProviderApi _api = widget.existing?.api ?? ProviderApi.openaiCompletions;
   late List<ProviderModelSpec> _models = [...?widget.existing?.models];
 
+  /// Currently chosen preset (null = custom). Only ever fills empty fields;
+  /// once the user edits a field it is left alone.
+  String? _presetId;
+
+  /// The model id the preset auto-added. It is replaced when the user picks a
+  /// different preset, but a model list they built by hand never is.
+  String? _presetModelId;
+
   /// The provider being edited; set after a create whose key failed, so the
   /// next 「保存」 only retries what is missing.
   late CustomProvider? _editing = widget.existing;
@@ -74,6 +83,14 @@ class _ProviderFormPageState extends ConsumerState<ProviderFormPage> {
   final _fieldKeys = {for (final f in _F.values) f: GlobalKey()};
 
   bool get _isEdit => _editing != null;
+
+  /// Local presets (Ollama / LM Studio) genuinely need no key. Editing an
+  /// existing keyless provider keeps it keyless too.
+  bool get _keyRequired {
+    final preset = providerPreset(_presetId);
+    if (preset != null) return preset.requiresKey;
+    return !_isEdit;
+  }
 
   late final Listenable _edits = Listenable.merge([_name, _baseUrl, _key]);
   late String _clean;
@@ -98,6 +115,42 @@ class _ProviderFormPageState extends ConsumerState<ProviderFormPage> {
     _baseUrl.dispose();
     _key.dispose();
     super.dispose();
+  }
+
+  void _applyPreset(String? id) {
+    final preset = providerPreset(id);
+    if (preset == null) {
+      setState(() {
+        _presetId = null;
+        // Keep whatever the user has typed. Clearing the marker means the
+        // auto-added model is now theirs and will not be swapped later.
+        _presetModelId = null;
+      });
+      return;
+    }
+    setState(() {
+      _presetId = preset.id;
+      // Fill only empty fields: a value the user typed (or an existing
+      // provider's value) always wins over the preset suggestion.
+      if (_name.text.trim().isEmpty) _name.text = preset.name;
+      if (_baseUrl.text.trim().isEmpty) _baseUrl.text = preset.endpoint;
+      // Protocol is a preset property, not a user-typed value. On a fresh form
+      // it follows the chosen preset until the user builds their own model
+      // list; the model list is the signal that they took over.
+      final ownsModels = _models.length > 1 ||
+          (_models.length == 1 && _presetModelId != _models.single.id);
+      if (!_isEdit && !ownsModels) _api = preset.api;
+      // A suggested first model saves the user a manual add. Switching to another
+      // preset swaps only the model we auto-added; a list the user built by
+      // hand (or edited) is never replaced.
+      if (!_isEdit && !ownsModels && preset.defaultModel.isNotEmpty) {
+        _models = [ProviderModelSpec(id: preset.defaultModel)];
+        _presetModelId = preset.defaultModel;
+      }
+      _baseUrlNote = null;
+      _errors = const {};
+      _formError = null;
+    });
   }
 
   void _edited(_F field) {
@@ -150,7 +203,7 @@ class _ProviderFormPageState extends ConsumerState<ProviderFormPage> {
   Future<void> _discover() async {
     FocusManager.instance.primaryFocus?.unfocus();
     final key = normalizeProviderKey(_key.text);
-    final keyError = !_isEdit && key.isEmpty
+    final keyError = _keyRequired && key.isEmpty
         ? context.l10n.engineProviderKeyFirst
         : providerKeyError(key, required: false);
     final errors = <_F, String>{_F.baseUrl: ?baseUrlError(_baseUrl.text), _F.key: ?keyError};
@@ -232,7 +285,7 @@ class _ProviderFormPageState extends ConsumerState<ProviderFormPage> {
     final key = normalizeProviderKey(_key.text);
     final errors = <_F, String>{
       _F.baseUrl: ?baseUrlError(_baseUrl.text),
-      _F.key: ?providerKeyError(key, required: !_isEdit),
+      _F.key: ?providerKeyError(key, required: _keyRequired),
       if (_models.isEmpty) _F.models: context.l10n.engineProviderNeedModel,
     };
     setState(() => _formError = null);
@@ -301,8 +354,31 @@ class _ProviderFormPageState extends ConsumerState<ProviderFormPage> {
               children: [
                 FormFieldGroup(
                   children: [
+                    // A preset only pre-fills empty fields; every value stays
+                    // editable and a later change is never overwritten.
+                    if (!_isEdit)
+                      FormFieldBlock(
+                        label: l10n.engineProviderTitle,
+                        child: DropdownButtonFormField<String?>(
+                          // initialValue is read once; rebuild on selection so
+                          // the picker visibly follows the chosen preset.
+                          key: ValueKey('provider-preset-$_presetId'),
+                          initialValue: _presetId,
+                          isExpanded: true,
+                          decoration: InputDecoration(hintText: l10n.engineProviderDefaultUrl),
+                          items: [
+                            DropdownMenuItem<String?>(
+                              value: null,
+                              child: Text(l10n.engineProvidersCustom),
+                            ),
+                            for (final p in providerPresets)
+                              DropdownMenuItem<String?>(value: p.id, child: Text(p.name)),
+                          ],
+                          onChanged: busy ? null : _applyPreset,
+                        ),
+                      ),
                     FormFieldBlock(
-                      label: l10n.commonName,
+                       label: l10n.commonName,
                       child: TextField(
                         controller: _name,
                         textInputAction: TextInputAction.next,

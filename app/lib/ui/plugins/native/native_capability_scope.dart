@@ -23,7 +23,8 @@ class NativeCapabilityScope extends ConsumerWidget {
     if (ref.watch(nativeFeatureStateProvider).any({'audio', 'voice', 'overlay'}.contains)) {
       ref.watch(nativeCapabilityRuntimeProvider);
       // The native indicator and caption go just under the chat header.
-      final top = ChatHeader.heightOf(context);
+      // The chat page draws the quick-access row above the title too.
+      final top = ChatHeader.heightOf(context, withQuickAccess: true);
       if (ref.read(nativeOverlayTopProvider) != top) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (context.mounted) ref.read(nativeOverlayTopProvider.notifier).set(top);

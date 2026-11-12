@@ -62,8 +62,9 @@ class HeaderTitleText extends ConsumerWidget {
   }
 }
 
-/// The right side: the agents capsule (when there is one), then [trailing]
-/// (the model chip) except in a subagent conversation.
+/// The right side: optional [trailing] (the model chip) except in a subagent
+/// conversation. The agents capsule used to live here; Terminal / Team / Files
+/// now share the quick-access row above the title, so no duplicate entry stays.
 class HeaderTrailingSlot extends ConsumerWidget {
   const HeaderTrailingSlot({super.key, this.trailing});
 
@@ -77,12 +78,9 @@ class HeaderTrailingSlot extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final current = ref.watch(_currentAgentsProvider);
     final agents = current?.$2;
-    final key = agents == null ? null : HeaderAgentsKey(sessionId: current!.$1, agents: agents);
-    final showsKey = agents != null && (agents.hasTeam || agents.children > 0);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (showsKey) ...[const SizedBox(width: gap), key!],
         if (trailing case final trailing? when !(agents?.isChild ?? false)) ...[const SizedBox(width: gap), trailing],
       ],
     );

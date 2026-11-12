@@ -115,16 +115,16 @@ class ChatGptShellColors extends ThemeExtension<ChatGptShellColors> {
     return ChatGptShellColors(
       page: n.mistTop,
       sidebar: n.mistLow,
-      composer: const Color(0xFFFFFFFF),
-      composerBorder: const Color(0xFFDCDCDC),
-      rowHover: const Color(0xFFECECEC),
-      rowSelected: const Color(0xFFE8E8E8),
-      divider: const Color(0xFFE5E5E5),
-      primaryText: const Color(0xFF0D0D0D),
-      secondaryText: const Color(0xFF5D5D5D),
+      composer: n.mistLowest,
+      composerBorder: n.mistHighest,
+      rowHover: n.mistHigh,
+      rowSelected: n.mistContainer,
+      divider: n.ruleLight,
+      primaryText: n.ink,
+      secondaryText: n.inkMuted,
       // 与 DshColors.light.textTertiary 保持一致（official_palette_test 断言两者相等）。
       // 官方 gray-600 对白底只有 3.23:1，压到 #757575 达标（4.61:1）。
-      tertiaryText: const Color(0xFF757575),
+      tertiaryText: n.inkFaint,
       // --color-background-primary-solid (light) = gray-900.
       primaryAction: const Color(0xFF181818),
       onPrimaryAction: const Color(0xFFFFFFFF),
@@ -146,15 +146,15 @@ class ChatGptShellColors extends ThemeExtension<ChatGptShellColors> {
     return ChatGptShellColors(
       page: n.nightTop,
       sidebar: n.nightLowest,
-      composer: const Color(0xFF2F2F2F),
-      composerBorder: const Color(0xFF424242),
-      rowHover: const Color(0xFF2F2F2F),
-      rowSelected: const Color(0xFF2F2F2F),
-      divider: const Color(0xFF2F2F2F),
-      primaryText: const Color(0xFFECECEC),
-      secondaryText: const Color(0xFFB4B4B4),
+      composer: n.smoke,
+      composerBorder: n.outlineDark,
+      rowHover: n.smoke,
+      rowSelected: n.smoke,
+      divider: n.ruleDark,
+      primaryText: n.paper,
+      secondaryText: n.paperMuted,
       // 与 DshColors.dark.textTertiary 保持一致（official_palette_test 断言两者相等）。
-      tertiaryText: const Color(0xFFA3A3A3),
+      tertiaryText: n.paperFaint,
       // --color-background-primary-solid (dark) = gray-950: near-white.
       primaryAction: const Color(0xFFF3F3F3),
       onPrimaryAction: const Color(0xFF0D0D0D),

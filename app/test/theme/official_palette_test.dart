@@ -109,6 +109,29 @@ void main() {
     expect(n.nightContainer, const Color(0xFF303030));
   });
 
+  test('accent swatches keep their declared order and stay distinguishable', () {
+    // 2026-11-12: a screenshot sampling script once reported the swatches as
+    // "misordered" because it dropped the low-chroma first dot. The dots were
+    // fine; pin the order so a real regression is caught without re-guessing
+    // from JPEG pixels.
+    for (final group in [AppAccent.presets, AppAccent.official]) {
+      final ids = group.map((p) => p.id).toList();
+      expect(ids.toSet().length, ids.length, reason: 'no duplicate accent ids');
+      for (final brightness in Brightness.values) {
+        for (var i = 0; i < group.length; i++) {
+          final p = group[i];
+          final seed = p.seedFor(brightness);
+          expect(seed.toARGB32(), isNot(0), reason: '${p.id} seed is opaque at $brightness');
+          expect(p.label, isNotEmpty, reason: '${p.id} has a name for its dot');
+          if (i > 0) {
+            expect(seed, isNot(group[i - 1].seedFor(brightness)),
+                reason: '${p.id} must differ from ${group[i - 1].id} at $brightness');
+          }
+        }
+      }
+    }
+  });
+
   test('both halves of the shell agree: chat shell vs the rest of the app', () {
     final light = buildLightTheme();
     final dark = buildDarkTheme();
@@ -128,6 +151,30 @@ void main() {
     expect(dark.colorScheme.onSurface, shellDark.primaryText);
     expect(dark.colorScheme.onSurfaceVariant, shellDark.secondaryText);
     expect(dark.extension<DshColors>()!.textTertiary, shellDark.tertiaryText);
+  });
+
+  test('shell chrome follows the same neutral ramp as the page', () {
+    // Before this test the composer, rows, divider and text were literals on
+    // the graphite ramp. Picking a coloured accent repainted page/sidebar but
+    // left the rest of the chrome grey: the two halves of the shell disagreed.
+    for (final brightness in Brightness.values) {
+      final dark = brightness == Brightness.dark;
+      for (final accent in [...AppAccent.presets, ...AppAccent.official]) {
+        final n = NeutralTones.forAccent(accent);
+        final shell = dark
+            ? ChatGptShellColors.dark(accent)
+            : ChatGptShellColors.light(accent);
+        final reason = '${accent.id} / $brightness';
+        expect(shell.composer, dark ? n.smoke : n.mistLowest, reason: 'composer $reason');
+        expect(shell.composerBorder, dark ? n.outlineDark : n.mistHighest, reason: 'border $reason');
+        expect(shell.rowHover, dark ? n.smoke : n.mistHigh, reason: 'hover $reason');
+        expect(shell.rowSelected, dark ? n.smoke : n.mistContainer, reason: 'selected $reason');
+        expect(shell.divider, dark ? n.ruleDark : n.ruleLight, reason: 'divider $reason');
+        expect(shell.primaryText, dark ? n.paper : n.ink, reason: 'primary text $reason');
+        expect(shell.secondaryText, dark ? n.paperMuted : n.inkMuted, reason: 'secondary text $reason');
+        expect(shell.tertiaryText, dark ? n.paperFaint : n.inkFaint, reason: 'tertiary text $reason');
+      }
+    }
   });
 
   test('picking an accent actually repaints the shell, and both halves stay in step', () {

@@ -63,13 +63,33 @@ class ThinkingRule {
     enabled: enabled ?? this.enabled,
   );
 
-  /// [value] 是否匹配 [pattern]；`*` 全通配，尾部 `*` 前缀通配。
+  /// [value] 是否匹配 [pattern]；`*` 全通配，尾部 `*` 前缀通配，
+  /// 头部 `*` 后缀通配，两侧 `*` 包含匹配。
+  ///
+  /// 前后兼容：历史规则只用 `*`/`deepseek-*`，新写法只是补上
+  /// `*pro` / `*4o*`；不引入正则，避免用户输入变成不受控的回溯。
   static bool _matches(String pattern, String value) {
-    if (pattern == '*' || pattern.isEmpty) return true;
-    if (pattern.endsWith('*')) {
-      return value.startsWith(pattern.substring(0, pattern.length - 1));
+    final p = pattern.trim().toLowerCase();
+    final v = value.toLowerCase();
+    if (p == '*' || p.isEmpty) return true;
+    if (!p.contains('*')) return p == v;
+    final startsWithGlob = p.startsWith('*');
+    final endsWithGlob = p.endsWith('*');
+    final core = p.replaceAll('*', '');
+    if (core.isEmpty) return true;
+    if (startsWithGlob && endsWithGlob) return v.contains(core);
+    if (endsWithGlob) return v.startsWith(core);
+    if (startsWithGlob) return v.endsWith(core);
+    // A glob in the middle: match its two sides in order.
+    final parts = p.split('*');
+    var cursor = 0;
+    for (final part in parts) {
+      if (part.isEmpty) continue;
+      final i = v.indexOf(part, cursor);
+      if (i < 0) return false;
+      cursor = i + part.length;
     }
-    return pattern == value;
+    return true;
   }
 
   bool matches(ModelSelection selection) =>
