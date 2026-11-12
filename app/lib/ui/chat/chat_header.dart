@@ -187,8 +187,8 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
           ),
         );
 
-    final quick = widget.quickAccess;
-    final quickHeight = quick == null ? 0.0 : ChatHeader.quickAccessHeight;
+    final quickRow = widget.quickAccess;
+    final quickRowHeight = quickRow == null ? 0.0 : ChatHeader.quickAccessHeight;
     final bar = Padding(
       padding: EdgeInsets.fromLTRB(12, top, 12, 0),
       child: BackdropGroup(
@@ -314,7 +314,7 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
         ),
       ),
     );
-    if (quick == null) return bar;
+    if (quickRow == null) return bar;
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -322,15 +322,15 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
           left: 0,
           right: 0,
           top: top,
-          height: quickHeight,
-          child: quick,
+          height: quickRowHeight,
+          child: quickRow,
         ),
         // The bar keeps its own status-bar inset; shift the whole bar down so
         // the quick-access row really sits above the title, not over it.
         Positioned(
           left: 0,
           right: 0,
-          top: quickHeight,
+          top: quickRowHeight,
           child: bar,
         ),
       ],
