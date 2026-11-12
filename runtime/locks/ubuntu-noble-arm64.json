@@ -184,11 +184,11 @@
     },
     {
       "package": "libperl5.38t64",
-      "version": "5.38.2-3.2ubuntu0.6",
+      "version": "5.38.2-3.2ubuntu0.7",
       "architecture": "arm64",
-      "filename": "pool/main/p/perl/libperl5.38t64_5.38.2-3.2ubuntu0.6_arm64.deb",
-      "sha256": "f9ef8a6909d0048cc4e4ce89c3c3ed010ba13e7932024d5744e38294e42b0925",
-      "size": 4784712,
+      "filename": "pool/main/p/perl/libperl5.38t64_5.38.2-3.2ubuntu0.7_arm64.deb",
+      "sha256": "1fa28b3dfa9936d4689285737eada693e04263e78d9ce12814aa4cb0f2c54259",
+      "size": 4776664,
       "installedSize": 31048,
       "upgradesBase": null,
       "neededBy": "perl"
