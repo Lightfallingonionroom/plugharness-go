@@ -38,6 +38,7 @@ class AdaptiveRail extends ConsumerWidget {
     required this.onSearch,
     required this.onHost,
     required this.onWeb,
+    this.onWebLongPress,
     required this.onSettings,
   });
 
@@ -46,6 +47,9 @@ class AdaptiveRail extends ConsumerWidget {
   final VoidCallback onSearch;
   final VoidCallback onHost;
   final VoidCallback onWeb;
+
+  /// Long press on the web key: open DSH Web in the system browser.
+  final VoidCallback? onWebLongPress;
   final VoidCallback onSettings;
 
   /// Top of the first key: centred on the chat header's bar.
@@ -114,6 +118,7 @@ class AdaptiveRail extends ConsumerWidget {
                     icon: AppIcons.webApp,
                     tooltip: l10n.commonWeb,
                     onPressed: onWeb,
+                    onLongPress: onWebLongPress,
                   ),
                   gap,
                   GlassIconButton(

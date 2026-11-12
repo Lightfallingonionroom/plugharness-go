@@ -72,6 +72,7 @@ class FeatureCard extends StatelessWidget {
     this.badge,
     this.corner,
     this.onTap,
+    this.onLongPress,
     this.enabled = true,
   }) : assert(icon != null || art != null);
 
@@ -93,6 +94,9 @@ class FeatureCard extends StatelessWidget {
   /// way in, e.g. an icon button).
   final Widget? corner;
   final VoidCallback? onTap;
+
+  /// Long press on the card: the web feature opens DSH Web in the system browser.
+  final VoidCallback? onLongPress;
   final bool enabled;
 
   static const padding = 14.0;
@@ -193,6 +197,7 @@ class FeatureCard extends StatelessWidget {
                         onTap!();
                       }
                     : null,
+                onLongPress: enabled ? onLongPress : null,
                 child: ConstrainedBox(constraints: const BoxConstraints(minHeight: 112), child: body),
               ),
             ),

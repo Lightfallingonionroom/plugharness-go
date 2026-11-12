@@ -286,6 +286,7 @@ class GlassIconButton extends StatelessWidget {
     super.key,
     required this.icon,
     required this.onPressed,
+    this.onLongPress,
     this.tooltip,
     this.grouped = true,
     this.tier = GlassTier.chrome,
@@ -296,6 +297,10 @@ class GlassIconButton extends StatelessWidget {
 
   final IconData icon;
   final VoidCallback? onPressed;
+
+  /// Long press on the button: used by the web entries to open DSH Web in the
+  /// system browser while a short press keeps the in-app WebView.
+  final VoidCallback? onLongPress;
   final String? tooltip;
   final bool grouped;
 
@@ -320,6 +325,7 @@ class GlassIconButton extends StatelessWidget {
         circle: true,
         grouped: grouped,
         onTap: onPressed,
+        onLongPress: onLongPress,
         child: Center(
           child: Icon(icon, size: iconSize, color: enabled ? scheme.onSurface : DshColors.of(context).textDisabled),
         ),

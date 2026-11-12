@@ -22,6 +22,7 @@ import '../shell/page_frame.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
 import '../web/dsh_web_launcher.dart';
+import '../web/web_external.dart';
 import '../web/web_target.dart';
 import '../plugins/seats/seat_probe.dart';
 import '../settings/search/settings_search_page.dart';
@@ -79,6 +80,7 @@ class AllFeaturesPage extends ConsumerWidget {
                   enabled: !item.needsSession || sessionId != null,
                   onOpen: () => open(item),
                   onOpenWeb: item.hasNative && item.web != null ? () => openWeb(item) : null,
+                  onLongPress: item.id == 'web' ? () => unawaited(openDshWebExternally(context, ref)) : null,
                 ),
             ],
           ),
@@ -146,6 +148,7 @@ class FeatureTileFor extends ConsumerWidget {
     this.tint,
     required this.onOpen,
     this.onOpenWeb,
+    this.onLongPress,
     this.enabled = true,
   });
 
@@ -157,6 +160,9 @@ class FeatureTileFor extends ConsumerWidget {
 
   /// Secondary way in for items that have both.
   final VoidCallback? onOpenWeb;
+
+  /// Long press on the card: the web feature opens DSH Web in the system browser.
+  final VoidCallback? onLongPress;
   final bool enabled;
 
   @override
@@ -190,6 +196,7 @@ class FeatureTileFor extends ConsumerWidget {
               icon: Icon(AppIcons.webApp, color: scheme.onSurfaceVariant),
             ),
       onTap: onOpen,
+      onLongPress: onLongPress,
     );
   }
 }

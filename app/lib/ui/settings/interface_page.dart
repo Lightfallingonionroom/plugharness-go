@@ -21,6 +21,7 @@ import '../shell/quick_panel.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
 import '../web/local_web_screen.dart';
+import '../web/web_external.dart';
 import 'quick_panel_items_sheet.dart';
 import 'settings_widgets.dart';
 
@@ -82,6 +83,7 @@ class InterfacePage extends ConsumerWidget {
               onTap: () => mode == UiMode.web
                   ? Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst)
                   : Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const LocalWebScreen())),
+              onLongPress: () => unawaited(openDshWebExternally(context, ref)),
             ),
             SettingsSwitchTile(
               spot: Spots.webPhoneLayout,

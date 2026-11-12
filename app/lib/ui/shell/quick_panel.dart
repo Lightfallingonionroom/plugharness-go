@@ -3,6 +3,8 @@
 // opens them the way the drawer does; what each page requires stays with the
 // page. Which ones and in what order: 设置 › 界面 (quick_panel_items_sheet.dart).
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,6 +14,7 @@ import '../chat/control_icons.dart';
 import '../session/conversation_panel.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
+import '../web/web_external.dart';
 import 'drawer/drawer_destination.dart';
 
 /// A destination's glyph as a row draws it.
@@ -137,14 +140,17 @@ class QuickPanel extends ConsumerWidget {
 }
 
 /// A row on the drawer's grid: the highlight's edge at 10, the glyph at 20.
-class QuickPanelRow extends StatelessWidget {
-  const QuickPanelRow({super.key, required this.destination, required this.onTap});
+class QuickPanelRow extends ConsumerWidget {
+  const QuickPanelRow({super.key, required this.destination, required this.onTap, this.onLongPress});
 
   final DrawerDestination destination;
   final VoidCallback onTap;
 
+  /// Long press: the web row opens DSH Web in the system browser.
+  final VoidCallback? onLongPress;
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final label = destination.label(context.l10n);
     return Semantics(
@@ -155,6 +161,9 @@ class QuickPanelRow extends StatelessWidget {
       child: InkWell(
         key: ValueKey('quick-panel-${destination.name}'),
         onTap: onTap,
+        onLongPress: destination == DrawerDestination.web
+            ? () => unawaited(openDshWebExternally(context, ref))
+            : onLongPress,
         customBorder: Squircle.border(AppShape.md),
         child: ConstrainedBox(
           // P5: ChatGPT's sidebar rows are tighter than the old 48.

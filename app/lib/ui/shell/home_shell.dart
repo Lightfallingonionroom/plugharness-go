@@ -41,6 +41,7 @@ import '../theme/theme.dart';
 import '../update/update_launch_check.dart';
 import '../wallpaper/wallpaper_backdrop.dart';
 import '../web/local_web_screen.dart';
+import '../web/web_external.dart';
 import 'adaptive/adaptive_layout.dart';
 import 'adaptive/adaptive_rail.dart';
 import 'adaptive/adaptive_scaffold.dart';
@@ -404,6 +405,7 @@ class _HomeShellState extends ConsumerState<HomeShell> with TickerProviderStateM
                               onHost: () =>
                                   showHostSheet(context, onManage: () => _openDestination(DrawerDestination.remote)),
                               onWeb: () => _openDestination(DrawerDestination.web),
+                              onWebLongPress: () => unawaited(openDshWebExternally(context, ref)),
                               onSettings: () => _openDestination(DrawerDestination.settings),
                             ),
                             panel: layout.panelAvailable && sessionId != null
