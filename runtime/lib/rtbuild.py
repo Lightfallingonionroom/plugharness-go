@@ -843,6 +843,9 @@ def purge_shared_rows(purge_path):
     rows = rows.replace("name: dsh-purge/redteam/ui", "name: %s/lib/redteam/ui.js" % DSH_GO_PURGE)
     rows = rows.replace("name: dsh-purge/redteam", "name: %s/lib/redteam/index.js" % DSH_GO_PURGE)
     rows = rows.replace("name: 'dsh-purge'", "name: %s/lib/index.js" % DSH_GO_PURGE)
+    # The built-in plugin re-applies the patch layer on engine start, so an APK
+    # update (which replaces the runtime) does not leave the host unpatched.
+    rows = rows.replace("autoApplyOnStart: false", "autoApplyOnStart: true")
     return rows
 
 
