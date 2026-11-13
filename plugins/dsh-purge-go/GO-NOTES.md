@@ -13,7 +13,7 @@
 ## 改动
 
 1. `package.json`
-   - `name` 保持 `dsh-purge`（目录是 `plugins/dsh-purge-go`），`version` → `1.2.3-go.3`。
+   - `name` 保持 `dsh-purge`（目录是 `plugins/dsh-purge-go`），`version` → `1.2.3-go.4`。
      这样可以直接替换已装的 dsh-purge；更新、卸载、profile 依赖逻辑里的 `dsh-purge` 硬编码不需要改。
    - 增加 `dshGo.manifest`：`purge-status`（插入状态提示词）与 `purge-apply`（执行 `/purge apply`）。
    - 移除 `dsh.install` 远程 tarball 指向（本副本从仓库路径安装）。
@@ -61,3 +61,11 @@
 - 补丁层现场由 `bin/dsh-purge.js --status --json` 后台读取，写进 `$DSH_HOME/dsh-purge/dsh-go-status.json`，
   面板每 60 秒刷新一次；首屏未命中缓存时显示「正在读取宿主状态…」。
 - dsh-go 检查器：`原生界面能显示（胶囊 2 · 面板 1）`；视图能显示，仅剩样式对比度提示。
+
+## 2026-11-13 修 needs-app
+
+- 移除 `dshGo.minApp`：App 的视图请求不带 `app` 版本，桥接默认 `0.0.0`，
+  会触发 `needs-app`（`409 not-native`）。dsh-purge-go 原本也没有这个字段。
+- 保留 `lib/dsh-go-panel.js` 的 `diag()` 诊断（写 `$DSH_HOME/dsh-purge/dsh-go-panel.log`），
+  移除 `lib/index.js` 里的 console.warn 调试输出。
+- 验证：桥接 `GET /dsh-go/v1/views/dsh-purge/purge` 返回 200，视图为 tabs（状态/提示词/补丁）。

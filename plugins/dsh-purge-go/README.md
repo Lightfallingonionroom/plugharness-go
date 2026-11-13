@@ -1,6 +1,6 @@
 # dsh-purge（dsh-go 融合版）
 
-把 **dsh-purge** 的破甲能力搬进 **dsh-go**（Android + proot）的融合插件。仓库目录是 `plugins/dsh-purge-go`，但包名保持 `dsh-purge`、版本 `1.2.3-go.3`，这样可以直接替换已装的 dsh-purge，更新/卸载逻辑不受影响。
+把 **dsh-purge** 的破甲能力搬进 **dsh-go**（Android + proot）的融合插件。仓库目录是 `plugins/dsh-purge-go`，但包名保持 `dsh-purge`、版本 `1.2.3-go.4`，这样可以直接替换已装的 dsh-purge，更新/卸载逻辑不受影响。
 
 - **内核**：`realMisakaMikoto/dsh-purge` v1.2.3，并含 `purge-research/dsh-purge-optimize` 移入的 PR #110 修复
   （卸载清理四个依赖键、停用红队后交还宿主默认预设）。
@@ -20,7 +20,7 @@ tooling/install-purge-go.sh
 脚本会：
 
 1. 从 `web` profile 移除旧的 `dsh-purge`（如果装过）；
-2. 把 `plugins/dsh-purge-go` 装进 `web` profile（包名仍是 `dsh-purge`，版本 `1.2.3-go.3`，原地升级）；
+2. 把 `plugins/dsh-purge-go` 装进 `web` profile（包名仍是 `dsh-purge`，版本 `1.2.3-go.4`，原地升级）；
 3. 提示重启引擎。
 
 也可以手动装：

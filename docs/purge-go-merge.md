@@ -87,3 +87,9 @@ App 插件市场只收 npm 精确版本，本副本不发布到 npm，走仓库�
   - `tooling/switch-purge.sh evans`（Evans-repo- 1.1.71-rc2.1，面向 0.2.1-rc.2）
   - `tooling/switch-purge.sh real`（realMisakaMikoto 1.2.3）
 - 切换会替换 profile 里的 `dsh-purge`，重启引擎后生效。
+
+## 2026-11-13 修 needs-app
+
+- 移除 `dshGo.minApp`。App 的视图请求不带 `app` 版本，桥接默认 `0.0.0`，
+  会触发 `409 not-native: dsh-purge is needs-app`，面板被 App 判为「还没处理这一项」。
+- 验证：桥接视图接口返回 200，面板可渲染。

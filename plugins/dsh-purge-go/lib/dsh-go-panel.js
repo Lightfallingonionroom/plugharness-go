@@ -12,6 +12,16 @@ const CACHE = (home) => path.join(home, 'dsh-purge', 'dsh-go-status.json')
 
 const KB = (bytes) => `${(bytes / 1024).toFixed(1)} KB`
 
+function diag(home, payload) {
+  try {
+    const file = path.join(home, 'dsh-purge', 'dsh-go-panel.log')
+    fs.mkdirSync(path.dirname(file), { recursive: true })
+    fs.appendFileSync(file, JSON.stringify({ at: new Date().toISOString(), ...payload }) + '\n')
+  } catch {
+    /* 诊断写不进不影响插件 */
+  }
+}
+
 /** 提示词注入层现场（轻量、同步）。 */
 function readSnap(home, config) {
   const injectPath = path.join(home, 'prompt-inject.md')
@@ -227,6 +237,7 @@ async function revertPatches() {
 export function installNative(ctx, deps) {
   const { home, config, warn } = deps
   const bridge = ctx && ctx.dshGo
+  diag(home, { stage: 'enter', hasBridge: !!bridge, panelType: typeof bridge?.panel, onType: typeof bridge?.on, refreshType: typeof bridge?.refresh, bridgeKeys: bridge && typeof bridge === 'object' ? Object.keys(bridge) : [] })
   if (!bridge || typeof bridge !== 'object') return false
 
   const snap = () => readSnap(home, config)
@@ -249,6 +260,7 @@ export function installNative(ctx, deps) {
 
   try {
     if (typeof bridge.panel === 'function') {
+      diag(home, { stage: 'panel-register-start' })
       bridge.panel('purge', {
         view: (scope, caps) => panelView(snap(), patch(), caps),
         actions: {
@@ -279,8 +291,12 @@ export function installNative(ctx, deps) {
           uninstall: guarded('uninstall', async () => ({ toast: '请在大厅插件页卸载' })),
         },
       })
+      diag(home, { stage: 'panel-registered' })
+    } else {
+      diag(home, { stage: 'no-panel-method' })
     }
   } catch (error) {
+    diag(home, { stage: 'panel-error', error: error?.message || String(error) })
     warn(`面板注册失败：${error?.message || error}`)
   }
 

@@ -1592,9 +1592,9 @@ function applyHostHooks(ctx, cfg) {
   // dsh-go 原生面板（全部功能 › 插件面板）
   try {
     const home = core.pinDshHome() || core.findDshHome();
-    ctx.inject(['dshGo'], (scoped) =>
-      installNative(scoped, { home, config: cfg, warn: (msg) => console.warn('[dsh-purge]', msg) }),
-    );
+    ctx.inject(['dshGo'], (scoped) => {
+      installNative(scoped, { home, config: cfg, warn: (msg) => console.warn('[dsh-purge]', msg) });
+    });
   } catch (error) {
     console.warn('[dsh-purge] dshGo 注入失败：', error?.message || error);
   }
