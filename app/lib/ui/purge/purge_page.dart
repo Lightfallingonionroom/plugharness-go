@@ -218,7 +218,7 @@ class _StatusBody extends ConsumerWidget {
               ),
             ),
             _kv('宿主', _str(data, 'ai_base')),
-            _kv('兼容级别', _str(data, 'patch_status', '检测中')),
+            _kv('补丁状态', '${_int(data, 'patches_applied')}/${_int(data, 'patches_total')} · 待应用 ${_int(data, 'patches_pending')} · 跳过 ${_int(data, 'patches_skipped')} · 不适用 ${_int(data, 'patches_na')}'),
             _kv('插件版本', _str(data, 'plugin_version')),
             _kv('主文件', _str(data, 'override_path')),
             if (operationPhase != null) _kv('操作状态', operationPhase),
