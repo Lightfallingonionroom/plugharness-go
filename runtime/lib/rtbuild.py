@@ -28,6 +28,8 @@ NPMJS = "https://registry.npmjs.org/"
 DSH_WEB_PATCH = "/etc/dsh-app/dsh-web.patch.yml"
 # Where runtime/bridge/dsh-go-bridge lands in the rootfs (loaded by absolute path from the overlay).
 DSH_GO_BRIDGE = "/opt/dsh-go/dsh-go-bridge"
+# Bundled dsh-purge-go plugin: loaded by path from the overlay, so the APK ships it.
+DSH_GO_PURGE = "/opt/dsh-go/bundled/dsh-purge-go"
 # runtime/boot/boot-cache.mjs: path cache for `dsh web` while it boots, preloaded by the dsh shim.
 BOOT_CACHE = "/opt/dsh-go/boot-cache.mjs"
 BOOT_CACHE_SRC = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "boot", "boot-cache.mjs")
@@ -831,7 +833,20 @@ def bridge_shared_rows():
                         "name: %s/lib/companion/full-context.js" % DSH_GO_BRIDGE)
 
 
-def overlay_entries(runtime_info, with_python=False, with_pnpm=False, with_bridge=False):
+def purge_shared_rows(purge_path):
+    """The bundled plugin's cordis.patch.yml, with its package names rewritten to paths."""
+    source = os.path.join(os.path.abspath(purge_path), "cordis.patch.yml")
+    with open(source, encoding="utf-8") as patch:
+        rows = patch.read()
+    # Longest first: dsh-purge/redteam/store and /ui are prefixes of the bare /redteam.
+    rows = rows.replace("name: dsh-purge/redteam/store", "name: %s/lib/redteam/store.js" % DSH_GO_PURGE)
+    rows = rows.replace("name: dsh-purge/redteam/ui", "name: %s/lib/redteam/ui.js" % DSH_GO_PURGE)
+    rows = rows.replace("name: dsh-purge/redteam", "name: %s/lib/redteam/index.js" % DSH_GO_PURGE)
+    rows = rows.replace("name: 'dsh-purge'", "name: %s/lib/index.js" % DSH_GO_PURGE)
+    return rows
+
+
+def overlay_entries(runtime_info, with_python=False, with_pnpm=False, with_bridge=False, with_purge=False, purge_path=None):
     """Files dsh-app adds to the rootfs. Kept here so the recipe lives in one place."""
     E = {}
 
@@ -926,6 +941,8 @@ def overlay_entries(runtime_info, with_python=False, with_pnpm=False, with_bridg
                       "    - id: dsh-go-bridge\n"
                       "      name: %s/lib/index.js\n" % DSH_GO_BRIDGE)
             patch += bridge_shared_rows()
+        if with_purge:
+            patch += "\n" + purge_shared_rows(purge_path)
         f(DSH_WEB_PATCH.lstrip("/"), patch)
     d("root/.dsh", 0o700)
     d("root/.l2s", 0o700)          # PROOT_L2S_DIR: hard-link backing files (kept with /root on upgrade)
@@ -1176,10 +1193,13 @@ def cmd_assemble(args):
                  "pnpm", pnpm_drop_reason)
     if args.bridge:
         add_tree(args.bridge, DSH_GO_BRIDGE.lstrip("/"), "bridge", lambda rel, abi, prune: None)
+    if args.purge:
+        add_tree(args.purge, DSH_GO_PURGE.lstrip("/"), "purge", lambda rel, abi, prune: None)
 
     # 4. dsh-app overlay (wins over everything above)
     for p, e in overlay_entries(runtime_info, with_python=bool(args.python), with_pnpm=bool(args.pnpm_prefix),
-                                with_bridge=bool(args.bridge)).items():
+                                with_bridge=bool(args.bridge), with_purge=bool(args.purge),
+                                purge_path=args.purge).items():
         entries[p] = e
 
     # 5. ELF audit + arch/libc pruning; Termux-style fixes for node-pty helpers
@@ -1551,6 +1571,7 @@ def main():
     p.add_argument("--deb", action="append", help="extra .deb to unpack and register (no maintainer scripts)")
     p.add_argument("--python", help="python-build-standalone install_only tarball -> /opt/python")
     p.add_argument("--bridge", help="dsh-go-bridge package dir -> " + DSH_GO_BRIDGE + " (+ overlay row)")
+    p.add_argument("--purge", help="dsh-purge-go plugin dir -> " + DSH_GO_PURGE + " (+ overlay row)")
     p.set_defaults(fn=cmd_assemble)
 
     p = sub.add_parser("manifest")

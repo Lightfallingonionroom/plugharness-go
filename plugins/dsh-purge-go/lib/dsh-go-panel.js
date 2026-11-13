@@ -124,6 +124,11 @@ export function panelView(snap, patch, caps) {
 
   const statusChildren = [
     {
+      type: 'text',
+      text: z('宿主兼容、补丁、破甲自检 · 融合版 1.2.3-go.4', 'Host compatibility, patches, self-check · merged 1.2.3-go.4'),
+      tone: 'muted',
+    },
+    {
       type: 'row',
       children: [
         { type: 'metric', label: z('状态', 'State'), value: snap.enabled ? z('开', 'on') : z('关', 'off'), tone: snap.enabled ? 'good' : 'warn' },
@@ -140,6 +145,8 @@ export function panelView(snap, patch, caps) {
     {
       type: 'keyValue',
       items: [
+        [z('宿主', 'Host'), patch?.aiBase || z('检测中', 'checking')],
+        [z('兼容级别', 'Compatibility'), z('检测中', 'checking')],
         [z('来源', 'Source'), snap.sourceLabel],
         [z('变体', 'Variant'), snap.variant],
         [z('主文件', 'File'), snap.injectPath],
@@ -154,6 +161,11 @@ export function panelView(snap, patch, caps) {
         { label: z('刷新', 'Refresh'), action: { id: 'refresh' }, style: 'plain' },
         { label: z('卸载', 'Uninstall'), action: { id: 'uninstall' }, style: 'plain' },
       ],
+    },
+    {
+      type: 'callout',
+      text: z('装好插件、更新过 DSH、或发现模型又开始推脱时：点一次「应用」，然后退出并重开 DSH，就会恢复。', 'After installing, updating DSH, or when the model starts refusing again: tap Apply, then restart DSH.'),
+      tone: 'info',
     },
     {
       type: 'callout',

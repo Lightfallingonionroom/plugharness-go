@@ -23,6 +23,7 @@ import '../files/files_page.dart';
 import '../forum/forum_home_page.dart';
 import '../phone/phone_control_screen.dart';
 import '../plugins/plugin_detail_sheet.dart';
+import '../purge/purge_page.dart';
 import '../plugins/plugins_screen.dart';
 import '../plugins/seats/plugin_seat_page.dart';
 import '../plugins/seats/seat_links.dart';
@@ -288,6 +289,13 @@ final featureSections = <FeatureSection>[
       icon: AppIcons.plugin,
       tile: FeatureKind.plugins,
       native: (_) => const PluginsScreen(),
+    ),
+    FeatureItem.localized(
+      id: 'purge',
+      title: (_) => 'Purge',
+      summary: (_) => '宿主兼容、补丁、破甲自检',
+      icon: AppIcons.systemAccess,
+      native: (_) => const PurgePage(),
     ),
     FeatureItem.localized(
       id: 'cordis',
