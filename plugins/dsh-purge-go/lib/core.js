@@ -1903,6 +1903,11 @@ function findAiBaseDesktop() {
   return null;
 }
 
+function isWorkspaceAiBase(p) {
+  const n = String(p || "").replace(/\\/g, "/").toLowerCase();
+  return n.includes("/root/workspace/") || n.includes("/workspace/") || n.includes("/ai agent/");
+}
+
 function findAiBaseWeb() {
   const env = process.env.DSH_BASE;
   if (env && env.trim()) {
@@ -1910,11 +1915,23 @@ function findAiBaseWeb() {
     if (isAiBase(p) && !desktop.isInsideDesktopInstall(p)) return p;
   }
 
+  // dsh-go / Android proot: the runtime engine is always here. Prefer it over
+  // any node_modules copy under the workspace (a source checkout used for
+  // research) so patches land on the live engine.
+  const runtimeAiBase = "/opt/dsh/node_modules/@deepseek-ai";
+  if (isAiBase(runtimeAiBase) && !desktop.isInsideDesktopInstall(runtimeAiBase)) return runtimeAiBase;
+
+  const envAiRoot = String(process.env.DSH_AI_ROOT || "").trim();
+  if (envAiRoot) {
+    const p = path.normalize(envAiRoot);
+    if (isAiBase(p) && !desktop.isInsideDesktopInstall(p)) return p;
+  }
+
   const fromProcess = findAiBaseFromRunningProcess();
-  if (fromProcess && !desktop.isInsideDesktopInstall(fromProcess)) return fromProcess;
+  if (fromProcess && !desktop.isInsideDesktopInstall(fromProcess) && !isWorkspaceAiBase(fromProcess)) return fromProcess;
 
   const fromHome = findAiBaseFromDshHome(findDshHome());
-  if (fromHome && !desktop.isInsideDesktopInstall(fromHome)) return fromHome;
+  if (fromHome && !desktop.isInsideDesktopInstall(fromHome) && !isWorkspaceAiBase(fromHome)) return fromHome;
 
   const nested = nestedAiPath();
   const prefix = findNpmPrefix();

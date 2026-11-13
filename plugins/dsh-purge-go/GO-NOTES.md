@@ -41,3 +41,15 @@
 - 优化版 PR #110 的「已存在且记录为 `agentPreset=redteam` 的会话」仍由宿主 `composeAgent()` 显式 `resolve()`，
   本补丁不保护这类历史会话。
 - 未在 App 插件市场发布；市场只收 npm 精确版本，本副本走仓库路径安装。
+
+## 2026-11-13 补充修复
+
+1. **宿主探测**：`findAiBaseWeb()` 现在优先返回 `/opt/dsh/node_modules/@deepseek-ai`，
+   并支持 `DSH_AI_ROOT` 覆盖；同时过滤 `/root/workspace/`、`/workspace/`、`/ai agent/`
+   下的副本。修复「补丁打到工作区源码副本、真实引擎没被清洗」的问题。
+2. **bundle patch**：删掉非 insert 的 `- id: dsh-purge` 覆盖行，只保留 `insert`，
+   避免宿主报 `entry "dsh-purge" not found` / 重复入队（与 Evans-repo- 的兼容修法一致）。
+3. **原生工具卡**：新增 `lib/dsh-go-card.js`，把 `purge_status` / `purge_apply` /
+   `purge_revert` 的输出挂成 dsh-go 文本卡；胶囊仍是「破甲状态 / 破甲应用」。
+4. **验证**：`findAiBase()` 实测返回 `/opt/dsh/node_modules/@deepseek-ai`；
+   `npm test` 全绿；dsh-go 检查器显示胶囊 2 个、工具 3 个。

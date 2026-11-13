@@ -30,9 +30,6 @@
     personaPrefix: ""
     personaSuffix: ""
 
-- id: dsh-purge
-  inject: [systemPrompt, tools]
-
 - insert:
     - id: dsh-purge
       name: 'dsh-purge'

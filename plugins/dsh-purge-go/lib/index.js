@@ -38,6 +38,7 @@ import {
   settleMayRestart,
   watchContextLife,
 } from "./settle-policy.js";
+import { toolCard, textCard } from "./dsh-go-card.js";
 
 export const name = "dsh-purge";
 
@@ -1662,6 +1663,7 @@ function applyHostHooks(ctx, cfg) {
           properties: { text: { type: "string" } },
         },
         render: (_args, value) => [{ type: "text", text: String(value?.text ?? "") }],
+        presentationMeta: toolCard((_args, value) => textCard(value?.text)),
       },
       async execute() {
         const state = await core.gatherState();
@@ -1683,6 +1685,7 @@ function applyHostHooks(ctx, cfg) {
           properties: { text: { type: "string" } },
         },
         render: (_args, value) => [{ type: "text", text: String(value?.text ?? "") }],
+        presentationMeta: toolCard((_args, value) => textCard(value?.text)),
       },
       async execute() {
         core.applyRuntimeEnv();
@@ -1719,6 +1722,7 @@ function applyHostHooks(ctx, cfg) {
           properties: { text: { type: "string" } },
         },
         render: (_args, value) => [{ type: "text", text: String(value?.text ?? "") }],
+        presentationMeta: toolCard((_args, value) => textCard(value?.text)),
       },
       async execute() {
         const state = await core.gatherState();

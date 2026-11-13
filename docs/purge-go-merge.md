@@ -69,3 +69,11 @@ App 插件市场只收 npm 精确版本，本副本不发布到 npm，走仓库�
   （那些包没装）。
 - 临时引擎启动：`dsh --profile web --no-open --port 3099` 成功打印
   `dsh web: http://127.0.0.1:3099/?token=…`，无插件加载错误。
+
+## 2026-11-13 补充修复
+
+- 宿主探测优先真实引擎 `/opt/dsh/node_modules/@deepseek-ai`，并支持 `DSH_AI_ROOT`；
+  过滤工作区源码副本。实测 `findAiBase()` 返回正确路径。
+- bundle patch 去掉重复 insert，兼容 Evans-repo- 的 rc.2 修法。
+- `purge_status` / `purge_apply` / `purge_revert` 增加 dsh-go 原生文本卡。
+- `npm test` 全绿；dsh-go 检查器：胶囊 2、工具 3。
