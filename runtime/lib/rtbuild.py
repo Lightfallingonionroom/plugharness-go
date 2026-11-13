@@ -869,11 +869,7 @@ def bundled_plugin_rows():
         "    - id: dsh-purge\n"
         "      name: %s/lib/index.js\n"
         "    - id: zfx-emperor\n"
-        "      name: %s/index.js\n"
-        "# Re-apply the patch layer on engine start (an APK update replaces the runtime).\n"
-        "- id: dsh-purge\n"
-        "  config:\n"
-        "    autoApplyOnStart: true\n" % (DSH_GO_PURGE_REAL_1171, DSH_GO_ZFX)
+        "      name: %s/index.js\n" % (DSH_GO_PURGE_REAL_1171, DSH_GO_ZFX)
     )
 
 
