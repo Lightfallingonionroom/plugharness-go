@@ -202,10 +202,11 @@ class SessionsDrawer extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // P5 (ChatGPT) has no 「功能」 heading: the feature rows start right
-                // under the wordmark, tight. 插件 / 自动化任务 / 网页版 stay
+                // under the wordmark, tight. 插件 / Purge / 自动化任务 / 网页版 stay
                 // on the top level; 快捷入口's own picks are not repeated here.
                 for (final destination in const [
                   DrawerDestination.plugins,
+                  DrawerDestination.purge,
                   DrawerDestination.schedules,
                   DrawerDestination.web,
                 ])

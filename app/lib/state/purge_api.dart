@@ -77,6 +77,11 @@ class PurgeApi {
 
   Future<Map<String, dynamic>> rewind(String sessionId, {String mode = 'once'}) =>
       _post('/dsh-purge/rewind', {'sessionId': sessionId, 'mode': mode});
+
+  /// Switch the bundled purge version; the overlay is rewritten and the engine
+  /// must be restarted for the new plugin path to load.
+  Future<Map<String, dynamic>> switchVersion(String version) =>
+      _post('/dsh-purge/switch-version', {'version': version});
 }
 
 /// The plugin API for the active local engine; null while it is not connected.

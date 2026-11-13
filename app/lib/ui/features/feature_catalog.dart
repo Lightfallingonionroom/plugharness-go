@@ -435,15 +435,19 @@ final featureSectionsProvider = Provider.autoDispose<List<FeatureSection>>((ref)
   if (items.isEmpty) return featureSections;
   final bundles = ref.watch(installedPluginsProvider.select((s) => s.value));
   final inventory = ref.watch(seatInventoryProvider);
+  // The bundled dsh-purge plugin's panel (plugin-panel:dsh-purge#…) duplicates
+  // the app's own Purge page, whose 'purge' entry is already in 插件; leave the
+  // plugin's panel items out so the page is not listed twice.
   final panels = [
     for (final item in items)
-      pluginPanelFeature(
-        item,
-        bundles: bundles,
-        inventory: inventory,
-        // A native panel's plugin may have declared a title of its own.
-        owner: item.mode == SeatMode.native ? ref.watch(nativePluginTitleProvider(item.occupant.package)) : null,
-      ),
+      if (item.occupant.package != 'dsh-purge')
+        pluginPanelFeature(
+          item,
+          bundles: bundles,
+          inventory: inventory,
+          // A native panel's plugin may have declared a title of its own.
+          owner: item.mode == SeatMode.native ? ref.watch(nativePluginTitleProvider(item.occupant.package)) : null,
+        ),
   ];
   return [
     for (final section in featureSections)

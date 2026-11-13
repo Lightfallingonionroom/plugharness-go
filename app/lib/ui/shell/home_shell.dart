@@ -28,6 +28,7 @@ import '../notify/chat_alert_host.dart';
 import '../notify/voice_model_host.dart';
 import '../plugins/plugins_screen.dart';
 import '../pets/pet_settings_page.dart';
+import '../purge/purge_page.dart';
 import '../phone/phone_stop_watcher.dart';
 import '../remote/host_switcher.dart' show showHostSheet;
 import '../remote/remote_screen.dart';
@@ -245,6 +246,7 @@ class _HomeShellState extends ConsumerState<HomeShell> with TickerProviderStateM
       DrawerDestination.web => const LocalWebScreen(),
       DrawerDestination.remote => const RemoteScreen(),
       DrawerDestination.plugins => const PluginsScreen(),
+      DrawerDestination.purge => const PurgePage(),
       DrawerDestination.engine => const EngineScreen(),
       DrawerDestination.settings => const SettingsScreen(),
       DrawerDestination.settingsSearch => const SettingsSearchPage(),

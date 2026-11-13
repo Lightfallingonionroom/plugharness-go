@@ -1978,6 +1978,42 @@ function installWebServer(ctx, cfg) {
       }, "dsh-purge: rewind");
       registerPluginRoute({
         kind: "exact",
+        path: "/dsh-purge/switch-version",
+        handler: async (request, response) => {
+          if (request.method !== "POST") {
+            response.writeHead(405, { allow: "POST" });
+            response.end();
+            return;
+          }
+          try {
+            const body = await readJsonBody(request);
+            const version = String(body?.version || "");
+            const versions = {
+              "1.1.71": "/opt/dsh-go/bundled/dsh-purge-real-1.1.71/lib/index.js",
+              "1.1.81": "/opt/dsh-go/bundled/dsh-purge-real-1.1.81/lib/index.js",
+              "1.2.3": "/opt/dsh-go/bundled/dsh-purge-real-1.2.3/lib/index.js",
+              "go": "/opt/dsh-go/bundled/dsh-purge-go/lib/index.js",
+            };
+            if (!versions[version]) {
+              sendJson(response, 400, { ok: false, error: "unknown version" });
+              return;
+            }
+            const overlay = "/etc/dsh-app/dsh-web.patch.yml";
+            let text = fs.readFileSync(overlay, "utf8");
+            const base = versions[version].replace("/lib/index.js", "");
+            text = text.replace(
+              /\/opt\/dsh-go\/bundled\/dsh-purge-[^/]+\/lib\//g,
+              base + "/lib/",
+            );
+            fs.writeFileSync(overlay, text);
+            sendJson(response, 200, { ok: true, version, restart_required: true });
+          } catch (e) {
+            sendJson(response, 500, { ok: false, error: String(e && e.message ? e.message : e) });
+          }
+        },
+      }, "dsh-purge: switch version");
+      registerPluginRoute({
+        kind: "exact",
         path: "/dsh-purge/update",
         handler: async (request, response) => {
           if (request.method === "GET") {

@@ -30,6 +30,18 @@ DSH_WEB_PATCH = "/etc/dsh-app/dsh-web.patch.yml"
 DSH_GO_BRIDGE = "/opt/dsh-go/dsh-go-bridge"
 # Bundled dsh-purge-go plugin: loaded by path from the overlay, so the APK ships it.
 DSH_GO_PURGE = "/opt/dsh-go/bundled/dsh-purge-go"
+DSH_GO_PURGE_REAL = "/opt/dsh-go/bundled/dsh-purge-real"
+DSH_GO_PURGE_EVANS = "/opt/dsh-go/bundled/dsh-purge-evans"
+DSH_GO_ZFX = "/opt/dsh-go/bundled/zfx-emperor"
+DSH_GO_PURGE_REAL_1171 = "/opt/dsh-go/bundled/dsh-purge-real-1.1.71"
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# realMisakaMikoto/dsh-purge versions that work on 0.2.2-rc.1, bundled for the
+# in-app version switcher. The first entry is the default.
+BUNDLED_PURGE_VERSIONS = [
+    ("dsh-purge-real-1.1.71", os.path.join(REPO_ROOT, "plugins", "dsh-purge-real-1.1.71")),
+    ("dsh-purge-real-1.1.81", os.path.join(REPO_ROOT, "plugins", "dsh-purge-real-1.1.81")),
+    ("dsh-purge-real-1.2.3", os.path.join(REPO_ROOT, "plugins", "dsh-purge-real")),
+]
 # runtime/boot/boot-cache.mjs: path cache for `dsh web` while it boots, preloaded by the dsh shim.
 BOOT_CACHE = "/opt/dsh-go/boot-cache.mjs"
 BOOT_CACHE_SRC = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "boot", "boot-cache.mjs")
@@ -849,6 +861,22 @@ def purge_shared_rows(purge_path):
     return rows
 
 
+def bundled_plugin_rows():
+    """The bundled plugins the overlay loads by path: purge (default real) + zfx."""
+    return (
+        "# Bundled plugins: dsh-purge (default realMisakaMikoto 1.1.71) + zfx-emperor.\n"
+        "- insert:\n"
+        "    - id: dsh-purge\n"
+        "      name: %s/lib/index.js\n"
+        "    - id: zfx-emperor\n"
+        "      name: %s/index.js\n"
+        "# Re-apply the patch layer on engine start (an APK update replaces the runtime).\n"
+        "- id: dsh-purge\n"
+        "  config:\n"
+        "    autoApplyOnStart: true\n" % (DSH_GO_PURGE_REAL_1171, DSH_GO_ZFX)
+    )
+
+
 def overlay_entries(runtime_info, with_python=False, with_pnpm=False, with_bridge=False, with_purge=False, purge_path=None):
     """Files dsh-app adds to the rootfs. Kept here so the recipe lives in one place."""
     E = {}
@@ -945,7 +973,7 @@ def overlay_entries(runtime_info, with_python=False, with_pnpm=False, with_bridg
                       "      name: %s/lib/index.js\n" % DSH_GO_BRIDGE)
             patch += bridge_shared_rows()
         if with_purge:
-            patch += "\n" + purge_shared_rows(purge_path)
+            patch += "\n" + bundled_plugin_rows()
         f(DSH_WEB_PATCH.lstrip("/"), patch)
     d("root/.dsh", 0o700)
     d("root/.l2s", 0o700)          # PROOT_L2S_DIR: hard-link backing files (kept with /root on upgrade)
@@ -1198,6 +1226,11 @@ def cmd_assemble(args):
         add_tree(args.bridge, DSH_GO_BRIDGE.lstrip("/"), "bridge", lambda rel, abi, prune: None)
     if args.purge:
         add_tree(args.purge, DSH_GO_PURGE.lstrip("/"), "purge", lambda rel, abi, prune: None)
+    for name, path in BUNDLED_PURGE_VERSIONS:
+        if os.path.isdir(path):
+            add_tree(path, "opt/dsh-go/bundled/" + name, "purge-real", lambda rel, abi, prune: None)
+    if args.zfx:
+        add_tree(args.zfx, DSH_GO_ZFX.lstrip("/"), "zfx-emperor", lambda rel, abi, prune: None)
 
     # 4. dsh-app overlay (wins over everything above)
     for p, e in overlay_entries(runtime_info, with_python=bool(args.python), with_pnpm=bool(args.pnpm_prefix),
@@ -1575,6 +1608,7 @@ def main():
     p.add_argument("--python", help="python-build-standalone install_only tarball -> /opt/python")
     p.add_argument("--bridge", help="dsh-go-bridge package dir -> " + DSH_GO_BRIDGE + " (+ overlay row)")
     p.add_argument("--purge", help="dsh-purge-go plugin dir -> " + DSH_GO_PURGE + " (+ overlay row)")
+    p.add_argument("--zfx", help="zfx-emperor plugin dir -> " + DSH_GO_ZFX)
     p.set_defaults(fn=cmd_assemble)
 
     p = sub.add_parser("manifest")

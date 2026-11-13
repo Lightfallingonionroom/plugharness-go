@@ -24,7 +24,7 @@ class PurgePage extends ConsumerStatefulWidget {
 }
 
 class _PurgePageState extends ConsumerState<PurgePage> with SingleTickerProviderStateMixin {
-  late final TabController _tabs = TabController(length: 6, vsync: this);
+  late final TabController _tabs = TabController(length: 7, vsync: this);
 
   @override
   void dispose() {
@@ -57,6 +57,7 @@ class _PurgePageState extends ConsumerState<PurgePage> with SingleTickerProvider
                   Tab(text: '规则'),
                   Tab(text: '技能'),
                   Tab(text: '演练台'),
+                  Tab(text: '版本'),
                 ],
               ),
               Expanded(
@@ -69,6 +70,7 @@ class _PurgePageState extends ConsumerState<PurgePage> with SingleTickerProvider
                     _PurgeRulesTab(),
                     _PurgeSkillsTab(),
                     _PurgeDrillTab(),
+                    _PurgeVersionTab(),
                   ],
                 ),
               ),
@@ -82,7 +84,7 @@ class _PurgePageState extends ConsumerState<PurgePage> with SingleTickerProvider
 
 // ── Shared helpers ──────────────────────────────────────────────────────────
 
-Future<void> _run(BuildContext context, WidgetRef ref, Future<void> Function() action) async {
+Future<void> _run(BuildContext context, WidgetRef ref, Future<void> Function() action, {String? notice}) async {
   try {
     await action();
     ref.invalidate(purgeStatusProvider);
@@ -90,7 +92,7 @@ Future<void> _run(BuildContext context, WidgetRef ref, Future<void> Function() a
     ref.invalidate(purgeRulesProvider);
     ref.invalidate(purgeSkillsProvider);
     ref.invalidate(purgeDrillProvider);
-    if (context.mounted) showBriefNotice(context, '完成');
+    if (context.mounted) showBriefNotice(context, notice ?? '完成');
   } catch (error) {
     if (context.mounted) showBriefNotice(context, '操作失败：$error');
   }
@@ -694,6 +696,57 @@ class _PurgeDrillTab extends ConsumerWidget {
           ],
         );
       },
+    );
+  }
+}
+
+// ── 版本 ─────────────────────────────────────────────────────────────────────
+
+/// The bundled purge versions [PurgeApi.switchVersion] can switch to; the
+/// engine must be restarted for the new plugin path to load.
+const purgeVersions = ['1.1.71', '1.1.81', '1.2.3'];
+
+class _PurgeVersionTab extends ConsumerWidget {
+  const _PurgeVersionTab();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final api = ref.read(purgeApiProvider)!;
+    final status = ref.watch(purgeStatusProvider);
+    final current = status.when(
+      data: (data) => data['plugin_version']?.toString() ?? '—',
+      loading: () => '—',
+      error: (_, _) => '—',
+    );
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+      children: [
+        ListPageCard(
+          children: [
+            ListPageRow(title: '当前版本', value: current),
+            ListPageRow(
+              title: '切换版本',
+              subtitle: '切换后需重启引擎生效',
+              trailing: DropdownButton<String>(
+                value: purgeVersions.contains(current) ? current : '1.1.71',
+                items: [
+                  for (final version in purgeVersions)
+                    DropdownMenuItem(value: version, child: Text(version)),
+                ],
+                onChanged: (version) {
+                  if (version == null) return;
+                  _run(
+                    context,
+                    ref,
+                    () async => api.switchVersion(version),
+                    notice: '已切换到 $version，请重启引擎',
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
