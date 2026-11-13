@@ -21,7 +21,7 @@ import kotlin.concurrent.thread
  * - `start` → begins `/bin/sh` in the runtime rootfs (proot), streams its output.
  * - `write {text}` → appends [text] to the shell's stdin (a newline is added when missing).
  * - `stop` → ends the shell.
- * - `run {command}` → one shot: `start`, `write`, waits, returns the collected output.
+ * - `run {command}` → one shot command, returns the merged output and its exit code.
  */
 class ContainerTerminalPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
 
@@ -92,8 +92,8 @@ class ContainerTerminalPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
     private fun startShell(): Boolean {
         if (process?.isAlive == true) return true
         stopShell()
-        val argv = shellArgv() ?: return false
-        val launched = runCatching { ProcessBuilder(argv).start() }.getOrNull() ?: return false
+        val built = shellCommand(listOf("/bin/sh")) ?: return false
+        val launched = runCatching { built.start() }.getOrNull() ?: return false
         process = launched
         stdin = launched.outputStream
         thread(name = "dsh-container-out", isDaemon = true) { pump(launched) }
@@ -102,13 +102,13 @@ class ContainerTerminalPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
 
     /** One command in its own shell, so it never disturbs a live session. */
     private fun runOnce(command: String): Map<String, Any> {
-        val argv = shellArgv(listOf("/bin/sh", "-c", command))
+        val built = shellCommand(listOf("/bin/sh", "-c", command))
             ?: error("the container runtime is not installed")
-        val launched = ProcessBuilder(argv).start()
+        val launched = built.start()
+        // Merged, so a chatty command cannot deadlock on a full stderr pipe.
         val out = launched.inputStream.readBytes().toString(Charsets.UTF_8)
-        val err = launched.errorStream.readBytes().toString(Charsets.UTF_8)
         val code = launched.waitFor()
-        return mapOf("stdout" to out, "stderr" to err, "exitCode" to code)
+        return mapOf("stdout" to out, "stderr" to "", "exitCode" to code)
     }
 
     private fun write(text: String): Boolean {
@@ -128,7 +128,7 @@ class ContainerTerminalPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
         process = null
     }
 
-    /** Reads the shell's stdout/stderr and forwards every chunk to the Dart side. */
+    /** Reads the shell's merged output and forwards every chunk to the Dart side. */
     private fun pump(launched: Process) {
         val buffer = ByteArray(8 * 1024)
         try {
@@ -157,10 +157,11 @@ class ContainerTerminalPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
     }
 
     /**
-     * The runtime manifest's proot template, with the guest command replaced by a shell.
-     * Placeholders are expanded the same way [DshProcess] expands the engine's launch.
+     * The runtime manifest's proot template as a [ProcessBuilder], with the guest command
+     * replaced by [guest]. Placeholders are expanded the same way [DshProcess] expands the
+     * engine's launch, and the manifest's proot environment is applied.
      */
-    private fun shellArgv(guest: List<String> = listOf("/bin/sh")): List<String>? {
+    private fun shellCommand(guest: List<String>): ProcessBuilder? {
         val manifest = runCatching { RuntimeManifest.load(context) }.getOrNull() ?: return null
         val rootfs = File(context.filesDir, "runtime/rootfs")
         if (!rootfs.isDirectory) return null
@@ -178,10 +179,15 @@ class ContainerTerminalPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
         if (envAt < 1) return null
         val head = argv.take(envAt + 1).map(::expand)
         // The engine's launch carries {GUEST_ENV} and the web command; the shell needs neither.
-        val env = argv.drop(envAt + 1)
-            .filterNot { it == "{GUEST_ENV}" || it.startsWith("{PORT}") || it == "/bin/sh" || it == "-c" }
+        val afterEnv = argv.drop(envAt + 1)
+        val guestAt = afterEnv.indexOf("/bin/sh")
+        val env = (if (guestAt >= 0) afterEnv.take(guestAt) else afterEnv)
+            .filterNot { it == "{GUEST_ENV}" || it.startsWith("{PORT}") }
             .map(::expand)
-        return head + env + guest.map(::expand)
+        val builder = ProcessBuilder(head + env + guest.map(::expand))
+        builder.redirectErrorStream(true)
+        builder.environment().apply { manifest.launchEnv.forEach { (k, v) -> put(k, expand(v)) } }
+        return builder
     }
 
     companion object {
