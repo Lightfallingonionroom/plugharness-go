@@ -13,6 +13,7 @@ import '../../state/purge_state.dart';
 import '../common/brief_notice.dart';
 import '../features/feature_widgets.dart' show FeatureOffline;
 import '../common/list_page_row.dart';
+import '../terminal/container_terminal_page.dart';
 import '../shell/page_frame.dart';
 import '../theme/app_icons.dart';
 import '../web/web_view_page.dart';
@@ -761,6 +762,21 @@ class _PurgeVersionTab extends ConsumerWidget {
                   child: Text(installed ? '切换' : '启用'),
                 ),
               ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        ListPageCard(
+          children: [
+            ListPageRow(
+              title: '容器终端',
+              subtitle: '直接进入本机容器，引擎崩溃时也能修',
+              trailing: OutlinedButton(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(builder: (_) => const ContainerTerminalPage()),
+                ),
+                child: const Text('打开'),
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 12),

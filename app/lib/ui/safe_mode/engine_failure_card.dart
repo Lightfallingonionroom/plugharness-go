@@ -12,6 +12,7 @@ import '../engine/diagnostics_export_card.dart';
 import '../engine/engine_status.dart';
 import '../remote/remote_screen.dart';
 import '../settings/background_guide_page.dart';
+import '../terminal/container_terminal_page.dart';
 import '../theme/theme.dart';
 import 'recovery_actions.dart';
 import 'safe_mode_actions.dart';
@@ -211,6 +212,15 @@ class EngineFailureCard extends ConsumerWidget {
               ],
               onLog: () => run(FailureAction.showLog),
               onExport: () => unawaited(showDiagnosticsExportSheet(context)),
+            ),
+            const SizedBox(height: 4),
+            // The container's own shell: the engine is down here, and this is the
+            // way to fix what broke it (remove a plugin, repair a config, restart).
+            TextButton(
+              onPressed: () => unawaited(Navigator.of(context).push<void>(
+                MaterialPageRoute(builder: (_) => const ContainerTerminalPage()),
+              )),
+              child: const Text('容器终端'),
             ),
           ],
         ),

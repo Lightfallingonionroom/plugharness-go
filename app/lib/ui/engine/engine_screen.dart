@@ -20,6 +20,7 @@ import '../settings/background_guide_page.dart';
 import '../settings/diagnostics_page.dart';
 import '../settings/settings_widgets.dart';
 import '../shell/page_frame.dart';
+import '../terminal/container_terminal_page.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
 import '../web/local_web_screen.dart';
@@ -162,6 +163,12 @@ class EngineScreen extends ConsumerWidget {
                   spot: SettingsIndex.entry(SettingsPageId.diagnostics),
                   subtitle: l10n.phoneEngineDiagnosticsHint,
                   onTap: () => _push(context, const DiagnosticsPage()),
+                ),
+                SettingsTile(
+                  icon: AppIcons.terminal,
+                  title: '容器终端',
+                  subtitle: '引擎没起来也能用：在这里删插件、改配置、重启引擎',
+                  onTap: () => _push(context, const ContainerTerminalPage()),
                 ),
               ],
             ),
