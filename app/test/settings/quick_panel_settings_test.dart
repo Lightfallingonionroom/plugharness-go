@@ -112,6 +112,8 @@ void main() {
       DrawerDestination.remote,
       DrawerDestination.settingsSearch,
       DrawerDestination.features,
+      DrawerDestination.schedules,
+      DrawerDestination.purge,
     ]);
   });
 
