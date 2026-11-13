@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../runtime/runtime_state.dart';
 import '../../state/connection_state.dart';
 import '../../state/purge_api.dart';
+import '../../state/plugins_state.dart';
 import '../../state/purge_state.dart';
 import '../common/brief_notice.dart';
 import '../features/feature_widgets.dart' show FeatureOffline;
@@ -702,17 +703,37 @@ class _PurgeDrillTab extends ConsumerWidget {
 
 // ── 版本 ─────────────────────────────────────────────────────────────────────
 
-/// The bundled purge versions [PurgeApi.switchVersion] can switch to; the
-/// engine must be restarted for the new plugin path to load.
+/// The bundled purge versions. The APK ships the files; the user enables one
+/// here, which installs it into the profile (no auto-load at engine start).
 const purgeVersions = ['1.1.71', '1.1.81', '1.2.3'];
 
 class _PurgeVersionTab extends ConsumerWidget {
   const _PurgeVersionTab();
 
+  Future<void> _enableBundled(BuildContext context, WidgetRef ref, String version, {required bool installed}) async {
+    final request = PluginInstallRequest(
+      name: 'dsh-purge',
+      spec: '/opt/dsh-go/bundled/dsh-purge-real-$version',
+      title: 'Purge',
+      replaceInstalled: installed,
+    );
+    try {
+      final job = await ref.read(pluginInstallsProvider.notifier).install(request);
+      if (!context.mounted) return;
+      if (job.phase == PluginInstallPhase.succeeded) {
+        showBriefNotice(context, '已启用 $version，请重启引擎');
+      } else {
+        showBriefNotice(context, '启用失败：${job.failure?.title ?? job.phase.name}');
+      }
+    } catch (error) {
+      if (context.mounted) showBriefNotice(context, '启用失败：$error');
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final api = ref.read(purgeApiProvider)!;
     final status = ref.watch(purgeStatusProvider);
+    final installed = ref.watch(installedPluginsProvider).value?.any((b) => b.name == 'dsh-purge') ?? false;
     final current = status.when(
       data: (data) => data['plugin_version']?.toString() ?? '—',
       loading: () => '—',
@@ -724,25 +745,30 @@ class _PurgeVersionTab extends ConsumerWidget {
         ListPageCard(
           children: [
             ListPageRow(title: '当前版本', value: current),
-            ListPageRow(
-              title: '切换版本',
-              subtitle: '切换后需重启引擎生效',
-              trailing: DropdownButton<String>(
-                value: purgeVersions.contains(current) ? current : '1.1.71',
-                items: [
-                  for (final version in purgeVersions)
-                    DropdownMenuItem(value: version, child: Text(version)),
-                ],
-                onChanged: (version) {
-                  if (version == null) return;
-                  _run(
-                    context,
-                    ref,
-                    () async => api.switchVersion(version),
-                    notice: '已切换到 $version，请重启引擎',
-                  );
-                },
+            ListPageRow(title: '内置插件', value: installed ? '已启用' : '未启用'),
+          ],
+        ),
+        const SizedBox(height: 12),
+        ListPageCard(
+          title: '启用 / 切换版本',
+          children: [
+            for (final version in purgeVersions)
+              ListPageRow(
+                title: version,
+                subtitle: version == '1.1.71' ? '默认兼容版本' : '兼容版本',
+                trailing: FilledButton(
+                  onPressed: () => _enableBundled(context, ref, version, installed: installed),
+                  child: Text(installed ? '切换' : '启用'),
+                ),
               ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        ListPageCard(
+          children: [
+            ListPageRow(
+              title: '说明',
+              subtitle: '插件文件已内置在 APK 里，启用后会装入当前 profile，需重启引擎生效。',
             ),
           ],
         ),

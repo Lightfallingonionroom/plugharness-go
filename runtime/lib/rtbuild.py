@@ -862,15 +862,10 @@ def purge_shared_rows(purge_path):
 
 
 def bundled_plugin_rows():
-    """The bundled plugins the overlay loads by path: purge (default real) + zfx."""
-    return (
-        "# Bundled plugins: dsh-purge (default realMisakaMikoto 1.1.71) + zfx-emperor.\n"
-        "- insert:\n"
-        "    - id: dsh-purge\n"
-        "      name: %s/lib/index.js\n"
-        "    - id: zfx-emperor\n"
-        "      name: %s/index.js\n" % (DSH_GO_PURGE_REAL_1171, DSH_GO_ZFX)
-    )
+    """The bundled plugins are shipped as files only; the app enables them on
+    request (one click), so a broken plugin cannot stop the engine or safe mode
+    from starting."""
+    return ""
 
 
 def overlay_entries(runtime_info, with_python=False, with_pnpm=False, with_bridge=False, with_purge=False, purge_path=None):
