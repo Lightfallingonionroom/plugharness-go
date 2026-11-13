@@ -39,6 +39,7 @@ import {
   watchContextLife,
 } from "./settle-policy.js";
 import { toolCard, textCard } from "./dsh-go-card.js";
+import { installNative } from "./dsh-go-panel.js";
 
 export const name = "dsh-purge";
 
@@ -1587,6 +1588,16 @@ function applyHostHooks(ctx, cfg) {
   installCwdCapture(ctx);
   installMnemonMessageStrip(ctx, cfg);
   registerPromptSections(ctx, cfg);
+
+  // dsh-go 原生面板（全部功能 › 插件面板）
+  try {
+    const home = core.pinDshHome() || core.findDshHome();
+    ctx.inject(['dshGo'], (scoped) =>
+      installNative(scoped, { home, config: cfg, warn: (msg) => console.warn('[dsh-purge]', msg) }),
+    );
+  } catch (error) {
+    console.warn('[dsh-purge] dshGo 注入失败：', error?.message || error);
+  }
 
   // 本次 apply 作用域内的 continue-retry 状态；旧 ctx dispose 会把这些闭包一并带走。
   const continuePluginCfg = cfg;

@@ -77,3 +77,13 @@ App 插件市场只收 npm 精确版本，本副本不发布到 npm，走仓库�
 - bundle patch 去掉重复 insert，兼容 Evans-repo- 的 rc.2 修法。
 - `purge_status` / `purge_apply` / `purge_revert` 增加 dsh-go 原生文本卡。
 - `npm test` 全绿；dsh-go 检查器：胶囊 2、工具 3。
+
+## 2026-11-13 原生面板与版本切换
+
+- 融合版补上 dsh-go 原生面板：`全部功能 › 插件面板 › Purge`，含 状态 / 提示词 / 补丁 三个 tab，
+  以及 应用 / 还原 / 刷新 / 复制 / 卸载 操作。
+- 仓库同时收进另外两个版本，可用脚本切换：
+  - `tooling/switch-purge.sh go`（默认，融合版）
+  - `tooling/switch-purge.sh evans`（Evans-repo- 1.1.71-rc2.1，面向 0.2.1-rc.2）
+  - `tooling/switch-purge.sh real`（realMisakaMikoto 1.2.3）
+- 切换会替换 profile 里的 `dsh-purge`，重启引擎后生效。

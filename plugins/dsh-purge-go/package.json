@@ -1,6 +1,6 @@
 {
   "name": "dsh-purge",
-  "version": "1.2.3-go.2",
+  "version": "1.2.3-go.3",
   "description": "DeepSeek Harness 破甲（dsh-go 融合版）：基于 dsh-purge 1.2.3 + PR #110 优化，叠加 dsh-go 原生胶囊。Jailbreak for every model — swap prompts per model.",
   "type": "module",
   "main": "lib/index.js",
@@ -136,6 +136,17 @@
             "name": "purge",
             "args": "apply"
           }
+        }
+      ],
+      "panels": [
+        {
+          "id": "purge",
+          "title": "Purge",
+          "icon": "wrench",
+          "placement": [
+            "features",
+            "session.tab"
+          ]
         }
       ]
     }

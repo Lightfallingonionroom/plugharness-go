@@ -13,7 +13,7 @@
 ## 改动
 
 1. `package.json`
-   - `name` 保持 `dsh-purge`（目录是 `plugins/dsh-purge-go`），`version` → `1.2.3-go.1`。
+   - `name` 保持 `dsh-purge`（目录是 `plugins/dsh-purge-go`），`version` → `1.2.3-go.3`。
      这样可以直接替换已装的 dsh-purge；更新、卸载、profile 依赖逻辑里的 `dsh-purge` 硬编码不需要改。
    - 增加 `dshGo.manifest`：`purge-status`（插入状态提示词）与 `purge-apply`（执行 `/purge apply`）。
    - 移除 `dsh.install` 远程 tarball 指向（本副本从仓库路径安装）。
@@ -53,3 +53,11 @@
    `purge_revert` 的输出挂成 dsh-go 文本卡；胶囊仍是「破甲状态 / 破甲应用」。
 4. **验证**：`findAiBase()` 实测返回 `/opt/dsh/node_modules/@deepseek-ai`；
    `npm test` 全绿；dsh-go 检查器显示胶囊 2 个、工具 3 个。
+
+## 2026-11-13 原生面板
+
+- `package.json.dshGo.contributes.panels` 增加 `purge` 面板，placement = `features` + `session.tab`。
+- `lib/dsh-go-panel.js`：状态 / 提示词 / 补丁 三个 tab；操作 应用 / 还原 / 刷新 / 复制 / 卸载。
+- 补丁层现场由 `bin/dsh-purge.js --status --json` 后台读取，写进 `$DSH_HOME/dsh-purge/dsh-go-status.json`，
+  面板每 60 秒刷新一次；首屏未命中缓存时显示「正在读取宿主状态…」。
+- dsh-go 检查器：`原生界面能显示（胶囊 2 · 面板 1）`；视图能显示，仅剩样式对比度提示。

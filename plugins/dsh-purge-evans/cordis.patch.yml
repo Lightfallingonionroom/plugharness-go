@@ -1,0 +1,76 @@
+# dsh-purge bundle patch — 1.1.71 (local rc.2 build)
+#
+# 清洗 + 演练台都在本插件内（lib/redteam、presets/redteam、skills/redteam）。
+# 只装 dsh-purge，不外接、不 link 其它红队包。
+#
+# [local] 相对官方 1.1.71 的三处改动：
+#  1. 删掉本层的 `insert: - id: dsh-purge`（本体已在 profile bundles + 用户层
+#     cordis.patch.yml 里 insert，重复 insert 会 already queued，宿主起不来。
+#     官方 1.1.75 才修这个）。
+#  2. `personaSuffix` 置空：0.2.1-rc.2 的 dsh-system-prompt 对未注册变量直接抛
+#     unknown prompt variable "{{cwd}}"，1.1.71 的原文会让宿主启动失败。
+#  3. package.json 的 dshTarget 标成 0.2.1-rc.2，纯粹给状态页看。
+
+# 关掉旧的独立红队包行（若用户以前装过 dsh-redteam-mode）
+- id: redteam-store
+  name: dsh-redteam-store
+  disabled: true
+
+- id: redteam-ui
+  name: dsh-redteam-ui
+  disabled: true
+
+- id: redteam-mode
+  name: dsh-redteam-mode
+  disabled: true
+
+- id: redteam-mode-store
+  name: dsh-redteam-mode/store
+  disabled: true
+
+- id: redteam-mode-ui
+  name: dsh-redteam-mode/ui
+  disabled: true
+
+- id: system-prompt
+  config:
+    includeHarnessIdentity: false
+    personaPrefix: ""
+    personaSuffix: ""
+
+# 本体条目已由 profile/cordis.patch.yml 插入，这里只补 inject / config。
+- id: dsh-purge
+  name: dsh-purge
+  inject: [systemPrompt, tools]
+  config:
+    enabled: true
+    autoApplyOnStart: false
+    autoUpdateOnStart: false
+    autoRevertOnMissing: false
+    injectOnce: false
+    stripMnemon: true
+    verbose: false
+    postPrompt: ""
+    postPromptOrder: 5100
+    autoRetry: true
+    retryMax: 3
+    autoContinue: false
+    continueMax: 3
+    continueText: "继续"
+    capabilityProtocol: true
+    hooksDenyBypass: true
+
+- insert:
+    # 演练台：预设 + 技能落地（本插件 lib/redteam）
+    - id: dsh-purge-redteam
+      name: dsh-purge/redteam
+
+    # 演练台事实库（SQLite），数据在 $DSH_HOME/redteam
+    - id: dsh-purge-redteam-store
+      name: dsh-purge/redteam/store
+      config:
+        root: !!js dshHomePath('redteam')
+
+    # 演练台 HTTP 桥 POST /redteam/api
+    - id: dsh-purge-redteam-ui
+      name: dsh-purge/redteam/ui
