@@ -14,7 +14,6 @@ import '../features/feature_widgets.dart' show FeatureOffline;
 import '../common/list_page_row.dart';
 import '../shell/page_frame.dart';
 import '../theme/app_icons.dart';
-import '../theme/theme.dart';
 import '../web/web_view_page.dart';
 
 class PurgePage extends ConsumerStatefulWidget {
@@ -37,7 +36,7 @@ class _PurgePageState extends ConsumerState<PurgePage> with SingleTickerProvider
   Widget build(BuildContext context) {
     final host = ref.watch(localConnectionProvider).value;
     if (host == null) {
-      return const AppPage.list(title: 'Purge', children: [FeatureOffline()]);
+      return AppPage.list(title: 'Purge', children: [FeatureOffline()]);
     }
     return AppPage(
       title: 'Purge',
@@ -175,8 +174,6 @@ class _StatusBody extends ConsumerWidget {
     final applied = _int(data, 'patches_applied');
     final total = _int(data, 'patches_total');
     final pending = _int(data, 'patches_pending');
-    final skipped = _int(data, 'patches_skipped');
-    final na = _int(data, 'patches_na');
     final backup = _bool(data, 'has_backup');
     final hooksDeny = _bool(data, 'hooks_deny_bypass');
     final operation = data['operation'] as Map<String, dynamic>?;
@@ -586,6 +583,7 @@ class _SkillsBody extends ConsumerWidget {
                     TextButton(
                       onPressed: () => _run(context, ref, () async {
                         final detail = await api.skills('read', {'id': skill['id']});
+                        if (!context.mounted) return;
                         final content = await _editText(
                           context,
                           skill['id']?.toString() ?? '',

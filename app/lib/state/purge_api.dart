@@ -32,8 +32,10 @@ class PurgeApi {
 
   Future<Map<String, dynamic>> status() => _get('/dsh-purge/status');
 
-  Future<Map<String, dynamic>> apply({String? content}) =>
-      _post('/dsh-purge/apply', {if (content != null) 'content': content});
+  Future<Map<String, dynamic>> apply({String? content}) {
+    if (content == null) return _post('/dsh-purge/apply');
+    return _post('/dsh-purge/apply', {'content': content});
+  }
 
   Future<Map<String, dynamic>> revert() => _post('/dsh-purge/revert');
 
@@ -68,10 +70,10 @@ class PurgeApi {
   Future<Map<String, dynamic>> grantDrill() => _post('/dsh-purge/drill-grant');
 
   Future<Map<String, dynamic>> update([String op = 'check']) =>
-      _get('/dsh-purge/update', {'op': op});
+      _get('/dsh-purge/update', query: {'op': op});
 
   Future<Map<String, dynamic>> rewindOptions(String sessionId) =>
-      _get('/dsh-purge/rewind/options', {'sessionId': sessionId});
+      _get('/dsh-purge/rewind/options', query: {'sessionId': sessionId});
 
   Future<Map<String, dynamic>> rewind(String sessionId, {String mode = 'once'}) =>
       _post('/dsh-purge/rewind', {'sessionId': sessionId, 'mode': mode});
