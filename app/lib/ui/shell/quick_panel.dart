@@ -54,6 +54,7 @@ extension DrawerDestinationLook on DrawerDestination {
     // calendar glyph is the one this destination has always used.
     DrawerDestination.schedules => AppIcons.automation,
     DrawerDestination.purge => AppIcons.systemAccess,
+    DrawerDestination.terminal => AppIcons.terminal,
   };
 
   String label(L10n l10n) => switch (this) {
@@ -66,6 +67,7 @@ extension DrawerDestinationLook on DrawerDestination {
     DrawerDestination.features => l10n.hubSettingsAllFeatures,
     DrawerDestination.schedules => l10n.featuresSchedules,
     DrawerDestination.purge => 'Purge',
+    DrawerDestination.terminal => '容器终端',
   };
 }
 

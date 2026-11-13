@@ -3,4 +3,4 @@
 /// these by [Enum.name], so a rename here is a change to stored preferences.
 /// Stored by [Enum.name], so a rename is a change to stored preferences:
 /// add values, never rename or reorder the ones that already exist.
-enum DrawerDestination { web, remote, plugins, engine, settings, settingsSearch, features, schedules, purge }
+enum DrawerDestination { web, remote, plugins, engine, settings, settingsSearch, features, schedules, purge, terminal }

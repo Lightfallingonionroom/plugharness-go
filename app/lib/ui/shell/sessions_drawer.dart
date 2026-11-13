@@ -207,6 +207,7 @@ class SessionsDrawer extends ConsumerWidget {
                 for (final destination in const [
                   DrawerDestination.plugins,
                   DrawerDestination.purge,
+                  DrawerDestination.terminal,
                   DrawerDestination.schedules,
                   DrawerDestination.web,
                 ])

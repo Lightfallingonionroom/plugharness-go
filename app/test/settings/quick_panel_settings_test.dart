@@ -114,6 +114,7 @@ void main() {
       DrawerDestination.features,
       DrawerDestination.schedules,
       DrawerDestination.purge,
+      DrawerDestination.terminal,
     ]);
   });
 
