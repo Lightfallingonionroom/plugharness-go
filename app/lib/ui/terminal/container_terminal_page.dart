@@ -11,7 +11,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../common/empty_view.dart';
 import '../shell/page_frame.dart';
 import '../theme/app_icons.dart';
-import '../theme/theme.dart';
 
 /// The container's shell page: a scrollable output area over one input row.
 /// The shell is a persistent `/bin/sh` in the runtime rootfs (see
@@ -127,7 +126,7 @@ class _ContainerTerminalPageState extends ConsumerState<ContainerTerminalPage> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = DshColors.of(context);
+    final scheme = Theme.of(context).colorScheme;
     return AppPage(
       title: '容器终端',
       showLargeTitle: false,
@@ -143,7 +142,7 @@ class _ContainerTerminalPageState extends ConsumerState<ContainerTerminalPage> {
             children: [
               Expanded(
                 child: _starting
-                    ? Center(child: CircularProgressIndicator(color: colors.primary))
+                    ? Center(child: CircularProgressIndicator(color: scheme.primary))
                     : _error != null
                         ? EmptyView(icon: AppIcons.plugin, title: _error!)
                         : ListView.builder(
@@ -156,7 +155,7 @@ class _ContainerTerminalPageState extends ConsumerState<ContainerTerminalPage> {
                                 fontFamily: 'monospace',
                                 fontSize: 13,
                                 height: 1.35,
-                                color: _lines[index].startsWith('[') ? colors.textSecondary : colors.textPrimary,
+                                color: _lines[index].startsWith('[') ? scheme.onSurfaceVariant : scheme.onSurface,
                               ),
                             ),
                           ),
