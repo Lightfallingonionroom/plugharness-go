@@ -1,0 +1,56 @@
+name: Release
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.repository }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  checks:
+    name: Checks (${{ matrix.os }}, Node ${{ matrix.node }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: ["22.13.0", "24.x"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Syntax and import
+        run: |
+          node --check lib/index.js
+          node --check lib/core.js
+          node --check lib/update.js
+          node --check client.js
+          node --input-type=module -e "import './lib/index.js'"
+      - name: Runtime and regression fixtures
+        run: node scripts/run-checks.mjs
+
+  release:
+    needs: checks
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == 'realMisakaMikoto/dsh-purge'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24.x"
+      - name: Publish verified archive and checksum
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/publish-release.mjs

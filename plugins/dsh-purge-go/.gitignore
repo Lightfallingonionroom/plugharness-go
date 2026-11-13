@@ -1,0 +1,48 @@
+# 不上传
+node_modules/
+*.tgz
+npm-debug.log*
+*.log
+.DS_Store
+Thumbs.db
+
+# 只给本机 Cursor 技能看，不进仓库
+docs/agents/
+
+# 本地草稿，不进仓库
+scripts/tmp-*.mjs
+scripts/test-*.mjs
+.scratch/
+dsh-redteam-mode-main/
+/1
+
+# 外部参考，不是本插件
+choirboy-prompt/
+/choirboy-prompt/
+_archive/
+频道推广手册/
+
+# 嵌入前的提示词原文
+lib/default-prompt-inject.md
+default-prompt-inject.md
+
+# 本机官方安装包、解包目录、拆出的压缩包
+/deepseek-harness-*.exe
+/official-harness-unpacked/
+/official-harness-payload.7z
+*.asar
+*.asar.bak
+
+# 本地修复备份 / local fix backups (never upload)
+*.bak-*
+*.dshpurge.bak
+*.copytmp
+*.tmp
+# 回归测试是交付物的一部分，不能被上面的 scripts/test-*.mjs 规则挡住
+!scripts/test-official-update-rollback.mjs
+# 插件更新器写的本地 revision 标记（运行时状态，不进仓库）
+.dsh-purge-revision
+# 发布脚本产物 / release artifacts (never upload)
+/dsh-purge-*.zip
+/SHA256SUMS
+/release-body.txt

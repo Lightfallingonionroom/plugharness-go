@@ -893,3 +893,19 @@ the SDK or promise to clear or stop sending previously accumulated SDK statistic
 The dsh-go anonymous usage statistics switch does not control this SDK.
 The Apache 2.0 license for documentation sample code is not the license for
 this SDK binary. This notice does not replace Google's SDK terms.
+
+## dsh-purge (dsh-go merge)
+
+`plugins/dsh-purge-go/` bundles a merged build of:
+
+- `realMisakaMikoto/dsh-purge` v1.2.3 (MIT, Copyright (c) 2026 小杨), with the PR #110 ports
+  from `purge-research/dsh-purge-optimize` (uninstall cleanup across four dependency keys;
+  release the host default preset when redteam mode is disabled).
+- The dsh-go native capsule design from `NANA7MI0/dsh-purge-go` (AGPL-3.0).
+
+The package name stays `dsh-purge` (version `1.2.3-go.1`) so it can replace an existing
+installation in place. Full licenses and notices are bundled at:
+
+- `plugins/dsh-purge-go/LICENSE`
+- `plugins/dsh-purge-go/NOTICE`
+- `plugins/dsh-purge-go/docs/upstream-dsh-purge-LICENSE`

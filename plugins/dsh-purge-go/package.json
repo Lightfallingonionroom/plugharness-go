@@ -1,0 +1,143 @@
+{
+  "name": "dsh-purge",
+  "version": "1.2.3-go.1",
+  "description": "DeepSeek Harness 破甲（dsh-go 融合版）：基于 dsh-purge 1.2.3 + PR #110 优化，叠加 dsh-go 原生胶囊。Jailbreak for every model — swap prompts per model.",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./client": "./client.js",
+    "./redteam": "./lib/redteam/index.js",
+    "./redteam/store": "./lib/redteam/store.js",
+    "./redteam/ui": "./lib/redteam/ui.js",
+    "./redteam/tools": "./lib/redteam/tools.js",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "dsh-purge": "bin/dsh-purge.js"
+  },
+  "files": [
+    "lib",
+    "!lib/default-prompt-inject.md",
+    "bin",
+    "docs",
+    "presets",
+    "skills",
+    "scripts",
+    "client.js",
+    "cordis.patch.yml",
+    "screenshots.json",
+    "README.md",
+    "LICENSE",
+    "NOTICE",
+    "README-upstream.md",
+    "README-upstream.zh-CN.md",
+    "GO-NOTES.md"
+  ],
+  "scripts": {
+    "embed-prompt": "node scripts/embed-default-prompt.mjs",
+    "build:client": "node scripts/build-client.mjs",
+    "test": "node scripts/run-checks.mjs"
+  },
+  "license": "MIT",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "dsh-plugins",
+    "网络安全",
+    "红队评测",
+    "llm-security",
+    "harness-security",
+    "deepseek-harness",
+    "red-team",
+    "instructions",
+    "rules",
+    "prompt-eval",
+    "agent"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lightfallingonionroom/plugharness-go.git"
+  },
+  "homepage": "https://github.com/Lightfallingonionroom/plugharness-go/tree/main/plugins/dsh-purge-go",
+  "bugs": {
+    "url": "https://github.com/realMisakaMikoto/dsh-purge/issues"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-connection",
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-slots",
+        "@deepseek-ai/dsh-client-ui-settings",
+        "@deepseek-ai/dsh-client-ui-conversation"
+      ]
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1"
+  },
+  "engines": {
+    "node": ">=22.13.0",
+    "dsh": ">=0.2.1-rc.2 <0.3.0-0"
+  },
+  "dshTarget": "0.2.2-rc.1",
+  "dshTargets": [
+    "0.2.2-rc.1",
+    "0.2.1-rc.5",
+    "0.2.1-rc.3",
+    "0.2.1-rc.2",
+    "0.2.1-rc.1",
+    "0.2.0-rc.2"
+  ],
+  "upstream": "https://github.com/YuJunZhiXue/dsh-purge",
+  "fork": "dsh-go merge of realMisakaMikoto/dsh-purge v1.2.3 (PR #110 ports) with the dsh-purge-go native capsule",
+  "dshGo": {
+    "v": 1,
+    "minApp": "1.0.15",
+    "title": {
+      "zh": "破甲",
+      "en": "Purge"
+    },
+    "icon": "wrench",
+    "contributes": {
+      "composer.actions": [
+        {
+          "id": "purge-status",
+          "label": {
+            "zh": "破甲状态",
+            "en": "Status"
+          },
+          "icon": "wrench",
+          "effect": {
+            "type": "insert",
+            "text": "把破甲两层状态报给我：提示词注入层（开关/正文体积/变体）+ 补丁层（85 条的生效数与分布）（调 purge_status）"
+          }
+        },
+        {
+          "id": "purge-apply",
+          "label": {
+            "zh": "破甲应用",
+            "en": "Apply"
+          },
+          "icon": "wrench",
+          "effect": {
+            "type": "command",
+            "name": "purge",
+            "args": "apply"
+          }
+        }
+      ]
+    }
+  }
+}
