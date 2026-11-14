@@ -74,6 +74,10 @@ dependencies:
   # Terminal emulator (VT parser, screen buffer, renderer) for the conversation
   # terminal page. MIT.
   xterm: ^4.0.0
+  # Pseudo-terminal for the container shell: the conversation terminal talks to
+  # the engine's own PTY, but the container's shell has to be spawned here, and
+  # only a real PTY gives it a prompt, line editing and job control. MIT.
+  flutter_pty: ^0.4.2
   # Forum (lib/forum): Discourse API calls (already a dependency of others),
   # the post HTML reader (dart-lang, BSD-3) and RSA for User API Keys
   # (already pulled in by dartssh2, MIT).
