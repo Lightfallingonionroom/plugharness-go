@@ -8066,6 +8066,9 @@ export async function patchShim(shimDir) {
     }
     try {
       await saveText(writeFp, insertShimInject(text, shimInjectFor(shimKindOf(writeFp))));
+      // 原子写在新文件上从 0600 起（atomicWriteFile）：shim 会因此不可执行，引擎直接 exec 它
+      // 报 Permission denied (126)，安全模式也一样。写前若目标正被引擎升级移走，权限就回不来。
+      try { fs.chmodSync(writeFp, 0o755); } catch { /* 权限补不回来不该让整次写入失败 */ }
       if (target.healed) {
         result[fname] = "patched_healed_symlink";
         continue;

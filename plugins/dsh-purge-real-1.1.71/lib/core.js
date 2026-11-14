@@ -7585,6 +7585,9 @@ export async function patchShim(shimDir) {
     }
     try {
       await saveText(fp, insertShimInject(text, shimInjectFor(shimKindOf(fp))));
+      // 原子写在新文件上从 0600 起（atomicWriteFile）：shim 会因此不可执行，引擎直接 exec 它
+      // 报 Permission denied (126)，安全模式也一样。写前若目标正被引擎升级移走，权限就回不来。
+      try { fs.chmodSync(fp, 0o755); } catch { /* 权限补不回来不该让整次写入失败 */ }
       result[fname] = isDesktopCommandRuntimeDir(shimDir) ? "patched_desktop" : "patched";
     } catch (e) {
       result[fname] = `error:${e}`;

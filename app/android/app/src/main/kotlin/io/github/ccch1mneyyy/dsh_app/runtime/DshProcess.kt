@@ -80,6 +80,7 @@ class DshProcess(
      */
     fun start(guestEnv: Map<String, String>, binds: List<String> = emptyList(), safe: Boolean = false, phone: Boolean = false, directEngine: Boolean = false, directFailed: Boolean = false, searchOverlay: Boolean = false, authOverlay: Boolean = false, speechOverlay: Boolean = false, onLaunchMethod: ((Boolean) -> Unit)? = null) {
         check(process == null) { "already started" }
+        repairLauncherPermission()
         var selection = DirectLaunch.select(rootfs, directEngine, safe, directFailed)
         // Only PRoot's fake hard links stand in Direct's way: tidy them once no runtime process is left.
         val tidy = selection.fallbackReason == DirectLaunch.INCOMPATIBLE
@@ -247,6 +248,23 @@ class DshProcess(
         listener.onLog("[dsh-app] direct: moved ${(result as L2sMigration.Result.Done).links} PRoot links to real files in ${(System.nanoTime() - started) / 1_000_000} ms", "system")
         val reason = DirectLaunch.compatibilityReason(rootfs)
         return DirectLaunch.Selection(reason == null, reason)
+    }
+
+    /**
+     * The launch template execs `/usr/local/bin/dsh` directly, so a launcher that lost its
+     * executable bit stops the engine (and safe mode) before anything can run — shell reports
+     * it as `Permission denied` (exit 126). A plugin's shim write does this when it races an
+     * engine upgrade: the tmp+rename write starts from 0600 whenever the file it replaces is
+     * already gone. Restoring the bit here is the last line of defence, and it is cheap.
+     */
+    private fun repairLauncherPermission() {
+        val launcher = File(rootfs, "usr/local/bin/dsh")
+        if (!launcher.isFile || launcher.canExecute()) return
+        val repaired = runCatching { launcher.setExecutable(true, false) }.getOrDefault(false)
+        listener.onLog(
+            "[dsh-app] ${if (repaired) "repaired" else "could not repair"} /usr/local/bin/dsh (not executable)",
+            "system",
+        )
     }
 
     /** Waits for cleanup and exit reporting; zero waits until completion. */
